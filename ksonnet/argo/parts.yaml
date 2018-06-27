@@ -1,0 +1,16 @@
+{
+   "name": "dkube-deps",
+   "apiVersion": "0.0.1",
+   "kind": "ksonnet.io/parts",
+   "description": "argo component.\n",
+   "quickStart": {
+      "prototype": "io.ksonnet.pkg.dkube",
+      "componentName": "argo",
+      "flags": {
+         "name": "argo",
+         "namespace": "default",
+         "disks": ""
+      },
+      "comment": "argo components."
+   },
+}

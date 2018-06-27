@@ -1,0 +1,16 @@
+{
+   "name": "dkube-deps",
+   "apiVersion": "0.0.1",
+   "kind": "ksonnet.io/parts",
+   "description": "pachyderm component.\n",
+   "quickStart": {
+      "prototype": "io.ksonnet.pkg.pachyderm",
+      "componentName": "pachyderm",
+      "flags": {
+         "name": "pachyderm",
+         "namespace": "default",
+         "disks": ""
+      },
+      "comment": "pachyderm components."
+   },
+}

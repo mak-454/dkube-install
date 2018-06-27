@@ -1,0 +1,16 @@
+{
+   "name": "spinner",
+   "apiVersion": "0.0.1",
+   "kind": "ksonnet.io/parts",
+   "description": "dkube user component.\n",
+   "quickStart": {
+      "prototype": "io.ksonnet.pkg.dkube",
+      "componentName": "user",
+      "flags": {
+         "name": "user",
+         "namespace": "default",
+         "disks": ""
+      },
+      "comment": "dkube user components."
+   },
+}

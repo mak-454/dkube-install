@@ -1,0 +1,16 @@
+{
+   "name": "dkube-deps",
+   "apiVersion": "0.0.1",
+   "kind": "ksonnet.io/parts",
+   "description": "nfs component.\n",
+   "quickStart": {
+      "prototype": "io.ksonnet.pkg.dkube",
+      "componentName": "nfs",
+      "flags": {
+         "name": "nfs",
+         "namespace": "default",
+         "disks": ""
+      },
+      "comment": "nfs components."
+   },
+}

@@ -1,0 +1,16 @@
+{
+   "name": "spinner",
+   "apiVersion": "0.0.1",
+   "kind": "ksonnet.io/parts",
+   "description": "Core components of dkube.\n",
+   "quickStart": {
+      "prototype": "io.ksonnet.pkg.dkube",
+      "componentName": "spinner",
+      "flags": {
+         "name": "spinner",
+         "namespace": "default",
+         "disks": ""
+      },
+      "comment": "Core dkube components."
+   },
+}

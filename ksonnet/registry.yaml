@@ -1,0 +1,25 @@
+apiVersion: '0.1'
+kind: ksonnet.io/registry
+libraries:
+  argo:
+    version: master
+    path: argo
+  nfs:
+    version: master
+    path: nfs
+  efk:
+    version: master
+    path: efk
+  pachyderm:
+    version: master
+    path: pachyderm
+  spinner:
+    version: master
+    path: spinner
+  ui:
+    version: master
+    path: ui
+  user:
+    version: master
+    path: user
+
