@@ -12,7 +12,7 @@
           "name": "OC"
         }, 
         "name": "oc-configmap", 
-        "namespace": "kube-system"
+        "namespace": "dkube"
       }
     },
     {
@@ -26,7 +26,7 @@
           "kubernetes.io/name": "Elasticsearch"
         }, 
         "name": "elasticsearch-logging", 
-        "namespace": "kube-system"
+        "namespace": "dkube"
       }, 
       "spec": {
         "ports": [
@@ -51,7 +51,7 @@
           "kubernetes.io/cluster-service": "true"
         }, 
         "name": "elasticsearch-logging", 
-        "namespace": "kube-system"
+        "namespace": "dkube"
       }
     },
     {
@@ -91,7 +91,7 @@
           "kubernetes.io/cluster-service": "true"
         }, 
         "name": "elasticsearch-logging", 
-        "namespace": "kube-system"
+        "namespace": "dkube"
       }, 
       "roleRef": {
         "apiGroup": "", 
@@ -103,7 +103,7 @@
           "apiGroup": "", 
           "kind": "ServiceAccount", 
           "name": "elasticsearch-logging", 
-          "namespace": "kube-system"
+          "namespace": "dkube"
         }
       ]
     },
@@ -118,7 +118,7 @@
           "version": "v5.6.4"
         }, 
         "name": "elasticsearch-logging", 
-        "namespace": "kube-system"
+        "namespace": "dkube"
       }, 
       "spec": {
         "replicas": 2, 
@@ -221,7 +221,7 @@
           "addonmanager.kubernetes.io/mode": "Reconcile"
         }, 
         "name": "fluentd-es-config-v0.1.4", 
-        "namespace": "kube-system"
+        "namespace": "dkube"
       }
     },
     {
@@ -234,7 +234,7 @@
           "kubernetes.io/cluster-service": "true"
         }, 
         "name": "fluentd-es", 
-        "namespace": "kube-system"
+        "namespace": "dkube"
       }
     },
     {
@@ -286,7 +286,7 @@
           "apiGroup": "", 
           "kind": "ServiceAccount", 
           "name": "fluentd-es", 
-          "namespace": "kube-system"
+          "namespace": "dkube"
         }
       ]
     },
@@ -301,7 +301,7 @@
           "version": "v2.0.4"
         }, 
         "name": "fluentd-es", 
-        "namespace": "kube-system"
+        "namespace": "dkube"
       }, 
       "spec": {
         "selector": {
@@ -395,7 +395,7 @@
           "kubernetes.io/cluster-service": "true"
         }, 
         "name": "kibana-logging", 
-        "namespace": "kube-system"
+        "namespace": "dkube"
       }, 
       "spec": {
         "replicas": 1, 
@@ -459,7 +459,7 @@
       "kind": "Service", 
       "metadata": {
         "annotations": {
-          "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_spinner_kibana\nprefix: /dkube/kibana/\nrewrite: /\nservice: kibana-logging.kube-system:5601"
+          "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_spinner_kibana\nprefix: /dkube/kibana/\nrewrite: /\nservice: kibana-logging.dkube:5601"
         }, 
         "name": "kibana-service-mapping", 
         "namespace": "dkube"
