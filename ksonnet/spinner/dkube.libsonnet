@@ -14,7 +14,12 @@
   parts(namespace):: {
     dkubeServiceAccount():: {
       "apiVersion": "v1", 
-      "kind": "ServiceAccount", 
+      "kind": "ServiceAccount",
+      "imagePullSecrets": [
+        {
+          "name": "dkube-dockerhub-secret"
+        }
+      ],
       "metadata": {
         "name": "dkube-spinner", 
         "namespace": namespace

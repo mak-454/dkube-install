@@ -3,10 +3,8 @@
 // @description DKube ui components
 // @param name string Name to give to each of the components
 // @shortDescription DKube user components. This create user environment.
-// @optionalParam dkubeUIImage string dkube/uiserver:v1 UI image for dkube.
-// @optionalParam restServerEndpoint string <master-ip:nodeport> dkube address.
-// @optionalParam gitClientId string null github client id.
-// @optionalParam gitClientSecret string null github client secret.
+// @optionalParam dkubeUIImage string ocdr/dkube-uiserver:v1 UI image for dkube.
+// @optionalParam restServerEndpoint string <http://master-ip:nodeport> dkube address.
 // @optionalParam namespace string dkube Namespace for dkube ui.
 
 local k = import "k.libsonnet";

@@ -4,10 +4,10 @@
 // @param name string Name to give to each of the components
 // @shortDescription DKube spinner components. This currently includes dkube api server and dkube tf controller.
 // @optionalParam namespace string dkube Namespace to use for the components. It is automatically inherited from the environment if not set.
-// @optionalParam dkubeApiServerImage string dkube-spinner/api-server:v1 The image for dkube spinner api server.
-// @optionalParam dkubeTFControllerImage string dkube-spinner/tf-controller:v1 The image for dkube spinner tf-controller.
-// @optionalParam dkubePachydermClientImage string dkube-spinner/pachyderm-client:v1 The image for dkube spinner pachyderm client.
-// @optionalParam dkubeLogCollectorImage string dkube-spinner/log-collector:v1 The image for log collector.
+// @optionalParam dkubeApiServerImage string ocdr/dkube-api-server:v1 The image for dkube spinner api server.
+// @optionalParam dkubeTFControllerImage string ocdr/dkube-tf-controller:v1 The image for dkube spinner tf-controller.
+// @optionalParam dkubePachydermClientImage string ocdr/dkube-pachyderm-client:v1 The image for dkube spinner pachyderm client.
+// @optionalParam dkubeLogCollectorImage string ocdr/dkube-log-collector:v1 The image for log collector.
 // @optionalParam dkubeApiServerAddr string localhost:5000 The address of dkube api server
 // @optionalParam pachydermAddr string pachd:650 The address of pachyderm server address
 // @optionalParam dkubeMountPath string /tmp/dkube/scratchpad Mount path to mount pvc in dkube engine

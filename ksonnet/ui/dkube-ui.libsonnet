@@ -1,7 +1,7 @@
 {
   all(params):: [
     $.parts(params.namespace).service(),
-    $.parts(params.namespace).deploy(params.dkubeUIImage, params.restServerEndpoint, params.gitClientId, params.gitClientSecret),
+    $.parts(params.namespace).deploy(params.dkubeUIImage, params.restServerEndpoint),
   ],
 
   parts(namespace):: {
@@ -33,7 +33,7 @@
       },
     },  // service
 
-    deploy(dkubeUIImage, restServerEndpoint, gitClientId, gitClientSecret):: {
+    deploy(dkubeUIImage, restServerEndpoint):: {
       "apiVersion": "extensions/v1beta1", 
       "kind": "Deployment", 
       "metadata": {
@@ -67,6 +67,11 @@
                 effect: "NoSchedule"
               }
             ],
+            "imagePullSecrets": [
+              {
+                "name": "dkube-dockerhub-secret"
+              }
+            ],
             "containers": [
               {
                 "env": [
@@ -76,11 +81,21 @@
                   }, 
                   {
                     "name": "GIT_CLIENT_ID", 
-                    "value": gitClientId
+                    "valueFrom": {
+                      "secretKeyRef": {
+                        "key": "client-id", 
+                        "name": "dkube-github-app-secret"
+                      }
+                    }
                   }, 
                   {
                     "name": "GIT_CLIENT_SECRET", 
-                    "value": gitClientSecret
+                    "valueFrom": {
+                      "secretKeyRef": {
+                        "key": "client-secret", 
+                        "name": "dkube-github-app-secret"
+                      }
+                    }
                   }
                 ], 
                 "image": dkubeUIImage, 
