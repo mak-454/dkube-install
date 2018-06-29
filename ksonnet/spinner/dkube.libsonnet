@@ -396,7 +396,8 @@
               {
                 "name": "db-file",
                 "hostPath": {
-                  "path": "/root/dkube/dkube.db"
+                  "path": "/var/dkube/dkube.db",
+                  "type": "FileOrCreate"
                 }
               }
             ]

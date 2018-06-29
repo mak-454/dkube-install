@@ -106,7 +106,7 @@
             "volumes": [
               {
                 "hostPath": {
-                  "path": "/root/dkube/store", 
+                  "path": "/var/dkube/store", 
                   "type": ""
                 }, 
                 "name": "export-volume"

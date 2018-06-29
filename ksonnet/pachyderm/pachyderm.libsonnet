@@ -191,7 +191,7 @@
             "volumes": [
               {
                 "hostPath": {
-                  "path": "/var/pachyderm/etcd"
+                  "path": "/var/dkube/pachyderm/etcd"
                 }, 
                 "name": "etcd-storage"
               }
@@ -452,7 +452,7 @@
             "volumes": [
               {
                 "hostPath": {
-                  "path": "/var/pachyderm/pachd"
+                  "path": "/var/dkube/pachyderm/pachd"
                 }, 
                 "name": "pach-disk"
               }, 
