@@ -1,0 +1,4 @@
+kubernetes==6.0.0
+blessings==1.7
+prettytable==0.7.2
+progressive==0.3.3

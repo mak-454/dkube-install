@@ -1,0 +1,7 @@
+#!/usr/bin/python3.5
+
+import sys
+import install
+
+if __name__ == "__main__":
+   sys.exit(install.run())
