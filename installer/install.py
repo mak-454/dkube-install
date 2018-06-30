@@ -26,8 +26,8 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-if [[ $# -lt 2 ]]; then
-    pretty_red "SYNTAX: " $0 "<cmd: deploy, delete, onboard> <option: --all, --dkube-deps, --dkube, --dkube-ui, --kubeflow> [--client-id <git-app-client-id>] [--client-secret <git-app-client-secret>] [--docker-username <docker-username>] [--docker-password <docker-password>] [--docker-email <docker-email>] [--git-username <git-username>]"
+if [[ $# -lt 1 ]]; then
+    pretty_red "SYNTAX: " $0 "<cmd: deploy, delete, onboard, deboard> <option: --all, --dkube-deps, --dkube, --dkube-ui, --kubeflow> [--client-id <git-app-client-id>] [--client-secret <git-app-client-secret>] [--docker-username <docker-username>] [--docker-password <docker-password>] [--docker-email <docker-email>] [--git-username <git-username>]"
     exit 1
 fi
 
@@ -65,13 +65,23 @@ export_env()
     fi
 }
 
-user_onbord()
+user_onboard()
 {
     cd $DKUBE_PATH
     ks param set dkube-user username $GIT_USERNAME
     ks apply default -c dkube-user
     if [ ! $? -eq 0 ]; then
         pretty_red "User onboarding Failed"
+        exit 1
+    fi
+}
+
+user_deboard()
+{
+    ks param set dkube-user username $GIT_USERNAME
+    ks delete default -c dkube-user
+    if [ ! $? -eq 0 ]; then
+        pretty_red "Deleting dkube-user Failed"
         exit 1
     fi
 }
@@ -218,39 +228,50 @@ create_dkube_namespace()
 
 create_dkube_secret()
 {
-    kubectl --namespace dkube create secret docker-registry dkube-dockerhub-secret --docker-server=https://index.docker.io/v1/ --docker-username=$DOCKER_USER --docker-password=$DOCKER_PASSWORD --docker-email=$DOCKER_EMAIL
+    kubectl get secret -n dkube dkube-dockerhub-secret &> /dev/null
     if [ ! $? -eq 0 ]; then
-        pretty_red "Failed to create dkube-secret"
-        exit 1
+    	kubectl --namespace dkube create secret docker-registry dkube-dockerhub-secret --docker-server=https://index.docker.io/v1/ --docker-username=$DOCKER_USER --docker-password=$DOCKER_PASSWORD --docker-email=$DOCKER_EMAIL
+    	if [ ! $? -eq 0 ]; then
+        	pretty_red "Failed to create dkube-secret"
+	        exit 1
+    	fi
     fi
-
 }
 
 create_ui_secret()
 {
-    kubectl --namespace dkube create secret generic dkube-github-app-secret --from-literal=client-id=$CLIENT_ID --from-literal=client-secret=$CLIENT_SECRET
+	kubectl get secret -n dkube dkube-github-app-secret &> /dev/null
     if [ ! $? -eq 0 ]; then
-        pretty_red "Failed to create dkube-ui-secret"
-        exit 1
+    	kubectl --namespace dkube create secret generic dkube-github-app-secret --from-literal=client-id=$CLIENT_ID --from-literal=client-secret=$CLIENT_SECRET
+	    if [ ! $? -eq 0 ]; then
+    	    pretty_red "Failed to create dkube-ui-secret"
+        	exit 1
+	    fi
     fi
 }
 
 delete_dkube_secret()
 {
-    kubectl --namespace dkube delete secret dkube-dockerhub-secret
-    if [ ! $? -eq 0 ]; then
-        pretty_red "Failed to delete dkube-secret"
-        exit 1
-    fi
+    kubectl get secret -n dkube dkube-dockerhub-secret &> /dev/null
+    if [ $? -eq 0 ]; then
+	    kubectl --namespace dkube delete secret dkube-dockerhub-secret
+    	if [ ! $? -eq 0 ]; then
+        	pretty_red "Failed to delete dkube-secret"
+        	exit 1
+    	fi
+	fi
 }
 
 delete_ui_secret()
 {
-    kubectl --namespace dkube delete secret dkube-github-app-secret
-    if [ ! $? -eq 0 ]; then
-        pretty_red "Failed to delete dkube-ui-secret"
-        exit 1
-    fi
+	kubectl get secret -n dkube dkube-github-app-secret &> /dev/null
+    if [ $? -eq 0 ]; then
+	    kubectl --namespace dkube delete secret dkube-github-app-secret
+    	if [ ! $? -eq 0 ]; then
+        	pretty_red "Failed to delete dkube-ui-secret"
+	        exit 1
+    	fi
+	fi
 }
 
 init_dkube()
@@ -440,11 +461,6 @@ delete_dkube_deps()
         pretty_red "Deleting pachyderm Failed"
         exit 1
     fi
-    ks delete default -c dkube-user
-    if [ ! $? -eq 0 ]; then
-        pretty_red "Deleting dkube-user Failed"
-        exit 1
-    fi
 
     if [ -d '/var/dkube/' ]; then
         rm -rf '/var/dkube/'
@@ -544,26 +560,27 @@ main_fun()
                     pretty_green "Dkube installation is Done !!!"
                     ;;
                 --dkube-ui)
-                    if [ $# -ne 12 ] || [ "$3" != "--client-id" ] || [ "$5" != "--client-secret" ] || [ "$7" != "--docker-username" ] || [ "$9" != "--docker-password" ] || [ "$11" != "--docker-email" ]; then
+                    if [ $# -ne 12 ] || [ "$3" != "--client-id" ] || [ "$5" != "--client-secret" ] || [ "$7" != "--docker-username" ] || [ "$9" != "--docker-password" ] || [ "${11}" != "--docker-email" ]; then
                         pretty_red "SYNTAX: " $0 "deploy <option: --all, --dkube-deps, --dkube, --dkube-ui, --kubeflow> --client-id <git-app-client-id> --client-secret <git-app-client-secret> --docker-username <docker-username> --docker-password <docker-password> --docker-email <docker-email>"
                         exit 1
                     else
                         export CLIENT_ID=$4
                         export CLIENT_SECRET=$6
                         export DOCKER_USER=$8
-                        export DOCKER_PASSWORD=$10
-                        export DOCKER_EMAIL=$12
+                        export DOCKER_PASSWORD=${10}
+                        export DOCKER_EMAIL=${12}
                     fi
 
                     pretty_green "Starting dkube-ui installation ..."
                     init_dkube
+                    create_dkube_secret
                     create_ui_secret
                     install_dkube_ui
                     pretty_green "Dkube-ui installation is Done !!!"
                     ;;
  
                *)
-                    pretty_red "Invalid option ${option}"
+                    pretty_red "Invalid option"
                     pretty_red "SYNTAX: " $0 "deploy <option: --all, --dkube-deps, --dkube, --dkube-ui, --kubeflow> [--client-id <git-app-client-id>] [--client-secret <git-app-client-secret>] --docker-username <docker-username> --docker-password <docker-password> --docker-email <docker-email>"
                     exit 1
                     ;;
@@ -634,11 +651,12 @@ main_fun()
                     init_dkube
                     delete_dkube_ui
                     delete_ui_secret
+                    delete_dkube_secret
                     pretty_green "Dkube-ui deletion is Done"
                     ;;
 
                 *)
-                    pretty_red "Invalid option ${option}"
+                    pretty_red "Invalid option"
                     pretty_red "SYNTAX: " $0 "delete <option: --all, --dkube-deps, --dkube, --dkube-ui, --kubeflow>"
                     exit 1
                     ;;
@@ -654,7 +672,6 @@ main_fun()
             ;;
 
         onboard)
-			echo $# $1 $2 $3
             if [ $# -ne 3 ] || [ "$2" != "--git-username" ]; then 
                 pretty_red "SYNTAX: " $0 "onboard --git-username <git-usetname>"
                 exit 1
@@ -664,15 +681,31 @@ main_fun()
 
             pretty_green "Onboarding user ..."
             init_dkube
-            user_onbord
+            user_onboard
             pretty_green "User onboarding is Done ...!!!"
+            if [ -d $DKUBE_PATH ]; then
+                rm -rf $DKUBE_PATH
+            fi
+            ;;
+        deboard)
+            if [ $# -ne 3 ] || [ "$2" != "--git-username" ]; then 
+                pretty_red "SYNTAX: " $0 "deboard --git-username <git-usetname>"
+                exit 1
+            else
+                export GIT_USERNAME=$3
+            fi
+
+            pretty_green "Deboarding user ..."
+            init_dkube
+            user_deboard
+            pretty_green "User deboarding is Done ...!!!"
             if [ -d $DKUBE_PATH ]; then
                 rm -rf $DKUBE_PATH
             fi
             ;;
         *)
             pretty_red "Invalid cmd ${cmd}"
-            pretty_red "SYNTAX: " $0 "<cmd: deploy, delete, onboard> <option: --all, --dkube-deps, --dkube, --dkube-ui, --kubeflow> [--client-id <git-app-client-id>] [--client-secret <git-app-client-secret>] [--docker-username <docker-username>] [--docker-password <docker-password>] [--docker-email <docker-email>] [--git-username <git-username>]"
+            pretty_red "SYNTAX: " $0 "<cmd: deploy, delete, onboard, deboard> <option: --all, --dkube-deps, --dkube, --dkube-ui, --kubeflow> [--client-id <git-app-client-id>] [--client-secret <git-app-client-secret>] [--docker-username <docker-username>] [--docker-password <docker-password>] [--docker-email <docker-email>] [--git-username <git-username>]"
             exit 1
             ;;
     esac           
@@ -684,7 +717,7 @@ main_fun $@"""
 
 def force_delete_pods():
 	print("Some pods were not deleted. cleaning up forcefully ....")
-	sp.run("kubectl get pod -n dkube | awk 'NR>1 {print $1}' | xargs kubectl delete pod --force --grace-period=0 -n dkube",shell=True)
+	sp.call("kubectl get pod -n dkube | awk 'NR>1 {print $1}' | xargs kubectl delete pod --force --grace-period=0 -n dkube",shell=True)
 
 def prettyTable(status):
     from prettytable import PrettyTable
@@ -792,14 +825,14 @@ def run():
     
     params = sys.argv[1:]
     default_dockerhub_creds = ["--docker-username", "lucifer001", "--docker-password", "lucifer@dkube", "--docker-email", "ocdlgit@oneconvergence.com"]
-    if (("--docker-username" not in params) and ("--docker-password" not in params) and ("--docker-email" not in params) and ("onboard" not in params)):
+    if (("--docker-username" not in params) and ("--docker-password" not in params) and ("--docker-email" not in params) and ("onboard" not in params) and params):
         final_params = params + default_dockerhub_creds
     else:
         final_params = params
+    ret = sp.call(['/bin/bash', '-c', dkubeScript, ""] + final_params)
+    sys.exit()
 
-    proc = sp.run(['/bin/bash', '-c', dkubeScript, ""] + final_params)
-    if (proc.returncode != 0):
-        print (proc.stderr)
+    if (ret != 0):
         sys.exit()
 
     master_ip = find_master_ip()
