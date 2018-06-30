@@ -829,8 +829,8 @@ def run():
         final_params = params + default_dockerhub_creds
     else:
         final_params = params
+
     ret = sp.call(['/bin/bash', '-c', dkubeScript, ""] + final_params)
-    sys.exit()
 
     if (ret != 0):
         sys.exit()
