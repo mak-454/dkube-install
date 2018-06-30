@@ -1,8 +1,11 @@
+from __future__ import print_function
+from kubernetes.client.rest import ApiException
+from pprint import pprint
+from kubernetes import config , client
 import subprocess as sp
 import re
 import sys
 import time
-import monitor
 
 dkubeScript = """#!/bin/bash
 
@@ -200,17 +203,16 @@ install_kubeflow()
 
 create_dkube_db()
 {
-    if [ ! -f '/var/dkube/' ]; then
-        pretty_green "creating dkube.db"
-        mkdir -p /var/dkube/
+    if [ ! -d '/var/dkube/' ]; then
+        mkdir -p '/var/dkube/'
     fi
     
 }
 
 delete_dkube_db()
 {
-    if [ -f '/var/dkube/' ]; then
-        rm -f /var/dkube/
+    if [ -d '/var/dkube/' ]; then
+        rm -f '/var/dkube/'
     fi
 }
 
@@ -221,11 +223,19 @@ create_dkube_namespace()
 
     if [ $? != 0 ]; then
         kubectl create namespace dkube
-        RES=$(kubectl get namespaces | grep dkube)
-        pretty_green $RES
+        RES=$(kubectl get namespaces dkube &> /dev/null)
     fi
 }
 
+delete_dkube_namespace()
+{
+    RES=$(kubectl get namespaces dkube &> /dev/null)
+
+    if [ $? == 0 ]; then
+    	kubectl delete namespace dkube
+    fi
+	
+}
 create_dkube_secret()
 {
     kubectl get secret -n dkube dkube-dockerhub-secret &> /dev/null
@@ -402,6 +412,7 @@ install_dkube()
 install_dkube_ui()
 {
     cd $DKUBE_PATH
+    create_dkube_namespace
     ks param set dkube-ui restServerEndpoint http://$MASTER_IP:32222
     sleep 2
     ks param set dkube-ui gitClientId $CLIENT_ID
@@ -434,7 +445,6 @@ delete_dkube()
         exit 1
     fi
     sleep 2
-    kubectl delete namespace dkube
     delete_dkube_db
 }
 
@@ -592,7 +602,6 @@ main_fun()
             if [ -d $KUBEFLOW_PATH ]; then
                 rm -rf $KUBEFLOW_PATH
             fi
-            pretty_blue "Verifying installation ..."
             ;;
 
         delete)
@@ -615,6 +624,7 @@ main_fun()
 
                     pretty_green "Deleting dkube-deps ..."
                     delete_dkube_deps
+					delete_dkube_namespace
                     pretty_green "Dkube-deps deletion is Done"
                     sleep 1
 
@@ -668,10 +678,10 @@ main_fun()
             if [ -d $KUBEFLOW_PATH ]; then
                 rm -rf $KUBEFLOW_PATH
             fi
-            pretty_blue "Verifying deletion ..."
             ;;
 
         onboard)
+			echo $# $2 $3
             if [ $# -ne 3 ] || [ "$2" != "--git-username" ]; then 
                 pretty_red "SYNTAX: " $0 "onboard --git-username <git-usetname>"
                 exit 1
@@ -688,6 +698,7 @@ main_fun()
             fi
             ;;
         deboard)
+			echo $# $2 $3
             if [ $# -ne 3 ] || [ "$2" != "--git-username" ]; then 
                 pretty_red "SYNTAX: " $0 "deboard --git-username <git-usetname>"
                 exit 1
@@ -718,6 +729,117 @@ main_fun $@"""
 def force_delete_pods():
 	print("Some pods were not deleted. cleaning up forcefully ....")
 	sp.call("kubectl get pod -n dkube | awk 'NR>1 {print $1}' | xargs kubectl delete pod --force --grace-period=0 -n dkube",shell=True)
+
+
+def check(RunnningStatus):
+    for value in RunnningStatus:
+        if value == False:
+            return False
+    return True    
+
+def monitorOnDeletion():
+
+    try:
+        config.load_kube_config()
+    except:
+        config.load_incluster_config()
+
+    # create an instance of the API class
+    api_instance = client.ExtensionsV1beta1Api()
+
+    namespace = 'dkube' # str | object name and auth scope, such as for teams and projects
+    pretty = 'pretty_example' # str | If 'true', then the output is pretty printed. (optional)
+    exact = True # bool | Should the export be exact.  Exact export maintains cluster-specific fields like 'Namespace'. (optional)
+
+    deploymentList = ['ambassador','dkube-spinner','dkube-ui','etcd','kibana-logging','nfs-provisioner','pachd','workflow-controller']
+    daemonsetName = 'fluentd-es'
+    RunnningStatus = []
+
+    for name in deploymentList:
+        try:
+            api_response = api_instance.read_namespaced_deployment(name, namespace, exact=exact, async=False)
+            RunnningStatus.append(False)
+        except ApiException as e:
+            if e.status == 404:
+                RunnningStatus.append(True)
+            else:
+                RunnningStatus.append(False)
+    # get the daemonSet
+    try:
+        api_response = api_instance.read_namespaced_daemon_set(daemonsetName, namespace, exact=exact,async=False)
+        RunnningStatus.append(False)
+    except ApiException as e:
+        if e.status == 404:
+            RunnningStatus.append(True)
+        else:
+            RunnningStatus.append(False)
+
+    try:
+        v1_api_instance = client.AppsV1Api()
+        api_response = v1_api_instance.read_namespaced_stateful_set('elasticsearch-logging', namespace, exact=exact,async=False)
+        RunnningStatus.append(False)
+    except ApiException as e:
+        if e.status == 404:
+            RunnningStatus.append(True)
+        else:
+            RunnningStatus.append(False)
+
+    status = check(RunnningStatus)
+    v1 = client.CoreV1Api()
+    listOfPods = v1.list_namespaced_pod(namespace)
+    if len(listOfPods.items) == 0 and status: 
+        return True
+    else:
+        return False
+
+
+def monitorOnCreation():
+
+    try:
+        config.load_kube_config()
+    except:
+        config.load_incluster_config()
+
+    # create an instance of the API class
+    api_instance = client.ExtensionsV1beta1Api()
+
+    namespace = 'dkube' # str | object name and auth scope, such as for teams and projects
+    exact = True # bool | Should the export be exact.  Exact export maintains cluster-specific fields like 'Namespace'. (optional)
+
+    deploymentList = ['ambassador','dkube-spinner','dkube-ui','etcd','kibana-logging','nfs-provisioner','pachd','workflow-controller']
+    daemonsetName = 'fluentd-es'
+    RunnningStatus = []
+
+    for name in deploymentList:
+        try:
+            api_response = api_instance.read_namespaced_deployment(name, namespace, exact=exact, async=False)
+            if api_response.status.replicas == api_response.status.ready_replicas:
+                RunnningStatus.append(True)
+            else:
+                RunnningStatus.append(False) 
+        except ApiException as e:
+                RunnningStatus.append(False)
+    # get the daemonSet
+    try: 
+        api_response = api_instance.read_namespaced_daemon_set(daemonsetName, namespace, exact=exact,async=False)
+        if  api_response.status.desired_number_scheduled == api_response.status.number_ready:
+            RunnningStatus.append(True)
+        else:
+            RunnningStatus.append(False)
+    except ApiException as e:
+        RunnningStatus.append(False)
+    try:
+        v1_api_instance = client.AppsV1Api()
+        api_response = v1_api_instance.read_namespaced_stateful_set('elasticsearch-logging', namespace, exact=exact,async=False)
+        if api_response.status.replicas == api_response.status.ready_replicas:
+            RunnningStatus.append(True)
+        else:
+	        RunnningStatus.append(False)	
+    except ApiException as e:
+	    RunnningStatus.append(False)
+ 
+    return check(RunnningStatus)
+
 
 def prettyTable(status):
     from prettytable import PrettyTable
@@ -797,9 +919,9 @@ def pretty(delete=False):
     while not status and not are_we_done(test_d):
         if monitor_freq >= 60:
             if not delete:
-            	status = monitor.monitorOnCreation()
+            	status = monitorOnCreation()
             else:
-                status = monitor.monitorOnDeletion()
+                status = monitorOnDeletion()
             monitor_freq = 0
         # After the cursor position is first saved (in the first draw call)
         #   this will restore the cursor back to the top so we can draw again
@@ -825,7 +947,7 @@ def run():
     
     params = sys.argv[1:]
     default_dockerhub_creds = ["--docker-username", "lucifer001", "--docker-password", "lucifer@dkube", "--docker-email", "ocdlgit@oneconvergence.com"]
-    if (("--docker-username" not in params) and ("--docker-password" not in params) and ("--docker-email" not in params) and ("onboard" not in params) and params):
+    if (("--docker-username" not in params) and ("--docker-password" not in params) and ("--docker-email" not in params) and ("onboard" not in params) and ("deboard" not in params) and params):
         final_params = params + default_dockerhub_creds
     else:
         final_params = params
@@ -836,7 +958,9 @@ def run():
         sys.exit()
 
     master_ip = find_master_ip()
-    if (sys.argv[1] == "deploy"):
+    if ((params[0] == "deploy") and (params[1] == "--all")):
+        print("\n")
+        print("\033[1;34m[Dkube Installer] Verifying deployment ...  \033[0m")
         status = pretty()
         prettyTable(status)
         if status:
@@ -848,8 +972,10 @@ def run():
             print("\033[1;34m     dkubectl delete --all  \033[0m")
             print("\033[1;34m     dkubectl deploy --all [--client-id <git-app-client-id>] [--client-secret <git-app-client-secret>] [--docker-username <docker-username>] [--docker-password <docker-password>] [--docker-email <docker-email>]\033[0m")
 
-    if (sys.argv[1] == "delete"):
+    if ((params[0] == "delete") and (params[1] == "--all")):
         force_delete_pods()
+        print("\n")
+        print("\033[1;34m[Dkube Installer] Verifying deletion ...  \033[0m")
         status = pretty(delete=True)
         prettyTable(status)
         if status:
