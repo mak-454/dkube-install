@@ -459,13 +459,22 @@
       "kind": "Service", 
       "metadata": {
         "annotations": {
-          "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_spinner_kibana\nprefix: /dkube/kibana/\nrewrite: /\nservice: kibana-logging.dkube:5601"
+          "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_spinner_kibana\nprefix: /dkube/kibana/\nrewrite: /\nservice: kibana-logging:5601"
         }, 
-        "name": "kibana-service-mapping", 
+        "name": "kibana-logging", 
         "namespace": "dkube"
       }, 
       "spec": {
-        "clusterIP": "None", 
+        "ports": [
+          {
+            "port": 5601, 
+            "protocol": "TCP", 
+            "targetPort": "ui"
+          }
+        ], 
+        "selector": {
+          "k8s-app": "kibana-logging"
+        }, 
         "type": "ClusterIP"
       }
     }
