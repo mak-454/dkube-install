@@ -149,7 +149,7 @@ def create_namespace(ns_name):
 
 
 def delete_namespace(ns_name):
-	if sp.call("kubectl get namespaces %s &> /dev/null"%ns_name,shell=True, executable='/bin/bash'):
+	if not sp.call("kubectl get namespaces %s &> /dev/null"%ns_name,shell=True, executable='/bin/bash'):
 		sp.call("kubectl delete namespace %s"%ns_name,shell=True, executable='/bin/bash')
 
 def install_kubeflow():
@@ -239,6 +239,7 @@ def init_dkube():
 def install_dkube_deps():
 	os.chdir(DKUBE_PATH)
 
+	create_namespace("dkube")
 	if sp.call("ks apply default -c argo",shell=True, executable='/bin/bash'):
 		pretty_red("Installing argo Failed")
 		sys.exit(1)
@@ -787,7 +788,7 @@ def run():
 
 	parser = argparse.ArgumentParser()
 	parser.add_argument("cmd", help="Cmd to perform")
-	parser.add_argument("pkg", help="Packges to install")
+	parser.add_argument("--pkg", help="Packges to install")
 	parser.add_argument("--client_id", help="Client ID for git OAuth app")
 	parser.add_argument("--client_secret", help="Client Secret for git OAuth app")
 	parser.add_argument("--docker_username", help="Username for docker hub")
