@@ -143,7 +143,7 @@ def delete_ui_secret():
 
 def create_namespace(ns_name):
 	if sp.call("kubectl get namespaces | grep %s &> /dev/null"%ns_name,shell=True, executable='/bin/bash'):
-		if sp.call("kubectl create namespace i%s"%ns_name,shell=True, executable='/bin/bash'):
+		if sp.call("kubectl create namespace %s"%ns_name,shell=True, executable='/bin/bash'):
 			pretty_red("Failed to create namespace %s"%ns_name)
 			sys.exit(1)
 
@@ -238,11 +238,6 @@ def init_dkube():
 
 def install_dkube_deps():
 	os.chdir(DKUBE_PATH)
-	'''
-    if not os.path.isdir('/var/dkube/'):
-		os.makedirs('/var/dkube/')
-	create_namespace("dkube")
-	'''
 
 	if sp.call("ks apply default -c argo",shell=True, executable='/bin/bash'):
 		pretty_red("Installing argo Failed")
