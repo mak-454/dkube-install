@@ -36,14 +36,14 @@ def check_running_user():
 		sys.exit(1)
 
 def dkube_installer_help():
-	pretty_red("SYNTAX:  %s <cmd: deploy, delete, onboard, deboard> <option: all, dkube, dkube_ui, kubeflow> [--client_id <git-app-client-id>] [--client_secret <git-app-client-secret>] [--docker_username <docker_username>] [--docker_password <docker-password>] [--docker_email <docker-email>] [--git_username <git-username>] [--master_ip <master-ip>]"% sys.argv[0])
+	pretty_red("SYNTAX:  %s <cmd: deploy, delete, onboard, deboard> <option: all, dkube, dkube-ui, kubeflow> [--client_id <git-app-client-id>] [--client_secret <git-app-client-secret>] [--docker_username <docker_username>] [--docker_password <docker-password>] [--docker_email <docker-email>] [--git_username <git-username>] [--master_ip <master-ip>]"% sys.argv[0])
 	sys.exit(1)
 
 def cmd_help(cmd):
 	if (cmd == "deploy"):
-		pretty_red("SYNTAX:  %s %s <option: all, dkube, dkube_ui, kubeflow> [--client_id <git-app-client-id>] [--client_secret <git-app-client-secret>] [--docker_username <docker-username>] [--docker_password <docker-password>] [--docker_email <docker-email>] "% (sys.argv[0], cmd))
+		pretty_red("SYNTAX:  %s %s <option: all, dkube, dkube-ui, kubeflow> [--client_id <git-app-client-id>] [--client_secret <git-app-client-secret>] [--docker_username <docker-username>] [--docker_password <docker-password>] [--docker_email <docker-email>] "% (sys.argv[0], cmd))
 	elif (cmd == "delete"):
-		pretty_red("SYNTAX:  %s %s <option: all, dkube, dkube_ui, kubeflow>"% (sys.argv[0], cmd))
+		pretty_red("SYNTAX:  %s %s <option: all, dkube, dkube-ui, kubeflow>"% (sys.argv[0], cmd))
 	elif (cmd == "onboard" or cmd == "deboard"):
 		pretty_red("SYNTAX:  %s %s [--git_username <git-username>]"% (sys.argv[0], cmd))
 	sys.exit(1)
