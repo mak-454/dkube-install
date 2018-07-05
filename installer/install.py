@@ -831,9 +831,9 @@ def run():
 		status = pretty()
 		prettyTable(status)
 		if status:
-            master_ip = find_master_ip()
-			print("\n")
-			pretty_green("('\u2714') Dkube deployed and available @ http://%s:32222/dkube/ui/"%master_ip)
+		    master_ip = find_master_ip()
+		    print("\n")
+		    pretty_green("('\u2714') Dkube deployed and available @ http://%s:32222/dkube/ui/"%master_ip)
 		else:
 			print("\n")
 			pretty_red("('\u274c') Dkube deploy failed. For reinstall, see below instructions")
