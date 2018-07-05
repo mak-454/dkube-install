@@ -209,30 +209,37 @@ def init_dkube():
 
 	if sp.call("ks generate dkube-spinner dkube-spinner",shell=True, executable='/bin/bash'):
 		pretty_red("Failed to generate dkube-spinner")
+		sys.exit(1)
 	time.sleep(1)
 
 	if sp.call("ks generate dkube-ui dkube-ui",shell=True, executable='/bin/bash'):
 		pretty_red("Failed to generate dkube-ui")
+		sys.exit(1)
 	time.sleep(1)
 
 	if sp.call("ks generate dkube-user dkube-user",shell=True, executable='/bin/bash'):
 		pretty_red("Failed to generate dkube-user")
+		sys.exit(1)
 	time.sleep(1)
 
 	if sp.call("ks generate argo argo",shell=True, executable='/bin/bash'):
 		pretty_red("Failed to generate argo")
+		sys.exit(1)
 	time.sleep(1)
 
 	if sp.call("ks generate nfs nfs",shell=True, executable='/bin/bash'):
 		pretty_red("Failed to generate nfs")
+		sys.exit(1)
 	time.sleep(1)
 
 	if sp.call("ks generate pachyderm pachyderm",shell=True, executable='/bin/bash'):
 		pretty_red("Failed to generate pachyderm")
+		sys.exit(1)
 	time.sleep(1)
 
 	if sp.call("ks generate efk efk",shell=True, executable='/bin/bash'):
 		pretty_red("Failed to generate efk")
+		sys.exit(1)
 	time.sleep(1)
 
 
@@ -818,13 +825,13 @@ def run():
 		dkube_installer_help()
 
 	# Dkube Monitoring
-	master_ip = find_master_ip()
 	if ((args.cmd == "deploy") and (args.pkg == "all")):
 		print("\n")
 		pretty_blue("Verifying deployment ... ")
 		status = pretty()
 		prettyTable(status)
 		if status:
+            master_ip = find_master_ip()
 			print("\n")
 			pretty_green("('\u2714') Dkube deployed and available @ http://%s:32222/dkube/ui/"%master_ip)
 		else:
