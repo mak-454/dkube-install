@@ -36,7 +36,7 @@ def check_running_user():
 		sys.exit(1)
 
 def dkube_installer_help():
-	pretty_red("SYNTAX:  %s <cmd: deploy, delete, onboard, deboard> <option: all, dkube, dkube-ui, kubeflow> [--client_id <git-app-client-id>] [--client_secret <git-app-client-secret>] [--docker_username <docker_username>] [--docker_password <docker-password>] [--docker_email <docker-email>] [--git_username <git-username>] [--master_ip <master-ip>]"% sys.argv[0])
+	pretty_red("SYNTAX:  %s <cmd: deploy, delete, onboard, deboard> <option: all, dkube, dkube-ui, kubeflow> [--client_id <git-app-client-id>] [--client_secret <git-app-client-secret>] [--docker_username <docker_username>] [--docker_password <docker-password>] [--docker_email <docker-email>] [--git_username <git-username>] [--external_access_ip <external-access-ip>]"% sys.argv[0])
 	sys.exit(1)
 
 def cmd_help(cmd):
@@ -275,11 +275,11 @@ def install_dkube():
 		sys.exit(1)
 	time.sleep(1)
 
-def install_dkube_ui(client_id, client_secret, master_ip):
+def install_dkube_ui(client_id, client_secret, external_access_ip):
 	os.chdir(DKUBE_PATH)
 
 	create_namespace("dkube")
-	sp.call("ks param set dkube-ui restServerEndpoint http://%s:32222"%master_ip,shell=True, executable='/bin/bash')
+	sp.call("ks param set dkube-ui restServerEndpoint http://%s:32222"%external_access_ip,shell=True, executable='/bin/bash')
 	time.sleep(1)
 	sp.call("ks param set dkube-ui gitClientId %s"%client_id,shell=True, executable='/bin/bash')
 	sp.call("ks param set dkube-ui gitClientSecret %s"%client_secret,shell=True, executable='/bin/bash')
@@ -310,10 +310,10 @@ def deploy_all(args):
 	else:
 		cmd_help("deploy")
 		
-	if( args.master_ip):
-		MASTER_IP = args.master_ip
+	if( args.external_access_ip):
+		external_access_ip = args.external_access_ip
 	else:
-		MASTER_IP = find_master_ip()
+		external_access_ip = find_master_ip()
 
 	pretty_green("Starting kubeflow installation ...")
 	init_kubeflow()
@@ -331,7 +331,7 @@ def deploy_all(args):
 
 	pretty_green("Starting dkube-ui installation ...")
 	create_ui_secret(CLIENT_ID, CLIENT_SECRET)
-	install_dkube_ui(CLIENT_ID, CLIENT_SECRET, MASTER_IP)
+	install_dkube_ui(CLIENT_ID, CLIENT_SECRET, external_access_ip)
 	pretty_green("dKube-ui installation is done !!!")
 	time.sleep(1)
 
@@ -381,16 +381,16 @@ def deploy_dkube_ui(args):
 	else:
 		cmd_help("deploy")
 		
-	if( args.master_ip):
-		MASTER_IP = args.master_ip
+	if( args.external_access_ip):
+		external_access_ip = args.external_access_ip
 	else:
-		MASTER_IP = find_master_ip()
+		external_access_ip = find_master_ip()
 
 	pretty_green("Starting dkube-ui installation ...")
 	init_dkube()
 	create_dkube_secret(DOCKER_USER, DOCKER_PASSWORD, DOCKER_EMAIL)
 	create_ui_secret(CLIENT_ID, CLIENT_SECRET)
-	install_dkube_ui(CLIENT_ID, CLIENT_SECRET, MASTER_IP)
+	install_dkube_ui(CLIENT_ID, CLIENT_SECRET, external_access_ip)
 	pretty_green("dKube-ui installation is done !!!")
 	time.sleep(1)
 
@@ -802,7 +802,7 @@ def run():
 	parser.add_argument("--docker_password", help="Password for docker hub")
 	parser.add_argument("--docker_email", help="Email id for docker hub")
 	parser.add_argument("--git_username", help="Username for github")
-	parser.add_argument("--master_ip", help="IP address of master node")
+	parser.add_argument("--external_access_ip", help="IP address for externall access")
 	args = parser.parse_args()
 
 	params = sys.argv[1:]
@@ -831,14 +831,17 @@ def run():
 		status = pretty()
 		prettyTable(status)
 		if status:
-		    master_ip = find_master_ip()
+		    if( args.external_access_ip):
+		        external_access_ip = args.external_access_ip
+		    else:
+		        external_access_ip = find_master_ip()
 		    print("\n")
-		    pretty_green("('\u2714') Dkube deployed and available @ http://%s:32222/dkube/ui/"%master_ip)
+		    pretty_green("('\u2714') Dkube deployed and available @ http://%s:32222/dkube/ui/"%external_access_ip)
 		else:
 			print("\n")
 			pretty_red("('\u274c') Dkube deploy failed. For reinstall, see below instructions")
 			pretty_blue("     dkubectl delete all")
-			pretty_blue("     dkubectl deploy all [--client_id <git-app-client-id>] [--client_secret <git-app-client-secret>] [--docker_username <docker_username>] [--docker_password <docker-password>] [--docker_email <docker-email>] [--master_ip <master-ip>]")
+			pretty_blue("     dkubectl deploy all [--client_id <git-app-client-id>] [--client_secret <git-app-client-secret>] [--docker_username <docker_username>] [--docker_password <docker-password>] [--docker_email <docker-email>] [--external_access_ip <external-access-ip>]")
 
 	if ((args.cmd == "delete") and (args.pkg == "all")):
 		try:
