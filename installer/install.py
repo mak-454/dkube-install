@@ -19,7 +19,6 @@ KF_ENV = 'nocloud'
 VERSION = 'v0.1.2'
 PWD = os.getcwd()
 default_dockerhub_creds = ["lucifer001", "lucifer@dkube", "ocdlgit@oneconvergence.com"]
-#print(KUBEFLOW_PATH)
 
 def pretty_green(msg):
 	print("\033[1;32m[Dkube installer] %s\033[0m"%msg)
@@ -288,9 +287,6 @@ def install_dkube_ui(client_id, client_secret):
 
 
 def deploy_all(args):
-	pretty_blue("deploy all ......")
-	pretty_blue(args)
-
 	if((not args.client_id) or (not args.client_secret)):
 		cmd_help("deploy")
 	else:
@@ -330,9 +326,6 @@ def deploy_all(args):
 
 
 def deploy_dkube(args):
-	pretty_blue("deploy dkube ......")
-	pretty_blue(args)
-
 	if ((not args.docker_username) and (not args.docker_password) and (not args.docker_email)):
 		DOCKER_USER = default_dockerhub_creds[0]
 		DOCKER_PASSWORD = default_dockerhub_creds[1]
@@ -354,9 +347,6 @@ def deploy_dkube(args):
 
 
 def deploy_dkube_ui(args):
-	pretty_blue("deploy dkube-ui ......")
-	pretty_blue(args)
-
 	if((not args.client_id) or (not args.client_secret)):
 		cmd_help("deploy")
 	else:
@@ -384,9 +374,6 @@ def deploy_dkube_ui(args):
 
 
 def deploy_kubeflow(args):
-	pretty_blue("deploy kubeflow ......")
-	pretty_blue(args)
-
 	pretty_green("Starting kubeflow installation ...")
 	init_kubeflow()
 	install_kubeflow()
@@ -394,8 +381,6 @@ def deploy_kubeflow(args):
 	time.sleep(1)
 
 def delete_all():
-	pretty_blue("delete all ......")
-
 	pretty_green("Deleting dkube-ui ...")
 	init_dkube()
 	dkube_ui_delete()
@@ -453,8 +438,6 @@ def dkube_deps_delete():
 
 
 def delete_dkube():
-	pretty_blue("delete dkube ......")
-
 	pretty_green("Deleting dkube ...")
 	init_dkube()
 	dkube_delete()
@@ -463,8 +446,6 @@ def delete_dkube():
 
 
 def delete_dkube_ui():
-	pretty_blue("delete dkube-ui ......")
-
 	pretty_green("Deleting dkube-ui ...")
 	init_dkube()
 	dkube_ui_delete()
@@ -472,16 +453,12 @@ def delete_dkube_ui():
 	time.sleep(1)
 
 def delete_kubeflow():
-	pretty_blue("delete kubeflow ......")
-
 	pretty_green("Deleting kubeflow ...")
 	init_kubeflow()
 	kubeflow_delete()
 	pretty_green("Kubeflow deletion is Done")
 
 def handle_onboard(args):
-	pretty_blue("handle onboard ......")
-
 	if( not args.git_username ):
 		cmd_help("onboard")
 	pretty_green("Onboarding user ...")
@@ -493,9 +470,6 @@ def handle_onboard(args):
 
 
 def handle_deboard(args):
-	pretty_blue("handle deboard ......")
-	pretty_blue(args)
-
 	if( not args.git_username ):
 		cmd_help("deboard")
 	pretty_green("Deboarding user ...")
@@ -506,9 +480,6 @@ def handle_deboard(args):
 		shutil.rmtree(DKUBE_PATH)
 
 def handle_delete(args):
-	pretty_blue("handle delete ......")
-	pretty_blue(args)
-
 	install_ksonnet()
 	option_switcher = {
 		'all': delete_all,
@@ -528,9 +499,6 @@ def handle_delete(args):
 		shutil.rmtree(KUBEFLOW_PATH)
 
 def handle_deploy(args):
-	pretty_blue("handle deploy ......")
-	pretty_blue(args)
-
 	os.chdir(BASE_DIR)
 	install_ksonnet()
 	option_switcher = {
