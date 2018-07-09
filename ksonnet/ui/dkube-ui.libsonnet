@@ -1,7 +1,7 @@
 {
   all(params):: [
     $.parts(params.namespace).service(),
-    $.parts(params.namespace).deploy(params.dkubeUIImage, params.restServerEndpoint),
+    $.parts(params.namespace).deploy(params.dkubeUIImage),
   ],
 
   parts(namespace):: {
@@ -33,7 +33,7 @@
       },
     },  // service
 
-    deploy(dkubeUIImage, restServerEndpoint):: {
+    deploy(dkubeUIImage):: {
       "apiVersion": "extensions/v1beta1", 
       "kind": "Deployment", 
       "metadata": {
@@ -75,10 +75,6 @@
             "containers": [
               {
                 "env": [
-                  {
-                    "name": "REST_SERVER_ENDPOINT", 
-                    "value": restServerEndpoint
-                  }, 
                   {
                     "name": "GIT_CLIENT_ID", 
                     "valueFrom": {
