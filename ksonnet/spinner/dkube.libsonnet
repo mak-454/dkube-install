@@ -3,10 +3,8 @@
     $.parts(params.namespace).dkubeServiceAccount(),
     $.parts(params.namespace).dkubeClusterRole(),
     $.parts(params.namespace).dkubeClusterRoleBinding(),
-    $.parts(params.namespace).dkubePersistentVolume(params.nfsServerAddr, params.nfsBasePath),
-    $.parts(params.namespace).dkubePersistentVolumeClaim(),
     $.parts(params.namespace).dkubeService(params.dkubeApiServerAddr),
-    $.parts(params.namespace).dkube(params.dkubeApiServerImage, params.dkubeApiServerAddr, params.dkubeMountPath, params.dkubeTFControllerImage, params.dkubePachydermClientImage, params.dkubeLogCollectorImage, params.pachydermAddr),
+    $.parts(params.namespace).dkube(params.dkubeApiServerImage, params.dkubeApiServerAddr, params.dkubeMountPath, params.dkubeTFControllerImage, params.dkubeLogCollectorImage, params.dkubeDownloadManagerImage, params.dkubeVersionManagerImage, params.dkubeStorageImage, params.dkubeInitImage),
     $.parts(params.namespace).dkubeUserClusterRole(),
     $.parts(params.namespace).dkubeUserRole(),
   ],
@@ -147,55 +145,6 @@
         }
       ]
     },  // cluster role binding
-    dkubePersistentVolume(nfsServerAddr, nfsBasePath):: {
-      "apiVersion": "v1", 
-      "kind": "PersistentVolume", 
-      "metadata": {
-        "labels": {
-          "app": "dkube-spinner"
-        }, 
-        "name": "dkube-spinner",
-        "namespace": namespace
-      }, 
-      "spec": {
-        "accessModes": [
-          "ReadWriteMany"
-        ], 
-        "capacity": {
-          "storage": "10Gi"
-        }, 
-        "nfs": {
-          "path": nfsBasePath, 
-          "server": nfsServerAddr
-        }, 
-        "persistentVolumeReclaimPolicy": "Delete"
-      },
-    }, //pv
-    dkubePersistentVolumeClaim():: {
-      "apiVersion": "v1", 
-      "kind": "PersistentVolumeClaim", 
-      "metadata": {
-        "name": "dkube-spinner", 
-        "namespace": namespace
-      }, 
-      "spec": {
-        "accessModes": [
-          "ReadWriteMany"
-        ], 
-        "resources": {
-          "requests": {
-            "storage": "10Gi"
-          }
-        }, 
-        "selector": {
-          "matchLabels": {
-            "app": "dkube-spinner"
-          }
-        }, 
-        "storageClassName": "", 
-        "volumeName": "dkube-spinner"
-      }
-    }, // pvc
     dkubeService(dkubeApiServerAddr):: {
       local dkubeApiServerAddrArray = std.split(dkubeApiServerAddr, ":"),
       local dkubeApiServerPort = std.parseInt(dkubeApiServerAddrArray[std.length(dkubeApiServerAddrArray)-1]),
@@ -227,7 +176,7 @@
         "type": "ClusterIP"
       }
     },  // service
-    dkube(apiServerImage, apiServerAddr, mountPath, tfcontrollerImage, dkubePachdClientImage, logCollectorImage, pachdAddr):: {
+    dkube(apiServerImage, apiServerAddr, mountPath, tfcontrollerImage, logCollectorImage, dkubeDownloadManagerImage, dkubeVersionManagerImage, dkubeStorageImage, dkubeInitImage):: {
       "apiVersion": "extensions/v1beta1", 
       "kind": "Deployment", 
       "metadata": {
@@ -260,43 +209,8 @@
             ],
             "containers": [
               {
-                "env": [
-                  {
-                    "name": "DKUBE_MOUNT_PATH", 
-                    "value": mountPath
-                  },
-                  {
-                    "name": "ADDRESS",
-                    "value": pachdAddr
-                  },
-                  {
-                    "name": "DKUBE_SERVER",
-                    "value": apiServerAddr
-                  }
-                ], 
-                "image": dkubePachdClientImage, 
-                "imagePullPolicy": "IfNotPresent", 
-                "name": "pachd-client", 
-                "ports": [
-                  {
-                    "containerPort": 7007, 
-                    "name": "server", 
-                    "protocol": "TCP"
-                  }
-                ], 
-                "volumeMounts": [
-                  {
-                    "mountPath": "/var/lib/tf-operator", 
-                    "name": "shared-dir"
-                  }, 
-                  {
-                    "mountPath": mountPath, 
-                    "name": "store"
-                  }
-                ]
-              }, 
-              {
-                "command": [
+                "command": ["/tmp/shared_dir/entrypoint.sh"],
+                "args": [
                   "gunicorn", 
                   "--workers=2", 
                   "-k", 
@@ -311,6 +225,10 @@
                   {
                     "name": "DKUBE_MOUNT_PATH", 
                     "value": mountPath
+                  },
+                  {
+                      "name": "DKUBE_DB_PATH",
+                      "value": "/tmp/dkube/dkube.db"
                   }
                 ], 
                 "image": apiServerImage, 
@@ -325,7 +243,7 @@
                 ], 
                 "volumeMounts": [
                   {
-                    "mountPath": "/var/lib/tf-operator", 
+                    "mountPath": "/tmp/shared_dir", 
                     "name": "shared-dir"
                   }, 
                   {
@@ -361,12 +279,13 @@
                 "image": tfcontrollerImage, 
                 "imagePullPolicy": "IfNotPresent", 
                 "name": "tf-controller",
-                "command": [
+                "command": ["/tmp/shared_dir/entrypoint.sh"],
+                "args": [
                   "/tf-controller"
                 ],
                 "volumeMounts": [
                   {
-                    "mountPath": "/var/lib/tf-operator", 
+                    "mountPath": "/tmp/shared_dir", 
                     "name": "shared-dir"
                   }, 
                   {
@@ -375,22 +294,158 @@
                   }
                 ]
               },
+              //{
+              //  "name": "log-collector",
+              //  "image": logCollectorImage,
+              //  "imagePullPolicy": "IfNotPresent",
+              //},
               {
-                "name": "log-collector",
-                "image": logCollectorImage,
-                "imagePullPolicy": "IfNotPresent",
+                "args": [
+                  "download-manager"
+                ], 
+                "command": [
+                  "/tmp/shared_dir/entrypoint.sh"
+                ], 
+                "env": [
+                  {
+                    "name": "MOUNTPATH", 
+                    "value": "/tmp/store"
+                  }, 
+                  {
+                    "name": "DKUBE_SERVER", 
+                    "value": apiServerAddr
+                  }
+                ], 
+                "image": dkubeDownloadManagerImage, 
+                "imagePullPolicy": "IfNotPresent", 
+                "name": "download-manager", 
+                "volumeMounts": [
+                  {
+                    "mountPath": "/tmp/store:shared", 
+                    "name": "store"
+                  }, 
+                  {
+                    "mountPath": "/tmp/shared_dir", 
+                    "name": "shared-dir"
+                  }
+                ]
+              },
+              {
+                "args": [
+                  "python", 
+                  "/opt/dkube/version-manager/server.py"
+                ], 
+                "command": [
+                  "/tmp/shared_dir/entrypoint.sh"
+                ], 
+                "env": [
+                  {
+                    "name": "MOUNTPATH", 
+                    "value": "/tmp/store"
+                  }
+                ], 
+                "image": dkubeVersionManagerImage, 
+                "imagePullPolicy": "IfNotPresent", 
+                "name": "version-manager", 
+                "volumeMounts": [
+                  {
+                    "mountPath": "/tmp/store:shared", 
+                    "name": "store"
+                  }, 
+                  {
+                    "mountPath": "/tmp/shared_dir", 
+                    "name": "shared-dir"
+                  }
+                ]
+              },
+              {
+                "command": [
+                  "/s3fsmount", 
+                  "MOUNT"
+                ], 
+                "env": [
+                  {
+                    "name": "ACCESS_KEY", 
+                    "value": "dkube"
+                  }, 
+                  {
+                    "name": "SECRET_KEY", 
+                    "value": "dkube123"
+                  }, 
+                  {
+                    "name": "S3_BUCKET", 
+                    "value": "dkube"
+                  }, 
+                  {
+                    "name": "S3_URL", 
+                    "value": "http://minio-service:9000"
+                  }, 
+                  {  
+                    "name": "S3_TYPE",
+                    "value": "minio"
+                  },  
+                  {
+                    "name": "MODE", 
+                    "value": "controller"
+                  },
+                  {  
+                    "name": "DATUMS_PATH_PREFIX", 
+                    "value": "/tmp/store"
+                  }
+                ], 
+                "image": dkubeStorageImage, 
+                "imagePullPolicy": "IfNotPresent", 
+                "lifecycle": {
+                  "preStop": {
+                    "exec": {
+                      "command": [
+                        "/bin/sh", 
+                        "-c", 
+                        "/s3fsmount UNMOUNT"
+                      ]
+                    }
+                  }
+                }, 
+                "name": "sidecar", 
+                "securityContext": {
+                  "privileged": true
+                }, 
+                "volumeMounts": [
+                  {
+                    "mountPath": "/tmp/store:shared", 
+                    "name": "store"
+                  }, 
+                  {
+                    "mountPath": "/tmp/shared_dir", 
+                    "name": "shared-dir"
+                  }
+                ]
+              }
+            ],
+            "initContainers": [
+              {
+                "image": dkubeInitImage, 
+                "imagePullPolicy": "IfNotPresent", 
+                "name": "init", 
+                "volumeMounts": [
+                  {
+                    "mountPath": "/tmp/shared_dir", 
+                    "name": "shared-dir"
+                  }
+                ]
               }
             ], 
             "serviceAccount": "dkube-spinner", 
             "volumes": [
               {
-                "emptyDir": {}, 
+                "emptyDir": {},
                 "name": "shared-dir"
-              }, 
+              },
               {
-                "name": "store", 
-                "persistentVolumeClaim": {
-                  "claimName": "dkube-spinner"
+                "name": "store",
+                "hostPath": {
+                  "path": "/var/dkube/spinner",
+                  "type": "DirectoryOrCreate"
                 }
               },
               {

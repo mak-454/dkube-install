@@ -1,0 +1,16 @@
+{
+   "name": "dkube-deps",
+   "apiVersion": "0.0.1",
+   "kind": "ksonnet.io/parts",
+   "description": "minio component.\n",
+   "quickStart": {
+      "prototype": "io.ksonnet.pkg.dkube",
+      "componentName": "minio",
+      "flags": {
+         "name": "minio",
+         "namespace": "default",
+         "disks": ""
+      },
+      "comment": "minio components."
+   },
+}
