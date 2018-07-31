@@ -9,7 +9,7 @@
 // @optionalParam dkubeLogCollectorImage string ocdr/dkube-log-collector:v2 The image for log collector.
 // @optionalParam dkubeDownloadManagerImage string ocdr/dkube-download-manager:v2 The image for download manager
 // @optionalParam dkubeVersionManagerImage string ocdr/dkube-version-manager:v2 The image for version manager
-// @optionalParam dkubeStorageImage string ocdr/dkube-storage:v2 The image for storage
+// @optionalParam dkubeStorageImage string ocdr/dkube-d3fs:v2 The image for storage
 // @optionalParam dkubeInitImage string ocdr/dkube-init:v2 The image for init
 // @optionalParam dkubeApiServerAddr string localhost:5000 The address of dkube api server
 // @optionalParam dkubeMountPath string /tmp/dkube/scratchpad Mount path to mount pvc in dkube engine
