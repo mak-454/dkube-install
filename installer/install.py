@@ -633,7 +633,7 @@ def monitorOnCreation():
     deploymentList = ['ambassador','dkube-spinner','dkube-ui','kibana-logging','minio-deployment','workflow-controller']
     daemonsetName = 'fluentd-es'
     RunnningStatus = []
-    import pdb;pdb.set_trace()
+
     for name in deploymentList:
         try:
             api_response = api_instance.read_namespaced_deployment(name, namespace, exact=exact, async=False)
