@@ -475,8 +475,8 @@ def handle_onboard(args):
 		
 	pretty_green("Onboarding user ...")
 	init_dkube()
-	create_secret(args.git_username, DOCKER_USER, DOCKER_PASSWORD, DOCKER_EMAIL)
 	user_onboard(args.git_username)
+	create_secret(args.git_username, DOCKER_USER, DOCKER_PASSWORD, DOCKER_EMAIL)
 	pretty_green("User onboarding is Done ...!!!")
 	if os.path.isdir(DKUBE_PATH):
 		shutil.rmtree(DKUBE_PATH)
