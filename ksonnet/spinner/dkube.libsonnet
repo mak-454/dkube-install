@@ -294,11 +294,11 @@
                   }
                 ]
               },
-              {
-                "name": "log-collector",
-                "image": logCollectorImage,
-                "imagePullPolicy": "IfNotPresent",
-              },
+              //{
+              //  "name": "log-collector",
+              //  "image": logCollectorImage,
+              //  "imagePullPolicy": "IfNotPresent",
+              //},
               {
                 "args": [
                   "download-manager"

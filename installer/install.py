@@ -187,7 +187,7 @@ def init_dkube():
 		sys.exit(1)
 	time.sleep(1)
 	os.chdir(DKUBE_PATH)
-	if sp.call("ks registry add dkube github.com/mak-454/dkube-install/tree/dkube_install_r0.2/ksonnet",shell=True, executable='/bin/bash'):
+	if sp.call("ks registry add dkube github.com/mak-454/dkube-install/tree/master/ksonnet",shell=True, executable='/bin/bash'):
 		pretty_red("Failed to add dkube registry")
 		sys.exit(1)
 	time.sleep(1)
@@ -575,7 +575,7 @@ def monitorOnDeletion():
     pretty = 'pretty_example' # str | If 'true', then the output is pretty printed. (optional)
     exact = True # bool | Should the export be exact.  Exact export maintains cluster-specific fields like 'Namespace'. (optional)
 
-    deploymentList = ['ambassador','dkube-spinner','dkube-ui','etcd','kibana-logging','minio-deployment','workflow-controller']
+    deploymentList = ['ambassador','dkube-spinner','dkube-ui','kibana-logging','minio-deployment','workflow-controller']
     daemonsetName = 'fluentd-es'
     RunnningStatus = []
 
@@ -630,10 +630,10 @@ def monitorOnCreation():
     namespace = 'dkube' # str | object name and auth scope, such as for teams and projects
     exact = True # bool | Should the export be exact.  Exact export maintains cluster-specific fields like 'Namespace'. (optional)
 
-    deploymentList = ['ambassador','dkube-spinner','dkube-ui','etcd','kibana-logging','minio-deployment','workflow-controller']
+    deploymentList = ['ambassador','dkube-spinner','dkube-ui','kibana-logging','minio-deployment','workflow-controller']
     daemonsetName = 'fluentd-es'
     RunnningStatus = []
-
+    import pdb;pdb.set_trace()
     for name in deploymentList:
         try:
             api_response = api_instance.read_namespaced_deployment(name, namespace, exact=exact, async=False)
