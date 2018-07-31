@@ -4,15 +4,15 @@
 // @param name string Name to give to each of the components
 // @shortDescription DKube spinner components. This currently includes dkube api server and dkube tf controller.
 // @optionalParam namespace string dkube Namespace to use for the components. It is automatically inherited from the environment if not set.
-// @optionalParam dkubeApiServerImage string ocdr/dkube-api-server:v1 The image for dkube spinner api server.
-// @optionalParam dkubeTFControllerImage string ocdr/dkube-tf-controller:v1 The image for dkube spinner tf-controller.
-// @optionalParam dkubePachydermClientImage string ocdr/dkube-pachyderm-client:v1 The image for dkube spinner pachyderm client.
-// @optionalParam dkubeLogCollectorImage string ocdr/dkube-log-collector:v1 The image for log collector.
+// @optionalParam dkubeApiServerImage string ocdr/dkube-api-server:v2 The image for dkube spinner api server.
+// @optionalParam dkubeTFControllerImage string ocdr/dkube-tf-controller:v2 The image for dkube spinner tf-controller.
+// @optionalParam dkubeLogCollectorImage string ocdr/dkube-log-collector:v2 The image for log collector.
+// @optionalParam dkubeDownloadManagerImage string ocdr/dkube-download-manager:v2 The image for download manager
+// @optionalParam dkubeVersionManagerImage string ocdr/dkube-version-manager:v2 The image for version manager
+// @optionalParam dkubeStorageImage string ocdr/dkube-storage:v2 The image for storage
+// @optionalParam dkubeInitImage string ocdr/dkube-init:v2 The image for init
 // @optionalParam dkubeApiServerAddr string localhost:5000 The address of dkube api server
-// @optionalParam pachydermAddr string pachd:650 The address of pachyderm server address
 // @optionalParam dkubeMountPath string /tmp/dkube/scratchpad Mount path to mount pvc in dkube engine
-// @optionalParam nfsServerAddr string 10.96.0.20 Nfs server ip
-// @optionalParam nfsBasePath string /exports Mfs mount path
 // @optionalParam ambassadorNodeport number 32222 Ambassador nodeport
 
 local k = import "k.libsonnet";

@@ -115,9 +115,9 @@ def init_kubeflow():
 		sys.exit(1)
 		
 
-def create_dkube_secret(docker_user, docker_password, docker_email):
-	if sp.call("kubectl get secret -n dkube dkube-dockerhub-secret &> /dev/null",shell=True, executable='/bin/bash'):
-		if sp.call("kubectl --namespace dkube create secret docker-registry dkube-dockerhub-secret --docker-server=https://index.docker.io/v1/ --docker-username=%s --docker-password=%s --docker-email=%s"% (docker_user, docker_password, docker_email),shell=True, executable='/bin/bash'):
+def create_secret(namespace, docker_user, docker_password, docker_email):
+	if sp.call("kubectl get secret -n %s dkube-dockerhub-secret &> /dev/null"%namespace,shell=True, executable='/bin/bash'):
+		if sp.call("kubectl --namespace %s create secret docker-registry dkube-dockerhub-secret --docker-server=https://index.docker.io/v1/ --docker-username=%s --docker-password=%s --docker-email=%s"% (namespace, docker_user, docker_password, docker_email),shell=True, executable='/bin/bash'):
 			pretty_red("Failed to create dkube-dkube-secret")
 			sys.exit(1)
 
@@ -127,9 +127,10 @@ def create_ui_secret(client_id, client_secret):
 			pretty_red("Failed to create dkube-ui-secret")
 			sys.exit(1)
 
-def delete_dkube_secret():
-	if not sp.call("kubectl get secret -n dkube dkube-dockerhub-secret &> /dev/null",shell=True, executable='/bin/bash'):
-		if sp.call("kubectl --namespace dkube delete secret dkube-dockerhub-secret",shell=True, executable='/bin/bash'):
+#def delete_dkube_secret():
+def delete_secret(namespace):
+	if not sp.call("kubectl get secret -n %s dkube-dockerhub-secret &> /dev/null"%namespace,shell=True, executable='/bin/bash'):
+		if sp.call("kubectl --namespace %s delete secret dkube-dockerhub-secret"%namespace,shell=True, executable='/bin/bash'):
 			pretty_red("Failed to delete dkube-secret")
 			sys.exit(1)
 
@@ -141,7 +142,7 @@ def delete_ui_secret():
 
 
 def create_namespace(ns_name):
-	if sp.call("kubectl get namespaces | grep %s &> /dev/null"%ns_name,shell=True, executable='/bin/bash'):
+	if sp.call("kubectl get namespaces %s &> /dev/null"%ns_name,shell=True, executable='/bin/bash'):
 		if sp.call("kubectl create namespace %s"%ns_name,shell=True, executable='/bin/bash'):
 			pretty_red("Failed to create namespace %s"%ns_name)
 			sys.exit(1)
@@ -186,7 +187,7 @@ def init_dkube():
 		sys.exit(1)
 	time.sleep(1)
 	os.chdir(DKUBE_PATH)
-	if sp.call("ks registry add dkube github.com/mak-454/dkube-install/tree/master/ksonnet",shell=True, executable='/bin/bash'):
+	if sp.call("ks registry add dkube github.com/mak-454/dkube-install/tree/dkube_install_r0.2/ksonnet",shell=True, executable='/bin/bash'):
 		pretty_red("Failed to add dkube registry")
 		sys.exit(1)
 	time.sleep(1)
@@ -199,11 +200,9 @@ def init_dkube():
 	time.sleep(1)
 	sp.call("ks pkg install dkube/argo",shell=True, executable='/bin/bash')
 	time.sleep(1)
-	sp.call("ks pkg install dkube/nfs",shell=True, executable='/bin/bash')
+	sp.call("ks pkg install dkube/minio",shell=True, executable='/bin/bash')
 	time.sleep(1)
 	sp.call("ks pkg install dkube/efk",shell=True, executable='/bin/bash')
-	time.sleep(1)
-	sp.call("ks pkg install dkube/pachyderm",shell=True, executable='/bin/bash')
 	time.sleep(1)
 
 	if sp.call("ks generate dkube-spinner dkube-spinner",shell=True, executable='/bin/bash'):
@@ -226,13 +225,8 @@ def init_dkube():
 		sys.exit(1)
 	time.sleep(1)
 
-	if sp.call("ks generate nfs nfs",shell=True, executable='/bin/bash'):
-		pretty_red("Failed to generate nfs")
-		sys.exit(1)
-	time.sleep(1)
-
-	if sp.call("ks generate pachyderm pachyderm",shell=True, executable='/bin/bash'):
-		pretty_red("Failed to generate pachyderm")
+	if sp.call("ks generate minio minio",shell=True, executable='/bin/bash'):
+		pretty_red("Failed to generate minio")
 		sys.exit(1)
 	time.sleep(1)
 
@@ -243,24 +237,35 @@ def init_dkube():
 
 
 def install_dkube_deps():
-	os.chdir(DKUBE_PATH)
+    os.chdir(DKUBE_PATH)
 
-	create_namespace("dkube")
-	if sp.call("ks apply default -c argo",shell=True, executable='/bin/bash'):
-		pretty_red("Installing argo Failed")
-		sys.exit(1)
+    create_namespace("dkube")
+    if sp.call("ks apply default -c argo",shell=True, executable='/bin/bash'):
+        pretty_red("Installing argo Failed")
+        sys.exit(1)
 	
-	if sp.call("ks apply default -c nfs",shell=True, executable='/bin/bash'):
-		pretty_red("Installing nfs Failed")
-		sys.exit(1)
+    if sp.call("ks apply default -c minio",shell=True, executable='/bin/bash'):
+        pretty_red("Installing minio Failed")
+        sys.exit(1)
+    time.sleep(30)
+
+    if not os.path.isfile('/usr/local/bin/mc'):
+        sp.call("wget https://dl.minio.io/client/mc/release/linux-amd64/mc",shell=True, executable='/bin/bash')
+        sp.call("chmod +x mc",shell=True, executable='/bin/bash')
+        sp.call("cp mc /usr/local/bin/mc",shell=True, executable='/bin/bash')
+
+    if sp.call("mc config host add minio http://10.96.0.22:9000 dkube dkube123",shell=True, executable='/bin/bash'):
+        pretty_red("minio config Failed")
+        sys.exit(1)
 	
-	if sp.call("ks apply default -c efk",shell=True, executable='/bin/bash'):
-		pretty_red("Installing efk Failed")
-		sys.exit(1)
+    if sp.call("mc mb minio/dkube",shell=True, executable='/bin/bash'):
+        pretty_red("minio bucket create Failed")
+        sys.exit(1)
 	
-	if sp.call("ks apply default -c pachyderm",shell=True, executable='/bin/bash'):
-		pretty_red("Installing pachyderm Failed")
-		sys.exit(1)
+    if sp.call("ks apply default -c efk",shell=True, executable='/bin/bash'):
+        pretty_red("Installing efk Failed")
+        sys.exit(1)
+	
 	
 def install_dkube():
 	os.chdir(DKUBE_PATH)
@@ -313,7 +318,7 @@ def deploy_all(args):
 	pretty_green("Starting dkube installation ...")
 	init_dkube()
 	install_dkube_deps()
-	create_dkube_secret(DOCKER_USER, DOCKER_PASSWORD, DOCKER_EMAIL)
+	create_secret("dkube", DOCKER_USER, DOCKER_PASSWORD, DOCKER_EMAIL)
 	install_dkube()
 	pretty_green("Dkube installation is done !!!")
 	time.sleep(1)
@@ -340,7 +345,7 @@ def deploy_dkube(args):
 	pretty_green("Starting dkube installation ...")
 	init_dkube()
 	install_dkube_deps()
-	create_dkube_secret(DOCKER_USER, DOCKER_PASSWORD, DOCKER_EMAIL)
+	create_secret("dkube", DOCKER_USER, DOCKER_PASSWORD, DOCKER_EMAIL)
 	install_dkube()
 	pretty_green("Dkube installation is done !!!")
 	time.sleep(1)
@@ -366,7 +371,7 @@ def deploy_dkube_ui(args):
 		
 	pretty_green("Starting dkube-ui installation ...")
 	init_dkube()
-	create_dkube_secret(DOCKER_USER, DOCKER_PASSWORD, DOCKER_EMAIL)
+	create_secret("dkube", DOCKER_USER, DOCKER_PASSWORD, DOCKER_EMAIL)
 	create_ui_secret(CLIENT_ID, CLIENT_SECRET)
 	install_dkube_ui(CLIENT_ID, CLIENT_SECRET)
 	pretty_green("dKube-ui installation is done !!!")
@@ -390,7 +395,7 @@ def delete_all():
 
 	pretty_green("Deleting dkube ...")
 	dkube_delete()
-	delete_dkube_secret()
+	delete_secret("dkube")
 	dkube_deps_delete()
 	delete_namespace('dkube')
 	pretty_green("Dkube deletion is Done")
@@ -424,16 +429,12 @@ def dkube_deps_delete():
 		pretty_red("Deleting argo Failed")
 		sys.exit(1)
 
-	if sp.call("ks delete default -c nfs",shell=True, executable='/bin/bash'):
-		pretty_red("Deleting nfs Failed")
+	if sp.call("ks delete default -c minio",shell=True, executable='/bin/bash'):
+		pretty_red("Deleting minio Failed")
 		sys.exit(1)
 
 	if sp.call("ks delete default -c efk",shell=True, executable='/bin/bash'):
 		pretty_red("Deleting efk Failed")
-		sys.exit(1)
-
-	if sp.call("ks delete default -c pachyderm",shell=True, executable='/bin/bash'):
-		pretty_red("Deleting pachyderm Failed")
 		sys.exit(1)
 
 
@@ -461,8 +462,20 @@ def delete_kubeflow():
 def handle_onboard(args):
 	if( not args.git_username ):
 		cmd_help("onboard")
+	if ((not args.docker_username) and (not args.docker_password) and (not args.docker_email)):
+		DOCKER_USER = default_dockerhub_creds[0]
+		DOCKER_PASSWORD = default_dockerhub_creds[1]
+		DOCKER_EMAIL = default_dockerhub_creds[2]
+	elif ((args.docker_username) and (args.docker_password) and (args.docker_email)):
+		DOCKER_USER = args.docker_username
+		DOCKER_PASSWORD = args.docker_password
+		DOCKER_EMAIL = args.docker_email
+	else:
+		cmd_help("onboard")
+		
 	pretty_green("Onboarding user ...")
 	init_dkube()
+	create_secret(args.git_username, DOCKER_USER, DOCKER_PASSWORD, DOCKER_EMAIL)
 	user_onboard(args.git_username)
 	pretty_green("User onboarding is Done ...!!!")
 	if os.path.isdir(DKUBE_PATH):
@@ -474,6 +487,7 @@ def handle_deboard(args):
 		cmd_help("deboard")
 	pretty_green("Deboarding user ...")
 	init_dkube()
+	delete_secret(args.git_username)
 	user_deboard(args.git_username)
 	pretty_green("User deboarding is Done ...!!!")
 	if os.path.isdir(DKUBE_PATH):
@@ -561,7 +575,7 @@ def monitorOnDeletion():
     pretty = 'pretty_example' # str | If 'true', then the output is pretty printed. (optional)
     exact = True # bool | Should the export be exact.  Exact export maintains cluster-specific fields like 'Namespace'. (optional)
 
-    deploymentList = ['ambassador','dkube-spinner','dkube-ui','etcd','kibana-logging','nfs-provisioner','pachd','workflow-controller']
+    deploymentList = ['ambassador','dkube-spinner','dkube-ui','etcd','kibana-logging','minio-deployment','workflow-controller']
     daemonsetName = 'fluentd-es'
     RunnningStatus = []
 
@@ -616,7 +630,7 @@ def monitorOnCreation():
     namespace = 'dkube' # str | object name and auth scope, such as for teams and projects
     exact = True # bool | Should the export be exact.  Exact export maintains cluster-specific fields like 'Namespace'. (optional)
 
-    deploymentList = ['ambassador','dkube-spinner','dkube-ui','etcd','kibana-logging','nfs-provisioner','pachd','workflow-controller']
+    deploymentList = ['ambassador','dkube-spinner','dkube-ui','etcd','kibana-logging','minio-deployment','workflow-controller']
     daemonsetName = 'fluentd-es'
     RunnningStatus = []
 
@@ -670,8 +684,7 @@ def prettyTable(status):
     t.add_row(['dkube', status])
     t.add_row(['dkube-ui', status])
     t.add_row(['argo', status])
-    t.add_row(['pachyderm', status])
-    t.add_row(['nfs', status])
+    t.add_row(['minio', status])
     t.add_row(['efk', status])
 
     t.align = 'l'
@@ -696,8 +709,7 @@ def pretty(delete=False):
         "Verifying [dkube]": BarDescriptor(value=leaf_values[0], **bd_defaults),
         "Verifying [dkube-ui]": BarDescriptor(value=leaf_values[0], **bd_defaults),
         "Verifying [argo]": BarDescriptor(value=leaf_values[0], **bd_defaults),
-        "Verifying [pachyderm]": BarDescriptor(value=leaf_values[0], **bd_defaults),
-        "Verifying [nfs]": BarDescriptor(value=leaf_values[0], **bd_defaults),
+        "Verifying [minio]": BarDescriptor(value=leaf_values[0], **bd_defaults),
         "Verifying [efk]": BarDescriptor(value=leaf_values[0], **bd_defaults)
     }
 
