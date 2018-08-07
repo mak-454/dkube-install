@@ -35,16 +35,16 @@ def check_running_user():
 		sys.exit(1)
 
 def dkube_installer_help():
-	pretty_red("SYNTAX:  %s <cmd: deploy, delete, onboard, deboard> <option: all, dkube, dkube-ui, kubeflow> [--client_id <git-app-client-id>] [--client_secret <git-app-client-secret>] [--docker_username <docker_username>] [--docker_password <docker-password>] [--docker_email <docker-email>] [--git_username <git-username>]"% sys.argv[0])
+	pretty_red("SYNTAX:  %s <cmd: deploy, delete, onboard, deboard> [--pkg <option: all, dkube, dkube-ui, kubeflow>] [--client_id <git-app-client-id>] [--client_secret <git-app-client-secret>] [--docker_username <docker_username>] [--docker_password <docker-password>] [--docker_email <docker-email>] [--git_username <git-username>]"% sys.argv[0])
 	sys.exit(1)
 
 def cmd_help(cmd):
 	if (cmd == "deploy"):
-		pretty_red("SYNTAX:  %s %s <option: all, dkube, dkube-ui, kubeflow> [--client_id <git-app-client-id>] [--client_secret <git-app-client-secret>] [--docker_username <docker-username>] [--docker_password <docker-password>] [--docker_email <docker-email>] "% (sys.argv[0], cmd))
+		pretty_red("SYNTAX:  %s %s --pkg <all, dkube, dkube-ui, kubeflow> [--client_id <git-app-client-id>] [--client_secret <git-app-client-secret>] [--docker_username <docker-username>] [--docker_password <docker-password>] [--docker_email <docker-email>] "% (sys.argv[0], cmd))
 	elif (cmd == "delete"):
-		pretty_red("SYNTAX:  %s %s <option: all, dkube, dkube-ui, kubeflow>"% (sys.argv[0], cmd))
+		pretty_red("SYNTAX:  %s %s --pkg <all, dkube, dkube-ui, kubeflow>"% (sys.argv[0], cmd))
 	elif (cmd == "onboard" or cmd == "deboard"):
-		pretty_red("SYNTAX:  %s %s [--git_username <git-username>]"% (sys.argv[0], cmd))
+		pretty_red("SYNTAX:  %s %s --git_username <git-username>"% (sys.argv[0], cmd))
 	sys.exit(1)
 
 def find_master_ip():
@@ -127,7 +127,6 @@ def create_ui_secret(client_id, client_secret):
 			pretty_red("Failed to create dkube-ui-secret")
 			sys.exit(1)
 
-#def delete_dkube_secret():
 def delete_secret(namespace):
 	if not sp.call("kubectl get secret -n %s dkube-dockerhub-secret &> /dev/null"%namespace,shell=True, executable='/bin/bash'):
 		if sp.call("kubectl --namespace %s delete secret dkube-dockerhub-secret"%namespace,shell=True, executable='/bin/bash'):
@@ -450,6 +449,7 @@ def delete_dkube_ui():
 	pretty_green("Deleting dkube-ui ...")
 	init_dkube()
 	dkube_ui_delete()
+	delete_ui_secret()
 	pretty_green("Dkube-ui deletion is Done")
 	time.sleep(1)
 
