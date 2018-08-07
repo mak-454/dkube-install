@@ -761,15 +761,18 @@ def pretty(delete=False):
 def run():
 	check_running_user()
 
-	parser = argparse.ArgumentParser()
-	parser.add_argument("cmd", help="Cmd to perform")
-	parser.add_argument("--pkg", help="Packges to install")
+	parser = argparse.ArgumentParser(description="Dkube installer")
+	parser.add_argument("cmd", help="Cmd to perform <deploy, delete, onboard, deboard>")
+	parser.add_argument("--pkg", help="Packges to install <all, kubeflow, dkube, dkube-ui>")
 	parser.add_argument("--client_id", help="Client ID for git OAuth app")
 	parser.add_argument("--client_secret", help="Client Secret for git OAuth app")
 	parser.add_argument("--docker_username", help="Username for docker hub")
 	parser.add_argument("--docker_password", help="Password for docker hub")
 	parser.add_argument("--docker_email", help="Email id for docker hub")
 	parser.add_argument("--git_username", help="Username for github")
+	if len(sys.argv)==1:
+		parser.print_help(sys.stderr)
+		sys.exit(1)
 	args = parser.parse_args()
 
 	params = sys.argv[1:]
