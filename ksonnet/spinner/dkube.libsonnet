@@ -289,7 +289,7 @@
                     "name": "shared-dir"
                   }, 
                   {
-                    "mountPath": mountPath, 
+                    "mountPath": mountPath + ":shared", 
                     "name": "store"
                   }
                 ]
