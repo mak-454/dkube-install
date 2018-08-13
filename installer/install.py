@@ -9,6 +9,8 @@ import sys
 import time
 import os
 import shutil
+import json
+import requests
 
 
 BASE_DIR = '/tmp'
@@ -43,8 +45,8 @@ def cmd_help(cmd):
 		pretty_red("SYNTAX:  %s %s --pkg <all, dkube, dkube-ui, kubeflow> [--client_id <git-app-client-id>] [--client_secret <git-app-client-secret>] [--docker_username <docker-username>] [--docker_password <docker-password>] [--docker_email <docker-email>] "% (sys.argv[0], cmd))
 	elif (cmd == "delete"):
 		pretty_red("SYNTAX:  %s %s --pkg <all, dkube, dkube-ui, kubeflow>"% (sys.argv[0], cmd))
-	elif (cmd == "onboard" or cmd == "deboard"):
-		pretty_red("SYNTAX:  %s %s --git_username <git-username>"% (sys.argv[0], cmd))
+	elif (cmd == "operator"):
+		pretty_red("SYNTAX:  %s %s --add <operator_name> --org <organisation>"% (sys.argv[0], cmd))
 	sys.exit(1)
 
 def find_master_ip():
@@ -56,20 +58,26 @@ def find_master_ip():
 	return ip_addr
 
 
-def user_onboard(git_user):
-	os.chdir(DKUBE_PATH)
-	sp.call("ks param set dkube-user username %s"% git_user,shell=True, executable='/bin/bash')
-	if sp.call("ks apply default -c dkube-user",shell=True, executable='/bin/bash'):
-		pretty_red("User onboarding Failed")
-		sys.exit(1)
+def operator_add(user, org):
+	master_ip = find_master_ip()
+	url = "http://%s:32222/GPUaaS/operator/super"%master_ip
+	job = {'username': user, 'organization': org}
+	data = json.dumps(job)
+	print(requests.post(url, data=data))
+	#sp.call("ks param set dkube-user username %s"% git_user,shell=True, executable='/bin/bash')
+	#if sp.call("ks apply default -c dkube-user",shell=True, executable='/bin/bash'):
+	#	pretty_red("User onboarding Failed")
+	#	sys.exit(1)
 
 
-def user_deboard(git_user):
-	os.chdir(DKUBE_PATH)
-	sp.call("ks param set dkube-user username %s"% git_user,shell=True, executable='/bin/bash')
-	if sp.call("ks delete default -c dkube-user",shell=True, executable='/bin/bash'):
-		pretty_red("User deboarding Failed")
-		sys.exit(1)
+def operator_delete(user, org):
+    pretty_red("This Feature is not available for now !!! please check the installation document")
+    sys.exit(1)
+	#os.chdir(DKUBE_PATH)
+	#sp.call("ks param set dkube-user username %s"% git_user,shell=True, executable='/bin/bash')
+	#if sp.call("ks delete default -c dkube-user",shell=True, executable='/bin/bash'):
+	#	pretty_red("User deboarding Failed")
+	#	sys.exit(1)
 
 def init_kubeflow():
 	os.chdir(BASE_DIR)
@@ -459,39 +467,14 @@ def delete_kubeflow():
 	kubeflow_delete()
 	pretty_green("Kubeflow deletion is Done")
 
-def handle_onboard(args):
-	if( not args.git_username ):
-		cmd_help("onboard")
-	if ((not args.docker_username) and (not args.docker_password) and (not args.docker_email)):
-		DOCKER_USER = default_dockerhub_creds[0]
-		DOCKER_PASSWORD = default_dockerhub_creds[1]
-		DOCKER_EMAIL = default_dockerhub_creds[2]
-	elif ((args.docker_username) and (args.docker_password) and (args.docker_email)):
-		DOCKER_USER = args.docker_username
-		DOCKER_PASSWORD = args.docker_password
-		DOCKER_EMAIL = args.docker_email
-	else:
-		cmd_help("onboard")
-		
-	pretty_green("Onboarding user ...")
-	init_dkube()
-	user_onboard(args.git_username)
-	create_secret(args.git_username, DOCKER_USER, DOCKER_PASSWORD, DOCKER_EMAIL)
-	pretty_green("User onboarding is Done ...!!!")
-	if os.path.isdir(DKUBE_PATH):
-		shutil.rmtree(DKUBE_PATH)
-
-
-def handle_deboard(args):
-	if( not args.git_username ):
-		cmd_help("deboard")
-	pretty_green("Deboarding user ...")
-	init_dkube()
-	delete_secret(args.git_username)
-	user_deboard(args.git_username)
-	pretty_green("User deboarding is Done ...!!!")
-	if os.path.isdir(DKUBE_PATH):
-		shutil.rmtree(DKUBE_PATH)
+def handle_operator(args):
+	if( (not args.add) or (not args.org)):
+		cmd_help("operator")
+	elif(args.add):
+	    username = args.add
+	    pretty_green("Adding operator ...")
+	    operator_add(username, args.org)
+	    pretty_green("Operator addition is Done ...!!!")
 
 def handle_delete(args):
 	install_ksonnet()
@@ -762,8 +745,11 @@ def run():
 	check_running_user()
 
 	parser = argparse.ArgumentParser(description="Dkube installer")
-	parser.add_argument("cmd", help="Cmd to perform <deploy, delete, onboard, deboard>")
-	parser.add_argument("--pkg", help="Packges to install <all, kubeflow, dkube, dkube-ui>")
+	parser.add_argument("cmd", help="Cmd to perform <deploy, delete, operator>")
+	parser.add_argument("--pkg", help="Packages to install <all, kubeflow, dkube, dkube-ui>")
+	parser.add_argument("--add", help="Username of operator to be added")
+	#parser.add_argument("--delete", help="Username of operator to be deleted")
+	parser.add_argument("--org", help="name of the organization for operator")
 	parser.add_argument("--client_id", help="Client ID for git OAuth app")
 	parser.add_argument("--client_secret", help="Client Secret for git OAuth app")
 	parser.add_argument("--docker_username", help="Username for docker hub")
@@ -784,8 +770,7 @@ def run():
 	cmd_switcher = {
 		'deploy': handle_deploy,
 		'delete': handle_delete,
-		'onboard': handle_onboard,
-		'deboard': handle_deboard,
+		'operator': handle_operator,
 	}
 
 	if (args.cmd in cmd_switcher):
