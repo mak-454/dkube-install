@@ -807,8 +807,8 @@ def run():
 		else:
 			print("\n")
 			pretty_red("('\u274c') Dkube deploy failed. For reinstall, see below instructions")
-			pretty_blue("     dkubectl delete all")
-			pretty_blue("     dkubectl deploy all [--client_id <git-app-client-id>] [--client_secret <git-app-client-secret>] [--docker_username <docker_username>] [--docker_password <docker-password>] [--docker_email <docker-email>]")
+			pretty_blue("     dkubectl delete --pkg all")
+			pretty_blue("     dkubectl deploy --pkg all [--client_id <git-app-client-id>] [--client_secret <git-app-client-secret>] [--docker_username <docker_username>] [--docker_password <docker-password>] [--docker_email <docker-email>]")
 
 	if ((args.cmd == "delete") and (args.pkg == "all")):
 		try:
