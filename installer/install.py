@@ -334,14 +334,16 @@ def delete_dkube_monitoring():
 		sys.exit(1)
 
 	delete_secret("monitoring")
-
-	if sp.call("helm delete --purge kube-prometheus",shell=True, executable='/bin/bash'):
-		pretty_red("kube-prometheus delete Failed")
-		sys.exit(1)
-
-	if sp.call("helm delete --purge prometheus-operator",shell=True, executable='/bin/bash'):
-		pretty_red("prometheus-operator delete Failed")
-		sys.exit(1)
+	
+	if not sp.call("helm ls | grep kube-prometheus > /dev/null",shell=True, executable='/bin/bash'):
+	    if sp.call("helm delete --purge kube-prometheus",shell=True, executable='/bin/bash'):
+	        pretty_red("kube-prometheus delete Failed")
+	        sys.exit(1)
+	        
+	if not sp.call("helm ls | grep prometheus-operator > /dev/null",shell=True, executable='/bin/bash'):
+	    if sp.call("helm delete --purge prometheus-operator",shell=True, executable='/bin/bash'):
+		    pretty_red("prometheus-operator delete Failed")
+		    sys.exit(1)
 	delete_namespace("monitoring")
 
 def deploy_all(args):
