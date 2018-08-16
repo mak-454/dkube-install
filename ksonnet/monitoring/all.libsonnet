@@ -1,8 +1,7 @@
 {
   parts(params):: {
-    local prometheus = import "dkube/monitoring/prometheus.libsonnet",
-    local grafana = import "dkube/monitoring/grafana.libsonnet",
+    local monitoring = import "dkube/monitoring/monitoring.libsonnet",
 
-    all:: prometheus.all(params) + grafana.all(params)
+    all:: monitoring.all(params)
   },
 }
