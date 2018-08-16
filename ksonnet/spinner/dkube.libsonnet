@@ -4,9 +4,7 @@
     $.parts(params.namespace).dkubeClusterRole(),
     $.parts(params.namespace).dkubeClusterRoleBinding(),
     $.parts(params.namespace).dkubeService(params.dkubeApiServerAddr),
-    $.parts(params.namespace).dkube(params.dkubeApiServerImage, params.dkubeApiServerAddr, params.dkubeMountPath, params.dkubeTFControllerImage, params.dkubeLogCollectorImage, params.dkubeDownloadManagerImage, params.dkubeVersionManagerImage, params.dkubeStorageImage, params.dkubeInitImage),
-    $.parts(params.namespace).dkubeUserClusterRole(),
-    $.parts(params.namespace).dkubeUserRole(),
+    $.parts(params.namespace).dkube(params.dkubeApiServerImage, params.dkubeApiServerAddr, params.dkubeMountPath, params.dkubeTFControllerImage, params.dkubeLogCollectorImage, params.dkubeStorageImage),
   ],
 
   parts(namespace):: {
@@ -46,18 +44,6 @@
             "update", 
             "patch",
             "delete"
-          ]
-        }, 
-        {
-          "apiGroups": [
-            ""
-          ], 
-          "resources": [
-            "persistentvolumeclaims", 
-            "persistentvolumes"
-          ], 
-          "verbs": [
-            "*" 
           ]
         }, 
         {
@@ -123,6 +109,41 @@
           "verbs": [
             "*"
           ]
+        },
+        {
+            "apiGroups": [
+                ""
+            ],
+            "resources": [
+                "namespaces"
+            ],
+            "verbs": [
+                "*"
+            ]
+        },
+        {
+            "apiGroups": [
+                "rbac.authorization.k8s.io"
+            ],
+            "resources": [
+                "roles",
+                "rolebindings"
+            ],
+            "verbs": [
+                "*"
+            ]
+        },
+        {
+            "apiGroups": [
+                ""
+            ],
+            "resources": [
+                "serviceaccounts",
+                "secrets"
+            ],
+            "verbs": [
+                "*"
+            ]
         }
       ]
     },  // cluster role
@@ -176,7 +197,7 @@
         "type": "ClusterIP"
       }
     },  // service
-    dkube(apiServerImage, apiServerAddr, mountPath, tfcontrollerImage, logCollectorImage, dkubeDownloadManagerImage, dkubeVersionManagerImage, dkubeStorageImage, dkubeInitImage):: {
+    dkube(apiServerImage, apiServerAddr, mountPath, tfcontrollerImage, logCollectorImage, dkubeStorageImage):: {
       "apiVersion": "extensions/v1beta1", 
       "kind": "Deployment", 
       "metadata": {
@@ -300,67 +321,8 @@
               //  "imagePullPolicy": "IfNotPresent",
               //},
               {
-                "args": [
-                  "download-manager"
-                ], 
                 "command": [
-                  "/tmp/shared_dir/entrypoint.sh"
-                ], 
-                "env": [
-                  {
-                    "name": "MOUNTPATH", 
-                    "value": "/tmp/store"
-                  }, 
-                  {
-                    "name": "DKUBE_SERVER", 
-                    "value": apiServerAddr
-                  }
-                ], 
-                "image": dkubeDownloadManagerImage, 
-                "imagePullPolicy": "IfNotPresent", 
-                "name": "download-manager", 
-                "volumeMounts": [
-                  {
-                    "mountPath": "/tmp/store:shared", 
-                    "name": "store"
-                  }, 
-                  {
-                    "mountPath": "/tmp/shared_dir", 
-                    "name": "shared-dir"
-                  }
-                ]
-              },
-              {
-                "args": [
-                  "python", 
-                  "/opt/dkube/version-manager/server.py"
-                ], 
-                "command": [
-                  "/tmp/shared_dir/entrypoint.sh"
-                ], 
-                "env": [
-                  {
-                    "name": "MOUNTPATH", 
-                    "value": "/tmp/store"
-                  }
-                ], 
-                "image": dkubeVersionManagerImage, 
-                "imagePullPolicy": "IfNotPresent", 
-                "name": "version-manager", 
-                "volumeMounts": [
-                  {
-                    "mountPath": "/tmp/store:shared", 
-                    "name": "store"
-                  }, 
-                  {
-                    "mountPath": "/tmp/shared_dir", 
-                    "name": "shared-dir"
-                  }
-                ]
-              },
-              {
-                "command": [
-                  "/s3fsmount", 
+                  "/storage", 
                   "MOUNT"
                 ], 
                 "env": [
@@ -391,7 +353,11 @@
                   {  
                     "name": "DATUMS_PATH_PREFIX", 
                     "value": "/tmp/store"
-                  }
+                  },
+                  {
+                    "name": "DKUBE_SERVER", 
+                    "value": apiServerAddr
+                  }, 
                 ], 
                 "image": dkubeStorageImage, 
                 "imagePullPolicy": "IfNotPresent", 
@@ -401,7 +367,7 @@
                       "command": [
                         "/bin/sh", 
                         "-c", 
-                        "/s3fsmount UNMOUNT"
+                        "/storage UNMOUNT"
                       ]
                     }
                   }
@@ -424,7 +390,12 @@
             ],
             "initContainers": [
               {
-                "image": dkubeInitImage, 
+                "image": dkubeStorageImage,
+                "command": [
+                    "cp",
+                    "/opt/dkube/script/entrypoint.sh",
+                    "/tmp/shared_dir/"
+                ],
                 "imagePullPolicy": "IfNotPresent", 
                 "name": "init", 
                 "volumeMounts": [
@@ -460,54 +431,6 @@
         }
       }
     }, // deployment
-    dkubeUserClusterRole():: {
-      "apiVersion": "rbac.authorization.k8s.io/v1", 
-      "kind": "ClusterRole", 
-      "metadata": {
-        "name": "dkube-spinner-user-clusterrole"
-      }, 
-      "rules": [
-        {
-          "apiGroups": [
-            "*"
-          ], 
-          "resources": [
-            "persistentvolumes"
-          ], 
-          "verbs": [
-            "*"
-          ]
-        }
-      ]
-    }, // clusterrole
-    dkubeUserRole():: {
-      "apiVersion": "rbac.authorization.k8s.io/v1", 
-      "kind": "ClusterRole", 
-      "metadata": {
-        "name": "dkube-spinner-user-role"
-      }, 
-      "rules": [
-        {
-          "apiGroups": [
-            "*"
-          ], 
-          "resources": [
-            "*"
-          ], 
-          "verbs": [
-            "*"
-          ]
-        }, 
-        {
-          "nonResourceURLs": [
-            "*"
-          ], 
-          "verbs": [
-            "*"
-          ]
-        }
-      ]
-    }, // role
   }, // parts
 }
 

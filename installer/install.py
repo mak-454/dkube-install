@@ -46,7 +46,7 @@ def cmd_help(cmd):
 	elif (cmd == "delete"):
 		pretty_red("SYNTAX:  %s %s --pkg <all, dkube, dkube-ui, kubeflow>"% (sys.argv[0], cmd))
 	elif (cmd == "operator"):
-		pretty_red("SYNTAX:  %s %s --add <operator_name> --org <organisation>"% (sys.argv[0], cmd))
+		pretty_red("SYNTAX:  %s %s --add <operator_name> --org <organisation> --token <personal-token>"% (sys.argv[0], cmd))
 	sys.exit(1)
 
 def find_master_ip():
@@ -58,12 +58,13 @@ def find_master_ip():
 	return ip_addr
 
 
-def operator_add(user, org):
+def operator_add(user, org, token):
 	master_ip = find_master_ip()
 	url = "http://%s:32222/GPUaaS/operator/super"%master_ip
-	job = {'username': user, 'organization': org}
+	job = {'username': user, 'organization': org, 'token':token}
 	data = json.dumps(job)
-	print(requests.post(url, data=data))
+	headers = {'Content-Type': 'application/json'}
+	print(requests.post(url, data=data, headers=headers))
 	#sp.call("ks param set dkube-user username %s"% git_user,shell=True, executable='/bin/bash')
 	#if sp.call("ks apply default -c dkube-user",shell=True, executable='/bin/bash'):
 	#	pretty_red("User onboarding Failed")
@@ -194,7 +195,8 @@ def init_dkube():
 		sys.exit(1)
 	time.sleep(1)
 	os.chdir(DKUBE_PATH)
-	if sp.call("ks registry add dkube github.com/mak-454/dkube-install/tree/master/ksonnet",shell=True, executable='/bin/bash'):
+	#if sp.call("ks registry add dkube github.com/mak-454/dkube-install/tree/master/ksonnet",shell=True, executable='/bin/bash'):
+	if sp.call("ks registry add dkube /root/harshal/monitoring/dkube-install/ksonnet",shell=True, executable='/bin/bash'):
 		pretty_red("Failed to add dkube registry")
 		sys.exit(1)
 	time.sleep(1)
@@ -210,6 +212,8 @@ def init_dkube():
 	sp.call("ks pkg install dkube/minio",shell=True, executable='/bin/bash')
 	time.sleep(1)
 	sp.call("ks pkg install dkube/efk",shell=True, executable='/bin/bash')
+	time.sleep(1)
+	sp.call("ks pkg install dkube/monitoring",shell=True, executable='/bin/bash')
 	time.sleep(1)
 
 	if sp.call("ks generate dkube-spinner dkube-spinner",shell=True, executable='/bin/bash'):
@@ -242,6 +246,10 @@ def init_dkube():
 		sys.exit(1)
 	time.sleep(1)
 
+	if sp.call("ks generate monitoring monitoring",shell=True, executable='/bin/bash'):
+		pretty_red("Failed to generate monitoring")
+		sys.exit(1)
+	time.sleep(1)
 
 def install_dkube_deps():
     os.chdir(DKUBE_PATH)
@@ -296,7 +304,45 @@ def install_dkube_ui(client_id, client_secret):
 		pretty_red("dkube-ui installation Failed")
 		sys.exit(1)
 
+def install_dkube_monitoring(DOCKER_USER, DOCKER_PASSWORD, DOCKER_EMAIL):
+	
+	os.chdir(DKUBE_PATH)
+	if sp.call("helm repo add coreos https://s3-eu-west-1.amazonaws.com/coreos-charts/stable/",shell=True, executable='/bin/bash'):
+		pretty_red("help repo add Failed")
+		sys.exit(1)
+	if sp.call("helm repo update",shell=True, executable='/bin/bash'):
+		pretty_red("helm update Failed")
+		sys.exit(1)
+	if sp.call("helm install coreos/prometheus-operator --name prometheus-operator --namespace monitoring",shell=True, executable='/bin/bash'):
+		pretty_red("prometheus-operator install Failed")
+		sys.exit(1)
+	if sp.call("helm install coreos/kube-prometheus --name kube-prometheus --set global.rbacEnable=true --namespace monitoring",shell=True, executable='/bin/bash'):
+		pretty_red("kube-prometheus install Failed")
+		sys.exit(1)
+	
+	create_secret("monitoring", DOCKER_USER, DOCKER_PASSWORD, DOCKER_EMAIL)
 
+	if sp.call("ks apply default -c monitoring",shell=True, executable='/bin/bash'):
+		pretty_red("monitoring component install Failed")
+		sys.exit(1)
+	
+def delete_dkube_monitoring():
+	
+	os.chdir(DKUBE_PATH)
+	if sp.call("ks delete default -c monitoring",shell=True, executable='/bin/bash'):
+		pretty_red("monitoring component delete Failed")
+		sys.exit(1)
+
+	delete_secret("monitoring")
+
+	if sp.call("helm delete --purge kube-prometheus",shell=True, executable='/bin/bash'):
+		pretty_red("kube-prometheus delete Failed")
+		sys.exit(1)
+
+	if sp.call("helm delete --purge prometheus-operator",shell=True, executable='/bin/bash'):
+		pretty_red("prometheus-operator delete Failed")
+		sys.exit(1)
+	delete_namespace("monitoring")
 
 def deploy_all(args):
 	if((not args.client_id) or (not args.client_secret)):
@@ -327,6 +373,7 @@ def deploy_all(args):
 	install_dkube_deps()
 	create_secret("dkube", DOCKER_USER, DOCKER_PASSWORD, DOCKER_EMAIL)
 	install_dkube()
+	install_dkube_monitoring(DOCKER_USER, DOCKER_PASSWORD, DOCKER_EMAIL)
 	pretty_green("Dkube installation is done !!!")
 	time.sleep(1)
 
@@ -354,6 +401,7 @@ def deploy_dkube(args):
 	install_dkube_deps()
 	create_secret("dkube", DOCKER_USER, DOCKER_PASSWORD, DOCKER_EMAIL)
 	install_dkube()
+	install_dkube_monitoring(DOCKER_USER, DOCKER_PASSWORD, DOCKER_EMAIL)
 	pretty_green("Dkube installation is done !!!")
 	time.sleep(1)
 
@@ -401,6 +449,7 @@ def delete_all():
 	time.sleep(1)
 
 	pretty_green("Deleting dkube ...")
+	delete_dkube_monitoring()
 	dkube_delete()
 	delete_secret("dkube")
 	dkube_deps_delete()
@@ -448,6 +497,7 @@ def dkube_deps_delete():
 def delete_dkube():
 	pretty_green("Deleting dkube ...")
 	init_dkube()
+	delete_dkube_monitoring()
 	dkube_delete()
 	dkube_deps_delete()
 	pretty_green("Dkube deletion is Done")
@@ -468,12 +518,12 @@ def delete_kubeflow():
 	pretty_green("Kubeflow deletion is Done")
 
 def handle_operator(args):
-	if( (not args.add) or (not args.org)):
+	if( (not args.add) or (not args.org) or (not args.token)):
 		cmd_help("operator")
 	elif(args.add):
 	    username = args.add
 	    pretty_green("Adding operator ...")
-	    operator_add(username, args.org)
+	    operator_add(username, args.org, args.token)
 	    pretty_green("Operator addition is Done ...!!!")
 
 def handle_delete(args):
@@ -750,6 +800,7 @@ def run():
 	parser.add_argument("--add", help="Username of operator to be added")
 	#parser.add_argument("--delete", help="Username of operator to be deleted")
 	parser.add_argument("--org", help="name of the organization for operator")
+	parser.add_argument("--token", help="personal token for operator")
 	parser.add_argument("--client_id", help="Client ID for git OAuth app")
 	parser.add_argument("--client_secret", help="Client Secret for git OAuth app")
 	parser.add_argument("--docker_username", help="Username for docker hub")
