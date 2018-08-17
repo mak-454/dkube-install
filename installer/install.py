@@ -338,7 +338,6 @@ def delete_dkube_monitoring():
 	    if sp.call("helm delete --purge prometheus-operator",shell=True, executable='/bin/bash'):
 		    pretty_red("prometheus-operator delete Failed")
 		    sys.exit(1)
-	delete_namespace("monitoring")
 
 def deploy_all(args):
 	if((not args.client_id) or (not args.client_secret)):
@@ -562,6 +561,7 @@ def handle_deploy(args):
 def force_delete_pods():
     print("Some pods were not deleted. cleaning up forcefully ....")
     sp.call("kubectl get pod -n dkube | awk 'NR>1 {print $1}' | xargs kubectl delete pod --force --grace-period=0 -n dkube",shell=True)
+	delete_namespace("monitoring")
 
 
 def check_env():
