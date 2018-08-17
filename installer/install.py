@@ -275,7 +275,7 @@ def install_dkube_deps():
         sys.exit(1)
 	
 	
-def install_dkube():
+def install_dkube(DOCKER_USER, DOCKER_PASSWORD, DOCKER_EMAIL):
 	os.chdir(DKUBE_PATH)
 
 	create_namespace("dkube")
@@ -366,7 +366,7 @@ def deploy_all(args):
 	pretty_green("Starting dkube installation ...")
 	init_dkube()
 	install_dkube_deps()
-	install_dkube()
+	install_dkube(DOCKER_USER, DOCKER_PASSWORD, DOCKER_EMAIL)
 	install_dkube_monitoring(DOCKER_USER, DOCKER_PASSWORD, DOCKER_EMAIL)
 	pretty_green("Dkube installation is done !!!")
 	time.sleep(1)
@@ -393,7 +393,7 @@ def deploy_dkube(args):
 	pretty_green("Starting dkube installation ...")
 	init_dkube()
 	install_dkube_deps()
-	install_dkube()
+	install_dkube(DOCKER_USER, DOCKER_PASSWORD, DOCKER_EMAIL)
 	install_dkube_monitoring(DOCKER_USER, DOCKER_PASSWORD, DOCKER_EMAIL)
 	pretty_green("Dkube installation is done !!!")
 	time.sleep(1)
