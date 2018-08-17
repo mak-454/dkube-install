@@ -46,7 +46,7 @@ def cmd_help(cmd):
 	elif (cmd == "delete"):
 		pretty_red("SYNTAX:  %s %s --pkg <all, dkube, dkube-ui, kubeflow>"% (sys.argv[0], cmd))
 	elif (cmd == "operator"):
-		pretty_red("SYNTAX:  %s %s --add <operator_name> --org <organisation> --token <personal-token>"% (sys.argv[0], cmd))
+		pretty_red("SYNTAX:  %s %s --add <git_username> --org <organisation> --token <admin-token>"% (sys.argv[0], cmd))
 	sys.exit(1)
 
 def find_master_ip():
@@ -64,21 +64,15 @@ def operator_add(user, org, token):
 	job = {'username': user, 'organization': org, 'token':token}
 	data = json.dumps(job)
 	headers = {'Content-Type': 'application/json'}
-	print(requests.post(url, data=data, headers=headers))
-	#sp.call("ks param set dkube-user username %s"% git_user,shell=True, executable='/bin/bash')
-	#if sp.call("ks apply default -c dkube-user",shell=True, executable='/bin/bash'):
-	#	pretty_red("User onboarding Failed")
-	#	sys.exit(1)
-
+	result = requests.post(url, data=data, headers=headers)
+	print("status:",result.status_code)
+	if (result.status_code != 200):
+	    pretty_red("Operator add Failed")
+	    sys.exit(1)
 
 def operator_delete(user, org):
     pretty_red("This Feature is not available for now !!! please check the installation document")
     sys.exit(1)
-	#os.chdir(DKUBE_PATH)
-	#sp.call("ks param set dkube-user username %s"% git_user,shell=True, executable='/bin/bash')
-	#if sp.call("ks delete default -c dkube-user",shell=True, executable='/bin/bash'):
-	#	pretty_red("User deboarding Failed")
-	#	sys.exit(1)
 
 def init_kubeflow():
 	os.chdir(BASE_DIR)
@@ -288,6 +282,7 @@ def install_dkube():
 	if not os.path.isdir('/var/dkube/'):
 		os.makedirs('/var/dkube/')
 
+	create_secret("dkube", DOCKER_USER, DOCKER_PASSWORD, DOCKER_EMAIL)
 	if sp.call("ks apply default -c dkube-spinner",shell=True, executable='/bin/bash'):
 		pretty_red("Installing dkube-spinner Failed")
 		sys.exit(1)
@@ -372,7 +367,6 @@ def deploy_all(args):
 	pretty_green("Starting dkube installation ...")
 	init_dkube()
 	install_dkube_deps()
-	create_secret("dkube", DOCKER_USER, DOCKER_PASSWORD, DOCKER_EMAIL)
 	install_dkube()
 	install_dkube_monitoring(DOCKER_USER, DOCKER_PASSWORD, DOCKER_EMAIL)
 	pretty_green("Dkube installation is done !!!")
@@ -400,7 +394,6 @@ def deploy_dkube(args):
 	pretty_green("Starting dkube installation ...")
 	init_dkube()
 	install_dkube_deps()
-	create_secret("dkube", DOCKER_USER, DOCKER_PASSWORD, DOCKER_EMAIL)
 	install_dkube()
 	install_dkube_monitoring(DOCKER_USER, DOCKER_PASSWORD, DOCKER_EMAIL)
 	pretty_green("Dkube installation is done !!!")
