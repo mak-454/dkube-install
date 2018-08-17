@@ -325,7 +325,7 @@ def delete_dkube_monitoring():
 	os.chdir(DKUBE_PATH)
 	if sp.call("ks delete default -c monitoring",shell=True, executable='/bin/bash'):
 		pretty_red("monitoring component delete Failed")
-		sys.exit(1)
+		#sys.exit(1)
 
 	delete_secret("monitoring")
 	
@@ -561,6 +561,7 @@ def handle_deploy(args):
 def force_delete_pods():
     print("Some pods were not deleted. cleaning up forcefully ....")
     sp.call("kubectl get pod -n dkube | awk 'NR>1 {print $1}' | xargs kubectl delete pod --force --grace-period=0 -n dkube",shell=True)
+    sp.call("kubectl get pod -n monitoring | awk 'NR>1 {print $1}' | xargs kubectl delete pod --force --grace-period=0 -n monitoring",shell=True)
     delete_namespace("monitoring")
 
 
