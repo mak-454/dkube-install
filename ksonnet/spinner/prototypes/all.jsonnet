@@ -4,8 +4,8 @@
 // @param name string Name to give to each of the components
 // @shortDescription DKube spinner components. This currently includes dkube api server and dkube tf controller.
 // @optionalParam namespace string dkube Namespace to use for the components. It is automatically inherited from the environment if not set.
-// @optionalParam dkubeApiServerImage string ocdr/dkube-api-server:v3 The image for dkube spinner api server.
-// @optionalParam dkubeTFControllerImage string ocdr/dkube-tf-controller:v3 The image for dkube spinner tf-controller.
+// @optionalParam dkubeApiServerImage string ocdr/dkube-api-server:v3.1 The image for dkube spinner api server.
+// @optionalParam dkubeTFControllerImage string ocdr/dkube-tf-controller:v3.1 The image for dkube spinner tf-controller.
 // @optionalParam dkubeLogCollectorImage string ocdr/dkube-log-collector:v2 The image for log collector.
 // @optionalParam dkubeStorageImage string ocdr/dkube-d3storage:v3 The image for storage
 // @optionalParam dkubeApiServerAddr string localhost:5000 The address of dkube api server
