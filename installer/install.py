@@ -33,7 +33,7 @@ def pretty_blue(msg):
 
 def check_running_user():
 	if not os.geteuid()==0:
-		pretty_red("Please run this script as a root")
+		pretty_red("Please run this script with sudo -E ")
 		sys.exit(1)
 
 def dkube_installer_help():
@@ -50,12 +50,13 @@ def cmd_help(cmd):
 	sys.exit(1)
 
 def find_master_ip():
-	file = open("/root/.kube/config")
-	lines = file.readlines()
-	line = ', '.join(lines)
-	ip = re.findall( r'[0-9]+(?:\.[0-9]+){3}', line )
-	ip_addr = ip[0]
-	return ip_addr
+    home_path = os.getenv('HOME')
+    file = open(home_path+"/.kube/config")
+    lines = file.readlines()
+    line = ', '.join(lines)
+    ip = re.findall( r'[0-9]+(?:\.[0-9]+){3}', line )
+    ip_addr = ip[0]
+    return ip_addr
 
 
 def operator_add(user, org, token):
@@ -566,14 +567,15 @@ def force_delete_pods():
 
 
 def check_env():
-	if not os.path.isfile('/root/.kube/config'):
-		pretty_red("kubernetes config is not set at standard path")
-		pretty_red("please run: \"cp /etc/kubernetes/admin.conf /root/.kube/config\" then run this script")
-		sys.exit(1)
+    home_path = os.getenv('HOME')
+    if not os.path.isfile(home_path+'/.kube/config'):
+        pretty_red("kubernetes config is not set at standard path")
+        pretty_red("please run: \"sudo cp /etc/kubernetes/admin.conf ${HOME}/.kube/config\" then run this script")
+        sys.exit(1)
 
 def install_ksonnet():
 	os.chdir(BASE_DIR)
-	if not os.path.isfile('ks_0.11.0_linux_amd64.tar.gz'):
+	if not os.path.isfile('/usr/bin/ks'):
 		os.system("wget -c https://github.com/ksonnet/ksonnet/releases/download/v0.11.0/ks_0.11.0_linux_amd64.tar.gz")
 	os.system("tar -xzf ks_0.11.0_linux_amd64.tar.gz")
 	if os.path.exists('ks_0.11.0_linux_amd64/ks'):
