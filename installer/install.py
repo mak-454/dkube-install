@@ -467,8 +467,10 @@ def dkube_delete():
     if sp.call("ks delete default -c dkube-spinner",shell=True, executable='/bin/bash'):
         pretty_red("deleting dkube-spinner Failed")
         sys.exit(1)
-
     time.sleep(2)
+    if not sp.call("df -h | grep /var/dkube/spinner > /dev/null",shell=True, executable='/bin/bash'):
+        sp.call("umount /var/dkube/spinner",shell=True, executable='/bin/bash')
+        time.sleep(1)
     if os.path.isdir('/var/dkube/'):
         shutil.rmtree('/var/dkube/')
 	
