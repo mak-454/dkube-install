@@ -576,15 +576,15 @@ def check_env():
         sys.exit(1)
 
 def install_ksonnet():
-	os.chdir(BASE_DIR)
-	if not os.path.isfile('/usr/bin/ks'):
-		os.system("wget -c https://github.com/ksonnet/ksonnet/releases/download/v0.11.0/ks_0.11.0_linux_amd64.tar.gz")
-	os.system("tar -xzf ks_0.11.0_linux_amd64.tar.gz")
-	if os.path.exists('ks_0.11.0_linux_amd64/ks'):
-		os.system("cp -r ks_0.11.0_linux_amd64/ks /usr/bin/")
-	else:
-		pretty_red("File Not Found: ks_0.11.0_linux_amd64/ks")
-		sys.exit()
+    os.chdir(BASE_DIR)
+    if not os.path.isfile('/usr/bin/ks'):
+        os.system("wget -c https://github.com/ksonnet/ksonnet/releases/download/v0.11.0/ks_0.11.0_linux_amd64.tar.gz")
+        os.system("tar -xzf ks_0.11.0_linux_amd64.tar.gz")
+        if os.path.exists('ks_0.11.0_linux_amd64/ks'):
+            os.system("cp -r ks_0.11.0_linux_amd64/ks /usr/bin/")
+        else:
+            pretty_red("File Not Found: ks_0.11.0_linux_amd64/ks")
+            sys.exit()
 
 
 def check(RunnningStatus):
