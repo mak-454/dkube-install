@@ -12,7 +12,6 @@ import shutil
 import json
 import requests
 
-
 BASE_DIR = '/tmp'
 DKUBE_PATH = BASE_DIR + '/dkube'
 KUBEFLOW_APPNAME = 'my-kubeflow'
@@ -46,7 +45,7 @@ def cmd_help(cmd):
 	elif (cmd == "delete"):
 		pretty_red("SYNTAX:  %s %s --pkg <all, dkube, dkube-ui, kubeflow>"% (sys.argv[0], cmd))
 	elif (cmd == "operator"):
-		pretty_red("SYNTAX:  %s %s --add <git_username> --org <organisation> --token <admin-token>"% (sys.argv[0], cmd))
+		pretty_red("SYNTAX:  %s %s --add <git_username> --org <organisation>"% (sys.argv[0], cmd))
 	sys.exit(1)
 
 def find_master_ip():
@@ -59,17 +58,17 @@ def find_master_ip():
     return ip_addr
 
 
-def operator_add(user, org, token):
-	master_ip = find_master_ip()
-	url = "http://%s:32222/GPUaaS/operator/super"%master_ip
-	job = {'username': user, 'organization': org, 'token':token}
-	data = json.dumps(job)
-	headers = {'Content-Type': 'application/json'}
-	result = requests.post(url, data=data, headers=headers)
-	print("status:",result.status_code)
-	if (result.status_code != 200):
-	    pretty_red("Operator add Failed")
-	    sys.exit(1)
+def operator_add(user, org):
+    master_ip = find_master_ip()
+    url = "http://%s:32222/GPUaaS/operator/super"%master_ip
+    job = {'username': user, 'organization': org}
+    data = json.dumps(job)
+    headers = {'Content-Type': 'application/json'}
+    result = requests.post(url, data=data, headers=headers)
+    print("status:",result.status_code)
+    if (result.status_code != 200):
+        pretty_red("Operator add Failed")
+        sys.exit(1)
 
 def operator_delete(user, org):
     pretty_red("This Feature is not available for now !!! please check the installation document")
@@ -514,12 +513,12 @@ def delete_kubeflow():
 	pretty_green("Kubeflow deletion is Done")
 
 def handle_operator(args):
-	if( (not args.add) or (not args.org) or (not args.token)):
+	if( (not args.add) or (not args.org)):
 		cmd_help("operator")
 	elif(args.add):
 	    username = args.add
 	    pretty_green("Adding operator ...")
-	    operator_add(username, args.org, args.token)
+	    operator_add(username, args.org)
 	    pretty_green("Operator addition is Done ...!!!")
 
 def handle_delete(args):
@@ -799,7 +798,6 @@ def run():
 	parser.add_argument("--add", help="Username of operator to be added")
 	#parser.add_argument("--delete", help="Username of operator to be deleted")
 	parser.add_argument("--org", help="name of the organization for operator")
-	parser.add_argument("--token", help="personal token for operator")
 	parser.add_argument("--client_id", help="Client ID for git OAuth app")
 	parser.add_argument("--client_secret", help="Client Secret for git OAuth app")
 	parser.add_argument("--docker_username", help="Username for docker hub")
