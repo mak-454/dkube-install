@@ -3,7 +3,7 @@
 // @description DKube ui components
 // @param name string Name to give to each of the components
 // @shortDescription DKube user components. This create user environment.
-// @optionalParam dkubeUIImage string ocdr/dkube-uiserver:v3.1 UI image for dkube.
+// @optionalParam dkubeUIImage string ocdr/dkube-uiserver:v4 UI image for dkube.
 // @optionalParam namespace string dkube Namespace for dkube ui.
 
 local k = import "k.libsonnet";
