@@ -271,21 +271,21 @@
       "apiVersion": "extensions/v1beta1", 
       "kind": "DaemonSet", 
       "metadata": {
-        "name": "nvidia-exporter", 
+        "name": "dkube-exporter", 
         "namespace": "monitoring"
       }, 
       "spec": {
         "template": {
           "metadata": {
             "labels": {
-              "app": "nvidia-exporter"
+              "app": "dkube-exporter"
             }
           }, 
           "spec": {
             "containers": [
               {
-                "image": "ocdr/dkube-gpu-exporter:v3", 
-                "name": "nvidia-exporter", 
+                "image": "ocdr/dkube-exporter-gpu:v4", 
+                "name": "dkube-exporter", 
                 "ports": [
                   {
                     "containerPort": 9401, 
@@ -295,6 +295,21 @@
                 "securityContext": {
                   "privileged": true
                 }, 
+                "env": [
+                  {
+                    "name": "MODE",
+                    "value": "daemonset"
+                  },
+                  {
+                    "name": "MYNODENAME",
+                    "valueFrom": {
+                      "fieldRef": {
+                        "apiVersion": "v1",
+                        "fieldPath": "spec.nodeName"
+                      }
+                    }
+                  }
+                ],
                 "volumeMounts": [
                   {
                     "mountPath": "/usr/local/nvidia", 
@@ -352,7 +367,7 @@
         "labels": {
           "app": "dkube-gpu-exporter"
         }, 
-        "name": "nvidia-exporter", 
+        "name": "dkube-exporter", 
         "namespace": "monitoring"
       }, 
       "spec": {
@@ -366,9 +381,25 @@
           }
         ], 
         "selector": {
-          "app": "nvidia-exporter"
+          "app": "dkube-exporter"
         }, 
         "type": "NodePort"
+      }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "Service",
+      "metadata": {
+        "annotations": {
+          "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  \"prometheus-maping-service\"\nuse_websocket: true\nprefix: \"/prometheus/api/v1\"\nrewrite: \"/api/v1\"\nservice: \"kube-prometheus.monitoring:9090\"\ncors:\n origins: \"*\"\n methods: \"*\"\n headers: \"*\""
+        },
+        "name": "prometheus-maping-service",
+        "namespace": "dkube"
+      },
+      "spec": {
+        "clusterIP": "None",
+        "sessionAffinity": "None",
+        "type": "ClusterIP"
       }
     }
   ]
