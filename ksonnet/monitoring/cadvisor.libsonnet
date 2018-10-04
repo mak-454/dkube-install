@@ -63,14 +63,13 @@
       }
     },
     {
-      "apiVersion": "apps/v1",
-      "kind": "Deployment",
+      "apiVersion": "extensions/v1beta1",
+      "kind": "DaemonSet",
       "metadata": {
         "name": "cadvisor",
         "namespace": "monitoring"
       },
       "spec": {
-        "replicas": 1,
         "selector": {
           "matchLabels": {
             "app": "pod-exporter"
