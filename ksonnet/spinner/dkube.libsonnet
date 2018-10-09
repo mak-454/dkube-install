@@ -234,10 +234,6 @@
                 "args": [
                   "gunicorn", 
                   "--workers=2", 
-                  "-k", 
-                  "gthread", 
-                  "--threads", 
-                  "4", 
                   "server:APP", 
                   "--bind", 
                   "0.0.0.0:5000"
