@@ -205,8 +205,6 @@ def init_dkube():
 	time.sleep(1)
 	sp.call("ks pkg install dkube/minio",shell=True, executable='/bin/bash')
 	time.sleep(1)
-	sp.call("ks pkg install dkube/efk",shell=True, executable='/bin/bash')
-	time.sleep(1)
 	sp.call("ks pkg install dkube/monitoring",shell=True, executable='/bin/bash')
 	time.sleep(1)
 
@@ -232,11 +230,6 @@ def init_dkube():
 
 	if sp.call("ks generate minio minio",shell=True, executable='/bin/bash'):
 		pretty_red("Failed to generate minio")
-		sys.exit(1)
-	time.sleep(1)
-
-	if sp.call("ks generate efk efk",shell=True, executable='/bin/bash'):
-		pretty_red("Failed to generate efk")
 		sys.exit(1)
 	time.sleep(1)
 
@@ -271,11 +264,6 @@ def install_dkube_deps():
         pretty_red("minio bucket create Failed")
         sys.exit(1)
 	
-    if sp.call("ks apply default -c efk",shell=True, executable='/bin/bash'):
-        pretty_red("Installing efk Failed")
-        sys.exit(1)
-	
-	
 def install_dkube(DOCKER_USER, DOCKER_PASSWORD, DOCKER_EMAIL):
 	os.chdir(DKUBE_PATH)
 
@@ -302,9 +290,13 @@ def install_dkube_ui(client_id, client_secret):
 def install_dkube_monitoring(DOCKER_USER, DOCKER_PASSWORD, DOCKER_EMAIL):
 	
 	os.chdir(DKUBE_PATH)
+	setup_helm()
+	time.sleep(1)
 	if sp.call("helm repo add coreos https://s3-eu-west-1.amazonaws.com/coreos-charts/stable/",shell=True, executable='/bin/bash'):
-		pretty_red("help repo add Failed")
-		sys.exit(1)
+	    sp.call("helm init --client-only",shell=True)
+	    if sp.call("helm repo add coreos https://s3-eu-west-1.amazonaws.com/coreos-charts/stable/",shell=True, executable='/bin/bash'):
+	        pretty_red("help repo add Failed")
+	        sys.exit(1)
 	if sp.call("helm repo update",shell=True, executable='/bin/bash'):
 		pretty_red("helm update Failed")
 		sys.exit(1)
@@ -317,6 +309,7 @@ def install_dkube_monitoring(DOCKER_USER, DOCKER_PASSWORD, DOCKER_EMAIL):
 	
 	create_secret("monitoring", DOCKER_USER, DOCKER_PASSWORD, DOCKER_EMAIL)
 
+	os.chdir(DKUBE_PATH)
 	if sp.call("ks apply default -c monitoring",shell=True, executable='/bin/bash'):
 		pretty_red("monitoring component install Failed")
 		sys.exit(1)
@@ -471,8 +464,8 @@ def dkube_delete():
     if not sp.call("df -h | grep /var/dkube/spinner > /dev/null",shell=True, executable='/bin/bash'):
         sp.call("umount /var/dkube/spinner",shell=True, executable='/bin/bash')
         time.sleep(1)
-    if os.path.isdir('/var/dkube/'):
-        shutil.rmtree('/var/dkube/')
+    #if os.path.isdir('/var/dkube/'):
+    #    shutil.rmtree('/var/dkube/*')
 	
 def dkube_deps_delete():
 	os.chdir(DKUBE_PATH)
@@ -484,11 +477,6 @@ def dkube_deps_delete():
 	if sp.call("ks delete default -c minio",shell=True, executable='/bin/bash'):
 		pretty_red("Deleting minio Failed")
 		sys.exit(1)
-
-	if sp.call("ks delete default -c efk",shell=True, executable='/bin/bash'):
-		pretty_red("Deleting efk Failed")
-		sys.exit(1)
-
 
 def delete_dkube():
 	pretty_green("Deleting dkube ...")
@@ -578,14 +566,38 @@ def check_env():
 def install_ksonnet():
     os.chdir(BASE_DIR)
     if not os.path.isfile('/usr/bin/ks'):
-        os.system("wget -c https://github.com/ksonnet/ksonnet/releases/download/v0.11.0/ks_0.11.0_linux_amd64.tar.gz")
-        os.system("tar -xzf ks_0.11.0_linux_amd64.tar.gz")
-        if os.path.exists('ks_0.11.0_linux_amd64/ks'):
-            os.system("cp -r ks_0.11.0_linux_amd64/ks /usr/bin/")
+        os.system("wget -c https://github.com/ksonnet/ksonnet/releases/download/v0.13.1/ks_0.13.1_linux_amd64.tar.gz")
+        os.system("tar -xzf ks_0.13.1_linux_amd64.tar.gz")
+        if os.path.exists('ks_0.13.1_linux_amd64/ks'):
+            os.system("cp -r ks_0.13.1_linux_amd64/ks /usr/bin/")
         else:
-            pretty_red("File Not Found: ks_0.11.0_linux_amd64/ks")
+            pretty_red("File Not Found: ks_0.13.1_linux_amd64/ks")
             sys.exit()
 
+def setup_helm():
+    os.chdir(BASE_DIR)
+    if not os.path.isfile('/usr/local/bin/helm'):
+        os.system("wget -c https://storage.googleapis.com/kubernetes-helm/helm-v2.10.0-linux-amd64.tar.gz")
+        os.system("tar -xzf helm-v2.10.0-linux-amd64.tar.gz")
+        if os.path.exists('linux-amd64/helm'):
+            os.system("cp -r linux-amd64/helm /usr/local/bin/helm")
+        else:
+            pretty_red("File Not Found: linux-amd64/helm")
+            sys.exit()
+    if sp.call("kubectl -n kube-system get sa tiller &> /dev/null",shell=True, executable='/bin/bash'):        
+        if sp.call("kubectl -n kube-system create sa tiller",shell=True):
+            pretty_red("Service account tiller create failed")
+            sys.exit(1)
+    if sp.call("kubectl get clusterrolebinding tiller",shell=True):
+        if sp.call("kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller",shell=True):
+            pretty_red("ClusterRoleBinding create tiller failed")
+            sys.exit(1)
+    if sp.call("kubectl get pod -n kube-system | grep tiller-deploy &> /dev/null",shell=True):
+        if sp.call("helm init --service-account tiller",shell=True):
+            pretty_red("helm init failed")
+            sys.exit(1)
+        else:
+            time.sleep(30)
 
 def check(RunnningStatus):
     for value in RunnningStatus:
@@ -607,8 +619,7 @@ def monitorOnDeletion():
     pretty = 'pretty_example' # str | If 'true', then the output is pretty printed. (optional)
     exact = True # bool | Should the export be exact.  Exact export maintains cluster-specific fields like 'Namespace'. (optional)
 
-    deploymentList = ['ambassador','dkube-spinner','dkube-ui','kibana-logging','minio-deployment','workflow-controller']
-    daemonsetName = 'fluentd-es'
+    deploymentList = ['ambassador','dkube-spinner','dkube-ui','minio-deployment','workflow-controller']
     RunnningStatus = []
 
     for name in deploymentList:
@@ -620,25 +631,6 @@ def monitorOnDeletion():
                 RunnningStatus.append(True)
             else:
                 RunnningStatus.append(False)
-    # get the daemonSet
-    try:
-        api_response = api_instance.read_namespaced_daemon_set(daemonsetName, namespace, exact=exact,async=False)
-        RunnningStatus.append(False)
-    except ApiException as e:
-        if e.status == 404:
-            RunnningStatus.append(True)
-        else:
-            RunnningStatus.append(False)
-
-    try:
-        v1_api_instance = client.AppsV1Api()
-        api_response = v1_api_instance.read_namespaced_stateful_set('elasticsearch-logging', namespace, exact=exact,async=False)
-        RunnningStatus.append(False)
-    except ApiException as e:
-        if e.status == 404:
-            RunnningStatus.append(True)
-        else:
-            RunnningStatus.append(False)
 
     status = check(RunnningStatus)
     v1 = client.CoreV1Api()
@@ -662,20 +654,11 @@ def monitorOnCreation():
     namespace = 'dkube' # str | object name and auth scope, such as for teams and projects
     exact = True # bool | Should the export be exact.  Exact export maintains cluster-specific fields like 'Namespace'. (optional)
 
-    deploymentList = ['ambassador','dkube-spinner','dkube-ui','kibana-logging','minio-deployment','workflow-controller']
-    daemonsetName = 'fluentd-es'
+    deploymentList = ['ambassador','dkube-spinner','dkube-ui','minio-deployment','workflow-controller']
     RunnningStatus = []
 
-    for name in deploymentList:
-        try:
-            api_response = api_instance.read_namespaced_deployment(name, namespace, exact=exact, async=False)
-            if api_response.status.replicas == api_response.status.ready_replicas:
-                RunnningStatus.append(True)
-            else:
-                RunnningStatus.append(False) 
-        except ApiException as e:
-                RunnningStatus.append(False)
-    # get the daemonSet
+   # get the daemonSet
+    '''
     try: 
         api_response = api_instance.read_namespaced_daemon_set(daemonsetName, namespace, exact=exact,async=False)
         if  api_response.status.desired_number_scheduled == api_response.status.number_ready:
@@ -693,7 +676,7 @@ def monitorOnCreation():
 	        RunnningStatus.append(False)	
     except ApiException as e:
 	    RunnningStatus.append(False)
- 
+    '''
     return check(RunnningStatus)
 
 
@@ -717,7 +700,6 @@ def prettyTable(status):
     t.add_row(['dkube-ui', status])
     t.add_row(['argo', status])
     t.add_row(['minio', status])
-    t.add_row(['efk', status])
 
     t.align = 'l'
     t.right_padding_width = 20
@@ -741,8 +723,7 @@ def pretty(delete=False):
         "Verifying [dkube]": BarDescriptor(value=leaf_values[0], **bd_defaults),
         "Verifying [dkube-ui]": BarDescriptor(value=leaf_values[0], **bd_defaults),
         "Verifying [argo]": BarDescriptor(value=leaf_values[0], **bd_defaults),
-        "Verifying [minio]": BarDescriptor(value=leaf_values[0], **bd_defaults),
-        "Verifying [efk]": BarDescriptor(value=leaf_values[0], **bd_defaults)
+        "Verifying [minio]": BarDescriptor(value=leaf_values[0], **bd_defaults)
     }
 
     # We'll use this function to bump up the leaf values
