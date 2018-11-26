@@ -761,11 +761,11 @@ def pretty(delete=False):
             monitor_freq = 0
         # After the cursor position is first saved (in the first draw call)
         #   this will restore the cursor back to the top so we can draw again
-        n.cursor.restore()
+        #n.cursor.restore()
         # We use our incr_value method to bump the fake numbers
-        incr_value(test_d)
+        #incr_value(test_d)
         # Actually draw out the bars
-        n.draw(test_d, BarDescriptor(bd_defaults))
+        #n.draw(test_d, BarDescriptor(bd_defaults))
         sleep(10)
         monitor_freq += 10
     return status
