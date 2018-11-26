@@ -461,11 +461,6 @@ def dkube_delete():
         pretty_red("deleting dkube-spinner Failed")
         sys.exit(1)
     time.sleep(2)
-    if not sp.call("df -h | grep /var/dkube/spinner > /dev/null",shell=True, executable='/bin/bash'):
-        sp.call("umount /var/dkube/spinner",shell=True, executable='/bin/bash')
-        time.sleep(1)
-    #if os.path.isdir('/var/dkube/'):
-    #    shutil.rmtree('/var/dkube/*')
 	
 def dkube_deps_delete():
 	os.chdir(DKUBE_PATH)
@@ -477,6 +472,12 @@ def dkube_deps_delete():
 	if sp.call("ks delete default -c minio",shell=True, executable='/bin/bash'):
 		pretty_red("Deleting minio Failed")
 		sys.exit(1)
+	time.sleep(10)
+	if not sp.call("df -h | grep /var/dkube/spinner > /dev/null",shell=True, executable='/bin/bash'):
+		sp.call("umount /var/dkube/spinner",shell=True, executable='/bin/bash')
+		time.sleep(1)
+	if os.path.isdir('/var/dkube/'):
+		sp.call("rm -rf /var/dkube/*",shell=True, executable='/bin/bash')
 
 def delete_dkube():
 	pretty_green("Deleting dkube ...")
@@ -819,10 +820,10 @@ def run():
 		if status:
 		    external_access_ip = find_master_ip()
 		    print("\n")
-		    pretty_green("('\u2714') Dkube deployed and available @ http://%s:32222/dkube/ui/ , The IP address in the link is master node IP address"%external_access_ip)
+		    pretty_green("	 Dkube deployed and available @ http://%s:32222/dkube/ui/ , The IP address in the link is master node IP address"%external_access_ip)
 		else:
 			print("\n")
-			pretty_red("('\u274c') Dkube deploy failed. For reinstall, see below instructions")
+			pretty_red("	 Dkube deploy failed. For reinstall, see below instructions")
 			pretty_blue("     dkubectl delete --pkg all")
 			pretty_blue("     dkubectl deploy --pkg all [--client_id <git-app-client-id>] [--client_secret <git-app-client-secret>] [--docker_username <docker_username>] [--docker_password <docker-password>] [--docker_email <docker-email>]")
 
@@ -837,7 +838,7 @@ def run():
 		prettyTable(status)
 		if status:
 			print("\n")
-			pretty_green("('\u2714') Dkube deleted ")
+			pretty_green(" 	  Dkube deleted ")
 		else:
-			pretty_red("('\u274c') Dkube delete failed. Retry again with same command ")
+			pretty_red("	 Dkube delete failed. Retry again with same command ")
 
