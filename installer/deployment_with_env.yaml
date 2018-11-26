@@ -40,7 +40,7 @@ spec:
         imagePullPolicy: IfNotPresent
         env:
           - name: GITHUB_TOKEN
-            value: "14f74455887f83d4ec780d43f4a510de2fc21074"
+            value: "0623466be105f1aa0b4e81d7d6fb3a7e3a933360"
           - name: CLIENT_ID 
             value: "e48e19a508229c0617ad"
           - name: CLIENT_SECRET
