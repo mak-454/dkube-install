@@ -38,7 +38,6 @@ spec:
       - name: dkube-installer
         image: dkube-installer:v1
         imagePullPolicy: IfNotPresent
-        command: ["sleep","infinity"]
         env:
           - name: GITHUB_TOKEN
             value: "14f74455887f83d4ec780d43f4a510de2fc21074"

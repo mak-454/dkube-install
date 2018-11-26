@@ -820,10 +820,10 @@ def run():
 		if status:
 		    external_access_ip = find_master_ip()
 		    print("\n")
-		    pretty_green("	 Dkube deployed and available @ http://%s:32222/dkube/ui/ , The IP address in the link is master node IP address"%external_access_ip)
+		    pretty_green("Dkube deployed and available @ http://%s:32222/dkube/ui/ , The IP address in the link is master node IP address"%external_access_ip)
 		else:
 			print("\n")
-			pretty_red("	 Dkube deploy failed. For reinstall, see below instructions")
+			pretty_red("Dkube deploy failed. For reinstall, see below instructions")
 			pretty_blue("     dkubectl delete --pkg all")
 			pretty_blue("     dkubectl deploy --pkg all [--client_id <git-app-client-id>] [--client_secret <git-app-client-secret>] [--docker_username <docker_username>] [--docker_password <docker-password>] [--docker_email <docker-email>]")
 
@@ -838,7 +838,7 @@ def run():
 		prettyTable(status)
 		if status:
 			print("\n")
-			pretty_green(" 	  Dkube deleted ")
+			pretty_green("Dkube deleted ")
 		else:
-			pretty_red("	 Dkube delete failed. Retry again with same command ")
+			pretty_red("Dkube delete failed. Retry again with same command ")
 
