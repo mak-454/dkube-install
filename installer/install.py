@@ -191,7 +191,7 @@ def init_dkube():
 	time.sleep(1)
 	os.chdir(DKUBE_PATH)
 	#if sp.call("ks registry add dkube github.com/mak-454/dkube-install/tree/master/ksonnet",shell=True, executable='/bin/bash'):
-	if sp.call("ks registry add dkube /usr/local/bin/dkube-install/ksonnet",shell=True, executable='/bin/bash'):
+	if sp.call("ks registry add dkube /tmp/dkube-install/ksonnet",shell=True, executable='/bin/bash'):
 		pretty_red("Failed to add dkube registry")
 		sys.exit(1)
 	time.sleep(1)
