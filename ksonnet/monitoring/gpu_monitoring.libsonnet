@@ -267,110 +267,166 @@
         }
       }
     },
-    {
-      "apiVersion": "extensions/v1beta1", 
-      "kind": "DaemonSet", 
-      "metadata": {
-        "name": "nvidia-exporter", 
-        "namespace": "monitoring"
-      }, 
-      "spec": {
-        "template": {
-          "metadata": {
-            "labels": {
-              "app": "nvidia-exporter"
-            }
-          }, 
-          "spec": {
-            "containers": [
-              {
-                "image": "ocdr/dkube-gpu-exporter:v3", 
-                "name": "nvidia-exporter", 
-                "ports": [
-                  {
-                    "containerPort": 9401, 
-                    "name": "http-metrics"
-                  }
-                ], 
-                "securityContext": {
-                  "privileged": true
-                }, 
-                "volumeMounts": [
-                  {
-                    "mountPath": "/usr/local/nvidia", 
-                    "name": "nvidia"
-                  }, 
-                  {
-                    "mountPath": "/usr/lib", 
-                    "name": "nvml"
-                  }, 
-                  {
-                    "mountPath": "/usr/lib64", 
-                    "name": "lib64"
-                  }
-                ]
-              }
-            ], 
-            "hostNetwork": true, 
-            "imagePullSecrets": [
-              {
-                "name": "dkube-dockerhub-secret"
-              }
-            ], 
-            "volumes": [
-              {
-                "hostPath": {
-                  "path": "/opt/nvidia/current"
-                }, 
-                "name": "nvidia"
-              }, 
-              {
-                "hostPath": {
-                  "path": "/usr/lib"
-                }, 
-                "name": "nvml"
-              }, 
-              {
-                "hostPath": {
-                  "path": "/usr/lib64"
-                }, 
-                "name": "lib64"
-              }
-            ]
-          }
-        }
-      }
-    },
-    {
-      "apiVersion": "v1", 
-      "kind": "Service", 
-      "metadata": {
-        "annotations": {
-          "prometheus.io/port": "9401", 
-          "prometheus.io/scrape": "true"
-        }, 
-        "labels": {
-          "app": "dkube-gpu-exporter"
-        }, 
-        "name": "nvidia-exporter", 
-        "namespace": "monitoring"
-      }, 
-      "spec": {
-        "ports": [
-          {
-            "name": "http-metrics", 
-            "nodePort": 30001, 
-            "port": 9401, 
-            "protocol": "TCP", 
-            "targetPort": 9401
-          }
-        ], 
-        "selector": {
-          "app": "nvidia-exporter"
-        }, 
-        "type": "NodePort"
-      }
-    }
+	{
+	  "apiVersion": "v1", 
+	  "kind": "Service", 
+	  "metadata": {
+		"annotations": {
+		  "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_ext\nuse_websocket: true\nprefix: /dkube/v2/ext\nrewrite: /dkube/v2\ntimeout_ms: 6000\nservice: dkube-ext.monitoring:9401"
+		}, 
+		"labels": {
+		  "app": "dkube-ext"
+		}, 
+		"name": "dkube-ext", 
+		"namespace": "dkube"
+	  }, 
+	  "spec": {
+		"clusterIP": "None", 
+		"type": "ClusterIP"
+	  }
+	},
+	{
+	  "apiVersion": "v1", 
+	  "kind": "Service", 
+	  "metadata": {
+		"annotations": {
+		  "prometheus.io/port": "9401", 
+		  "prometheus.io/scrape": "true"
+		}, 
+		"labels": {
+		  "app": "dkube-gpu-exporter"
+		}, 
+		"name": "dkube-ext", 
+		"namespace": "monitoring"
+	  }, 
+	  "spec": {
+		"ports": [
+		  {
+			"name": "http-metrics", 
+			"nodePort": 30001, 
+			"port": 9401, 
+			"protocol": "TCP", 
+			"targetPort": 9401
+		  }
+		], 
+		"selector": {
+		  "app": "dkube-ext"
+		}, 
+		"type": "ClusterIP"
+	  }
+	},
+	{
+	  "apiVersion": "extensions/v1beta1", 
+	  "kind": "DaemonSet", 
+	  "metadata": {
+		"labels": {
+		  "app": "dkube-ext"
+		}, 
+		"name": "dkube-ext", 
+		"namespace": "monitoring"
+	  }, 
+	  "spec": {
+		"selector": {
+		  "matchLabels": {
+			"app": "dkube-ext"
+		  }
+		}, 
+		"template": {
+		  "metadata": {
+			"labels": {
+			  "app": "dkube-ext"
+			}
+		  }, 
+		  "spec": {
+			"containers": [
+			  {
+				"env": [
+				  {
+					"name": "MYNODENAME", 
+					"valueFrom": {
+					  "fieldRef": {
+						"apiVersion": "v1", 
+						"fieldPath": "spec.nodeName"
+					  }
+					}
+				  }
+				], 
+				"image": "ocdr/dkube-ext:alpha3", 
+				"imagePullPolicy": "IfNotPresent", 
+				"name": "dkube-ext", 
+				"ports": [
+				  {
+					"containerPort": 9401, 
+					"hostPort": 9401, 
+					"name": "http-metrics", 
+					"protocol": "TCP"
+				  }
+				], 
+				"volumeMounts": [
+				  {
+					"mountPath": "/var/log/containerlogs", 
+					"name": "logs"
+				  }, 
+				  {
+					"mountPath": "/tmp/dkube/store", 
+					"name": "dkube-data"
+				  }
+				]
+			  }
+			], 
+			"imagePullSecrets": [
+			  {
+				"name": "dkube-dockerhub-secret"
+			  }
+			], 
+			"volumes": [
+			  {
+				"flexVolume": {
+				  "driver": "oc/d3", 
+				  "options": {
+					"accessKey": "dkube", 
+					"bucket": "logs", 
+					"endpoint": "http://10.96.0.22:9000", 
+					"s3provider": "minio", 
+					"secretKey": "dkube123"
+				  }
+				}, 
+				"name": "logs"
+			  }, 
+			  {
+				"flexVolume": {
+				  "driver": "oc/d3", 
+				  "options": {
+					"accessKey": "dkube", 
+					"bucket": "dkube", 
+					"endpoint": "http://10.96.0.22:9000", 
+					"s3provider": "minio", 
+					"secretKey": "dkube123"
+				  }
+				}, 
+				"name": "dkube-data"
+			  }
+			]
+		  }
+		}
+	  }
+	},
+	{
+	  "apiVersion": "v1", 
+	  "kind": "Service", 
+	  "metadata": {
+		"annotations": {
+		  "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  \"prometheus\"\nuse_websocket: true\nprefix: \"/dkube/v2/prometheus/api/v1\"\nrewrite: \"/api/v1\"\nservice: \"kube-prometheus.monitoring:9090\"\ncors:\n origins: \"*\"\n methods: \"*\"\n headers: \"*\"\n---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  \"prometheus-alert-manager\"\nuse_websocket: true\nprefix: \"/dkube/v2/prometheus/alertmanager/api/v1\"\nrewrite: \"/api/v1\"\nservice: \"kube-prometheus-alertmanager.monitoring:9093\"\ncors:\n origins: \"*\"\n methods: \"*\"\n headers: \"*\""
+		}, 
+		"name": "prometheus-maping-service", 
+		"namespace": "dkube"
+	  }, 
+	  "spec": {
+		"clusterIP": "None", 
+		"sessionAffinity": "None", 
+		"type": "ClusterIP"
+	  }
+	}
   ]
 }
 

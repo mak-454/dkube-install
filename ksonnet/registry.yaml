@@ -4,22 +4,16 @@ libraries:
   argo:
     version: master
     path: argo
-  nfs:
+  monitoring:
     version: master
-    path: nfs
-  efk:
+    path: monitoring
+  minio:
     version: master
-    path: efk
-  pachyderm:
-    version: master
-    path: pachyderm
+    path: minio
   spinner:
     version: master
-    path: spinner
+    path: dkube
   ui:
     version: master
     path: ui
-  user:
-    version: master
-    path: user
 

@@ -190,7 +190,8 @@ def init_dkube():
 		sys.exit(1)
 	time.sleep(1)
 	os.chdir(DKUBE_PATH)
-	if sp.call("ks registry add dkube github.com/mak-454/dkube-install/tree/master/ksonnet",shell=True, executable='/bin/bash'):
+	#if sp.call("ks registry add dkube github.com/mak-454/dkube-install/tree/master/ksonnet",shell=True, executable='/bin/bash'):
+	if sp.call("ks registry add dkube /usr/local/bin/dkube-install/ksonnet",shell=True, executable='/bin/bash'):
 		pretty_red("Failed to add dkube registry")
 		sys.exit(1)
 	time.sleep(1)
@@ -198,8 +199,6 @@ def init_dkube():
 	sp.call("ks pkg install dkube/spinner",shell=True, executable='/bin/bash')
 	time.sleep(1)
 	sp.call("ks pkg install dkube/ui",shell=True, executable='/bin/bash')
-	time.sleep(1)
-	sp.call("ks pkg install dkube/user",shell=True, executable='/bin/bash')
 	time.sleep(1)
 	sp.call("ks pkg install dkube/argo",shell=True, executable='/bin/bash')
 	time.sleep(1)
@@ -215,11 +214,6 @@ def init_dkube():
 
 	if sp.call("ks generate dkube-ui dkube-ui",shell=True, executable='/bin/bash'):
 		pretty_red("Failed to generate dkube-ui")
-		sys.exit(1)
-	time.sleep(1)
-
-	if sp.call("ks generate dkube-user dkube-user",shell=True, executable='/bin/bash'):
-		pretty_red("Failed to generate dkube-user")
 		sys.exit(1)
 	time.sleep(1)
 
