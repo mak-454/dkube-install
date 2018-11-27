@@ -196,7 +196,7 @@ def init_dkube():
 		sys.exit(1)
 	time.sleep(1)
 
-	sp.call("ks pkg install dkube/spinner",shell=True, executable='/bin/bash')
+	sp.call("ks pkg install dkube/dkube",shell=True, executable='/bin/bash')
 	time.sleep(1)
 	sp.call("ks pkg install dkube/ui",shell=True, executable='/bin/bash')
 	time.sleep(1)
@@ -207,8 +207,8 @@ def init_dkube():
 	sp.call("ks pkg install dkube/monitoring",shell=True, executable='/bin/bash')
 	time.sleep(1)
 
-	if sp.call("ks generate dkube-spinner dkube-spinner",shell=True, executable='/bin/bash'):
-		pretty_red("Failed to generate dkube-spinner")
+	if sp.call("ks generate dkube dkube",shell=True, executable='/bin/bash'):
+		pretty_red("Failed to generate dkube")
 		sys.exit(1)
 	time.sleep(1)
 
@@ -266,8 +266,8 @@ def install_dkube(DOCKER_USER, DOCKER_PASSWORD, DOCKER_EMAIL):
 		os.makedirs('/var/dkube/')
 
 	create_secret("dkube", DOCKER_USER, DOCKER_PASSWORD, DOCKER_EMAIL)
-	if sp.call("ks apply default -c dkube-spinner",shell=True, executable='/bin/bash'):
-		pretty_red("Installing dkube-spinner Failed")
+	if sp.call("ks apply default -c dkube",shell=True, executable='/bin/bash'):
+		pretty_red("Installing dkube Failed")
 		sys.exit(1)
 	time.sleep(1)
 
@@ -451,8 +451,8 @@ def dkube_ui_delete():
 
 def dkube_delete():
     os.chdir(DKUBE_PATH)
-    if sp.call("ks delete default -c dkube-spinner",shell=True, executable='/bin/bash'):
-        pretty_red("deleting dkube-spinner Failed")
+    if sp.call("ks delete default -c dkube",shell=True, executable='/bin/bash'):
+        pretty_red("deleting dkube Failed")
         sys.exit(1)
     time.sleep(2)
 	
@@ -467,9 +467,6 @@ def dkube_deps_delete():
 		pretty_red("Deleting minio Failed")
 		sys.exit(1)
 	time.sleep(10)
-	if not sp.call("df -h | grep /var/dkube/spinner > /dev/null",shell=True, executable='/bin/bash'):
-		sp.call("umount /var/dkube/spinner",shell=True, executable='/bin/bash')
-		time.sleep(1)
 	if os.path.isdir('/var/dkube/'):
 		sp.call("rm -rf /var/dkube/*",shell=True, executable='/bin/bash')
 
@@ -614,7 +611,7 @@ def monitorOnDeletion():
     pretty = 'pretty_example' # str | If 'true', then the output is pretty printed. (optional)
     exact = True # bool | Should the export be exact.  Exact export maintains cluster-specific fields like 'Namespace'. (optional)
 
-    deploymentList = ['ambassador','dkube-spinner','dkube-ui','minio-deployment','workflow-controller']
+    deploymentList = ['ambassador','dkube','dkube-ui','minio-deployment','workflow-controller']
     RunnningStatus = []
 
     for name in deploymentList:
@@ -649,7 +646,7 @@ def monitorOnCreation():
     namespace = 'dkube' # str | object name and auth scope, such as for teams and projects
     exact = True # bool | Should the export be exact.  Exact export maintains cluster-specific fields like 'Namespace'. (optional)
 
-    deploymentList = ['ambassador','dkube-spinner','dkube-ui','minio-deployment','workflow-controller']
+    deploymentList = ['ambassador','dkube','dkube-ui','minio-deployment','workflow-controller']
     RunnningStatus = []
 
    # get the daemonSet
