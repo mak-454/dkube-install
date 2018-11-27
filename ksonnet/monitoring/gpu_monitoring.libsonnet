@@ -303,7 +303,6 @@
 		"ports": [
 		  {
 			"name": "http-metrics", 
-			"nodePort": 30001, 
 			"port": 9401, 
 			"protocol": "TCP", 
 			"targetPort": 9401
@@ -326,6 +325,11 @@
 		"namespace": "monitoring"
 	  }, 
 	  "spec": {
+                "imagePullSecrets": [
+                  {
+                    "name": "dkube-dockerhub-secret"
+                  }
+                ],
 		"selector": {
 		  "matchLabels": {
 			"app": "dkube-ext"
@@ -351,7 +355,7 @@
 					}
 				  }
 				], 
-				"image": "ocdr/dkube-ext:alpha3", 
+				"image": "ocdr/dkube-d3ext:alpha3", 
 				"imagePullPolicy": "IfNotPresent", 
 				"name": "dkube-ext", 
 				"ports": [

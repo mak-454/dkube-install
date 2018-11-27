@@ -248,10 +248,6 @@
                     "value": mountPath
                   },
                   {
-                      "name": "WORKFLOW_DIR",
-                      "value": "/etc/dkube/workflows"
-                  },
-                  {
                       "name": "DKUBE_SERVICE_ACCOUNT",
                       "value": "dkube"
                   }

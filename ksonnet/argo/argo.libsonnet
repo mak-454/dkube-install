@@ -19,16 +19,24 @@
         "scope": "Namespaced",
         "version": "v1alpha1"
       }
-    }
+    },
+    {
+      "apiVersion": "v1",
+      "kind": "ConfigMap",
+      "metadata": {
+        "name": "workflow-controller-configmap",
+        "namespace": "dkube"
+      }
+    },
     
     {
       "apiVersion": "v1",
       "kind": "ServiceAccount",
       "metadata": {
         "name": "argo",
-        "namespace": "argo"
+        "namespace": "dkube"
       }
-    }
+    },
     
     {
       "apiVersion": "rbac.authorization.k8s.io/v1",
@@ -98,7 +106,7 @@
           ]
         }
       ]
-    }
+    },
     
     {
       "apiVersion": "rbac.authorization.k8s.io/v1",
@@ -115,17 +123,17 @@
         {
           "kind": "ServiceAccount",
           "name": "argo",
-          "namespace": "argo"
+          "namespace": "dkube"
         }
       ]
-    }
+    },
     
     {
       "apiVersion": "apps/v1beta2",
       "kind": "Deployment",
       "metadata": {
         "name": "workflow-controller",
-        "namespace": "argo"
+        "namespace": "dkube"
       },
       "spec": {
         "selector": {
