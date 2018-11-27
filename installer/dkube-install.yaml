@@ -1,0 +1,65 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: dkube-installer
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: dkube-installer-sa
+  namespace: kube-system
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: dkube-installer-sa
+  namespace: kube-system
+
+--- 
+apiVersion: v1
+kind: Pod
+metadata: 
+  name: dkube-installer
+  namespace: kube-system
+spec: 
+  restartPolicy: Never
+  containers: 
+    - 
+      env: 
+        - 
+          name: GITHUB_TOKEN
+          value: 0623466be105f1aa0b4e81d7d6fb3a7e3a933360
+        - 
+          name: CLIENT_ID
+          value: e48e19a508229c0617ad
+        - 
+          name: CLIENT_SECRET
+          value: fa67ef01778859f935d7a90dfc40b8c6f8f7c27a
+      image: "dkube-installer:v1"
+      imagePullPolicy: IfNotPresent
+      name: dkube-installer
+      volumeMounts: 
+        - 
+          mountPath: /root/.kube/config
+          name: kubeconfig
+        - 
+          mountPath: /var/dkube
+          name: dkubestore
+      command:
+        - /usr/local/bin/install.sh
+        - install
+
+  serviceAccountName: dkube-installer-sa
+  volumes: 
+    - 
+      hostPath: 
+        path: /home/dkube/.kube/config
+      name: kubeconfig
+    - 
+      hostPath: 
+        path: /var/dkube
+        type: Directory
+      name: dkubestore
+
