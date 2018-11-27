@@ -316,6 +316,7 @@ def install_dkube_monitoring(DOCKER_USER, DOCKER_PASSWORD, DOCKER_EMAIL):
 	
 def delete_dkube_monitoring():
 	os.chdir(DKUBE_PATH)
+	setup_helm()
 	if sp.call("ks delete default -c monitoring",shell=True, executable='/bin/bash'):
 		pretty_red("monitoring component delete Failed")
 		#sys.exit(1)
