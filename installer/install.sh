@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 echo "cloning dkube-installer ...."
-git clone https://github.com/mak-454/dkube-install && cd dkube-install && git checkout installer_test
+git clone https://github.com/mak-454/dkube-install && cd dkube-install && git checkout alpha3
 sleep 1
 if [ -d "installer" ]; then
 	cd installer/
