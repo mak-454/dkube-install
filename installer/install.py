@@ -255,7 +255,11 @@ def install_dkube_deps():
         sys.exit(1)
 	
     if sp.call("mc mb minio/dkube",shell=True, executable='/bin/bash'):
-        pretty_red("minio bucket create Failed")
+        pretty_red("minio bucket {dkube} create Failed")
+        sys.exit(1)
+
+    if sp.call("mc mb minio/logs",shell=True, executable='/bin/bash'):
+        pretty_red("minio bucket {logs} create Failed")
         sys.exit(1)
 	
 def install_dkube(DOCKER_USER, DOCKER_PASSWORD, DOCKER_EMAIL):
