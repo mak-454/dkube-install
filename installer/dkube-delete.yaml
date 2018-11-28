@@ -16,6 +16,15 @@ kind: ServiceAccount
 metadata:
   name: dkube-installer-sa
   namespace: kube-system
+---
+apiVersion: v1
+data:
+  .dockerconfigjson: eyJhdXRocyI6eyJodHRwczovL2luZGV4LmRvY2tlci5pby92MS8iOnsidXNlcm5hbWUiOiJsdWNpZmVyMDAxIiwicGFzc3dvcmQiOiJsdWNpZmVyQGRrdWJlIiwiZW1haWwiOiJvY2RsZ2l0QG9uZWNvbnZlcmdlbmNlLmNvbSIsImF1dGgiOiJiSFZqYVdabGNqQXdNVHBzZFdOcFptVnlRR1JyZFdKbCJ9fX0=
+kind: Secret
+metadata:
+  name: dkube-dockerhub-secret
+  namespace: kube-system
+type: kubernetes.io/dockerconfigjson
 
 --- 
 apiVersion: v1
@@ -25,6 +34,8 @@ metadata:
   namespace: kube-system
 spec: 
   restartPolicy: Never
+  imagePullSecrets:
+  - name: dkube-dockerhub-secret
   containers: 
     - 
       env: 

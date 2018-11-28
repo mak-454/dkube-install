@@ -175,7 +175,7 @@
       "kind": "Service", 
       "metadata": {
         "annotations": {
-          "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_d3api\nprefix: /dkube/v2\nrewrite: /dkube/v2\ntimeout_ms: 60000\nservice: dkube-d3api:5000"
+          "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_d3api\nprefix: /dkube/v2\nrewrite: /dkube/v2\ntimeout_ms: 600000\nservice: dkube-d3api:5000"
         }, 
         "labels": {
           "app": "dkube-d3api"
@@ -235,6 +235,9 @@
                 "image": apiServerImage, 
                 "imagePullPolicy": "IfNotPresent", 
                 "name": "dkube-d3api", 
+                "securityContext": {
+                    "runAsUser": 0
+                },
                 "ports": [
                   {
                     "containerPort": dkubeApiServerPort, 
