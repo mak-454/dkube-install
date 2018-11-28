@@ -95,16 +95,6 @@ def init_kubeflow():
 		sys.exit(1)
 	time.sleep(1)
 
-	if sp.call("ks pkg install kubeflow/tf-serving@%s"% VERSION,shell=True, executable='/bin/bash'):
-		pretty_red("installing kubeflow/tf-serving Failed")
-		sys.exit(1)
-	time.sleep(1)
-
-	if sp.call("ks pkg install kubeflow/tf-job@%s"% VERSION,shell=True, executable='/bin/bash'):
-		pretty_red("installing kubeflow/tf-job Failed")
-		sys.exit(1)
-	time.sleep(1)
-
 	if os.system("ks generate core kubeflow-core --name=kubeflow-core"):
 		pretty_red("Creating Kubeflow core component Failed")
 		sys.exit(1)
