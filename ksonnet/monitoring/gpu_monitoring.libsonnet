@@ -272,7 +272,7 @@
 	  "kind": "Service", 
 	  "metadata": {
 		"annotations": {
-		  "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_ext\nuse_websocket: true\nprefix: /dkube/v2/ext\nrewrite: /dkube/v2\ntimeout_ms: 6000\nservice: dkube-ext.monitoring:9401"
+		  "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_ext\nuse_websocket: true\nprefix: /dkube/v2/ext\nrewrite: /dkube/v2\ntimeout_ms: 600000\nservice: dkube-ext.monitoring:9401"
 		}, 
 		"labels": {
 		  "app": "dkube-ext"
