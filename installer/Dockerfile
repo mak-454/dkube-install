@@ -9,4 +9,5 @@ RUN apt-get update
 RUN apt-get install -y kubelet=1.12.2-00 kubeadm=1.12.2-00 kubectl=1.12.2-00
 ADD install.sh /usr/local/bin/install.sh
 RUN chmod +x /usr/local/bin/install.sh
+ADD dfabproxy.yaml /opt/dkube/dfabproxy.yaml
 #ENTRYPOINT /usr/local/bin/install.sh

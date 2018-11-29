@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: dfabproxy
+  namespace: dkube
+  annotations:
+    getambassador.io/config: |-
+      ---
+      apiVersion: ambassador/v0
+      kind:  Mapping
+      name:  dfabproxy
+      use_websocket: true
+      timeout_ms: 600000
+      prefix: /dkube/v2/operator
+      rewrite: /dkube/v2/operator
+      service: dfabproxy:8000
+spec:
+  ports:
+  - name: dfabproxy
+    port: 8000
+    protocol: TCP
+    targetPort: 8000
+  selector:
+    app: dfabproxy
+  type: ClusterIP
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dfabproxy
+  namespace: dkube
+  labels:
+    app: dfabproxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dfabproxy
+  template:
+    metadata:
+      labels:
+        app: dfabproxy
+    spec:
+      imagePullSecrets:
+      - name: dkube-dockerhub-secret
+      containers:
+      - name: dfabproxy
+        image: ocdr/dkube-dfabproxy:alpha3
+        imagePullPolicy: IfNotPresent
+

@@ -9,7 +9,9 @@ if [ -d "installer" ]; then
 	sleep 1
 	if [ $1 = "install" ]; then
 	    ./dkubectl deploy --pkg all --client_id ${CLIENT_ID} --client_secret ${CLIENT_SECRET}
+	    kubectl apply -f /opt/dkube/dfabproxy.yaml
 	else
+	    kubectl delete -f /opt/dkube/dfabproxy.yaml
 	    ./dkubectl delete --pkg all
 	fi
 else
