@@ -578,7 +578,7 @@ def setup_helm():
         if sp.call("kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller",shell=True):
             pretty_red("ClusterRoleBinding create tiller failed")
             sys.exit(1)
-    if sp.call("kubectl get pod -n kube-system | grep tiller-deploy &> /dev/null",shell=True):
+    if sp.call("kubectl get pod -n kube-system | grep tiller-deploy",shell=True):
         if sp.call("helm init --service-account tiller",shell=True):
             pretty_red("helm init failed")
             sys.exit(1)
