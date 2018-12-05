@@ -380,6 +380,17 @@ def deploy_all(args):
 	pretty_green("dKube-ui installation is done !!!")
 	time.sleep(1)
 
+	pretty_green("Starting dfabproxy installation ...")
+	install_dfabproxy()
+	pretty_green("dfabproxy installation is done !!!")
+
+
+def install_dfabproxy():
+	if sp.call("kubectl apply -f /opt/dkube/dfabproxy.yaml",shell=True):
+		pretty_red("dfabproxy install failed")
+		sys.exit(1)
+	time.sleep(1)
+
 
 def deploy_all_rdma(args):
 	pretty_green("Starting installation all+rdma...")
@@ -508,6 +519,17 @@ def delete_all():
 	init_kubeflow()
 	kubeflow_delete()
 	pretty_green("Kubeflow deletion is Done")
+
+	pretty_green("Deleting dfabproxy ...")
+	delete_dfabproxy()
+	pretty_green("dfabproxy deletion is done !!!")
+
+
+def delete_dfabproxy():
+	if sp.call("kubectl delete -f /opt/dkube/dfabproxy.yaml",shell=True):
+		pretty_red("deleting dfabproxy failed")
+	time.sleep(1)
+
 
 def delete_all_rdma():
 	delete_all()
