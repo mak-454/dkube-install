@@ -196,6 +196,8 @@ def init_dkube():
 	time.sleep(1)
 	sp.call("ks pkg install dkube/monitoring",shell=True, executable='/bin/bash')
 	time.sleep(1)
+	sp.call("ks pkg install dkube/rdma",shell=True, executable='/bin/bash')
+	time.sleep(1)
 
 	if sp.call("ks generate dkube dkube",shell=True, executable='/bin/bash'):
 		pretty_red("Failed to generate dkube")
@@ -219,6 +221,11 @@ def init_dkube():
 
 	if sp.call("ks generate monitoring monitoring",shell=True, executable='/bin/bash'):
 		pretty_red("Failed to generate monitoring")
+		sys.exit(1)
+	time.sleep(1)
+
+	if sp.call("ks generate rdma rdma",shell=True, executable='/bin/bash'):
+		pretty_red("Failed to generate rdma")
 		sys.exit(1)
 	time.sleep(1)
 
@@ -360,6 +367,33 @@ def deploy_all(args):
 	time.sleep(1)
 
 
+def deploy_all_rdma(args):
+	pretty_green("Starting installation all+rdma...")
+	deploy_all(args)
+	time.sleep(1)
+
+	pretty_green("Starting rdma installation ...")
+	deploy_rdma()
+	pretty_green("rdma installation is done !!!")
+	time.sleep(1)
+
+
+
+def deploy_rdma():
+	os.chdir(DKUBE_PATH)
+
+	#Install mpi-operator
+	if sp.call("kubectl create -f /tmp/mpi-operator/deploy/",shell=True):
+		pretty_red("mpi-operator install failed")
+		sys.exit(1)
+	time.sleep(1)
+
+	#Install ipam and multus
+	if sp.call("ks apply default -c rdma",shell=True, executable='/bin/bash'):
+		pretty_red("rdma component install Failed")
+		sys.exit(1)
+
+
 def deploy_dkube(args):
 	if ((not args.docker_username) and (not args.docker_password) and (not args.docker_email)):
 		DOCKER_USER = default_dockerhub_creds[0]
@@ -437,6 +471,28 @@ def delete_all():
 	kubeflow_delete()
 	pretty_green("Kubeflow deletion is Done")
 
+def delete_all_rdma():
+	delete_all()
+	time.sleep(1)
+
+	pretty_green("Deleting rdma ...")
+	delete_rdma()
+	pretty_green("rdma deletion is Done")
+
+def delete_rdma():
+	#Install ipam and multus
+	os.chdir(DKUBE_PATH)
+	if sp.call("ks delete default -c rdma",shell=True, executable='/bin/bash'):
+		pretty_red("deleting rdma Failed")
+		sys.exit(1)
+	time.sleep(1)
+
+	#Install mpi-operator
+	if sp.call("kubectl delete -f /tmp/mpi-operator/deploy/",shell=True):
+		pretty_red("deleting mpi-operator Failed")
+		sys.exit(1)
+
+
 def dkube_ui_delete():
     os.chdir(DKUBE_PATH)
     if sp.call("ks delete default -c dkube-ui",shell=True, executable='/bin/bash'):
@@ -500,6 +556,7 @@ def handle_delete(args):
 	install_ksonnet()
 	option_switcher = {
 		'all': delete_all,
+		'all+rdma': delete_all_rdma,
 		'dkube': delete_dkube,
 		'dkube-ui': delete_dkube_ui,
 		'kubeflow': delete_kubeflow,
@@ -520,6 +577,7 @@ def handle_deploy(args):
 	install_ksonnet()
 	option_switcher = {
 		'all': deploy_all,
+		'all+rdma': deploy_all_rdma,
 		'dkube': deploy_dkube,
 		'dkube-ui': deploy_dkube_ui,
 		'kubeflow': deploy_kubeflow,
@@ -797,7 +855,7 @@ def run():
 		dkube_installer_help()
 
 	# Dkube Monitoring
-	if ((args.cmd == "deploy") and (args.pkg == "all")):
+	if ((args.cmd == "deploy") and (args.pkg == "all" or args.pkg == "all+rdma")):
 		print("\n")
 		pretty_blue("Verifying deployment ... ")
 		status = pretty()
@@ -812,7 +870,7 @@ def run():
 			pretty_blue("     dkubectl delete --pkg all")
 			pretty_blue("     dkubectl deploy --pkg all [--client_id <git-app-client-id>] [--client_secret <git-app-client-secret>] [--docker_username <docker_username>] [--docker_password <docker-password>] [--docker_email <docker-email>]")
 
-	if ((args.cmd == "delete") and (args.pkg == "all")):
+	if ((args.cmd == "delete") and (args.pkg == "all" or args.pkg == "all+rdma")):
 		try:
 			force_delete_pods()
 		except:

@@ -16,4 +16,7 @@ libraries:
   ui:
     version: master
     path: ui
+  rdma:
+    version: master
+    path: rdma
 
