@@ -196,7 +196,11 @@ def init_dkube():
 	time.sleep(1)
 	sp.call("ks pkg install dkube/monitoring",shell=True, executable='/bin/bash')
 	time.sleep(1)
-	sp.call("ks pkg install dkube/rdma",shell=True, executable='/bin/bash')
+	sp.call("ks pkg install dkube/multus",shell=True, executable='/bin/bash')
+	time.sleep(1)
+	sp.call("ks pkg install dkube/ipam",shell=True, executable='/bin/bash')
+	time.sleep(1)
+	sp.call("ks pkg install dkube/ipam-requestor",shell=True, executable='/bin/bash')
 	time.sleep(1)
 
 	if sp.call("ks generate dkube dkube",shell=True, executable='/bin/bash'):
@@ -224,8 +228,18 @@ def init_dkube():
 		sys.exit(1)
 	time.sleep(1)
 
-	if sp.call("ks generate rdma rdma",shell=True, executable='/bin/bash'):
-		pretty_red("Failed to generate rdma")
+	if sp.call("ks generate multus multus",shell=True, executable='/bin/bash'):
+		pretty_red("Failed to generate multus")
+		sys.exit(1)
+	time.sleep(1)
+
+	if sp.call("ks generate ipam ipam",shell=True, executable='/bin/bash'):
+		pretty_red("Failed to generate ipam")
+		sys.exit(1)
+	time.sleep(1)
+
+	if sp.call("ks generate ipam-requestor ipam-requestor",shell=True, executable='/bin/bash'):
+		pretty_red("Failed to generate ipam-requestor")
 		sys.exit(1)
 	time.sleep(1)
 
@@ -378,7 +392,6 @@ def deploy_all_rdma(args):
 	time.sleep(1)
 
 
-
 def deploy_rdma():
 	os.chdir(DKUBE_PATH)
 
@@ -388,10 +401,35 @@ def deploy_rdma():
 		sys.exit(1)
 	time.sleep(1)
 
-	#Install ipam and multus
-	if sp.call("ks apply default -c rdma",shell=True, executable='/bin/bash'):
-		pretty_red("rdma component install Failed")
+	#Install multus
+	if sp.call("ks apply default -c multus",shell=True, executable='/bin/bash'):
+		pretty_red("multus component install Failed")
 		sys.exit(1)
+
+	#Install ipam
+	if sp.call("ks apply default -c ipam",shell=True, executable='/bin/bash'):
+		pretty_red("ipam component install Failed")
+		sys.exit(1)
+
+	#Ensure ipam is running
+	ensure_ipam_running()
+
+	#Install ipam-requestor
+	if sp.call("ks apply default -c ipam-requestor",shell=True, executable='/bin/bash'):
+		pretty_red("ipam-requestor component install Failed")
+		sys.exit(1)
+
+
+def ensure_ipam_running():
+	max_wait_time = 300
+	elapsed_time = 0
+	while elapsed_time < max_wait_time:
+		if not sp.call("kubectl get po -n dkube | grep custom-sriov-ipam | grep Running",shell=True, executable='/bin/bash'):
+			return
+		time.sleep(5)
+		elapsed_time += 5
+	pretty_red("ipam didn't come up within 300s")
+	sys.exit(1)
 
 
 def deploy_dkube(args):
@@ -480,17 +518,38 @@ def delete_all_rdma():
 	pretty_green("rdma deletion is Done")
 
 def delete_rdma():
-	#Install ipam and multus
+	#Uninstall ipam and multus
 	os.chdir(DKUBE_PATH)
-	if sp.call("ks delete default -c rdma",shell=True, executable='/bin/bash'):
-		pretty_red("deleting rdma Failed")
+	if sp.call("ks delete default -c ipam-requestor",shell=True, executable='/bin/bash'):
+		pretty_red("deleting ipam-requestor Failed")
 		sys.exit(1)
 	time.sleep(1)
 
-	#Install mpi-operator
+	if sp.call("ks delete default -c ipam",shell=True, executable='/bin/bash'):
+		pretty_red("deleting ipam Failed")
+		sys.exit(1)
+	time.sleep(1)
+
+	if sp.call("ks delete default -c multus",shell=True, executable='/bin/bash'):
+		pretty_red("deleting multus Failed")
+		sys.exit(1)
+	time.sleep(1)
+
+	#Uninstall mpi-operator
 	if sp.call("kubectl delete -f /tmp/mpi-operator/deploy/",shell=True):
 		pretty_red("deleting mpi-operator Failed")
-		sys.exit(1)
+		#sys.exit(1)
+	time.sleep(1)
+
+	remove_file("/etc/cni/net.d/10-custom-sriov.conf")
+	remove_file("/etc/cni/net.d/10-dhcp.conf")
+
+def remove_file(file_path):
+	if os.path.exists(file_path):
+		try:
+			os.remove(file_path)
+		except Exception as e:
+			pretty_red("deleting file %s Failed: %s" % (file_path, e))
 
 
 def dkube_ui_delete():
@@ -567,6 +626,7 @@ def handle_delete(args):
 	else:
 		pretty_red("Invalid option")
 		cmd_help("delete")
+	os.chdir(BASE_DIR)
 	if os.path.isdir(DKUBE_PATH):
 		shutil.rmtree(DKUBE_PATH)
 	if os.path.isdir(KUBEFLOW_PATH):
@@ -588,6 +648,7 @@ def handle_deploy(args):
 	else:
 		pretty_red("Invalid option")
 		cmd_help("deploy")
+	os.chdir(BASE_DIR)
 	if os.path.isdir(DKUBE_PATH):
 		shutil.rmtree(DKUBE_PATH)
 	if os.path.isdir(KUBEFLOW_PATH):

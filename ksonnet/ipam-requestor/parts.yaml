@@ -1,0 +1,16 @@
+{
+   "name": "ipam-requestor",
+   "apiVersion": "0.0.1",
+   "kind": "ksonnet.io/parts",
+   "description": "ipam-requestor component.\n",
+   "quickStart": {
+      "prototype": "io.ksonnet.pkg.dkube",
+      "componentName": "ipam-requestor",
+      "flags": {
+         "name": "ipam-requestor",
+         "namespace": "default",
+         "disks": ""
+      },
+      "comment": "ipam-requestor components."
+   },
+}

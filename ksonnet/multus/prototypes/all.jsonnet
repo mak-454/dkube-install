@@ -1,14 +1,12 @@
 // @apiVersion 0.1
-// @name io.ksonnet.pkg.rdma
-// @description rdma components
+// @name io.ksonnet.pkg.multus
+// @description multus components
 // @param name string Name to give to each of the components
-// @shortDescription rdma components.
-// @optionalParam ipamRequestorImage string ocdr/dkube-custom-ipam-requestor:v2 Dkube custom ipam requester image
-// @optionalParam ipamImage string ocdr/dkube-custom-ipam:v2 Dkube custom ipam image.
+// @shortDescription multus components.
 // @optionalParam multusImage string nfvpe/multus:latest Multus image.
 
 local k = import "k.libsonnet";
-local all = import "dkube/rdma/all.libsonnet";
+local all = import "dkube/multus/all.libsonnet";
 
 // updatedParams uses the environment namespace if
 // the namespace parameter is not explicitly set

@@ -1,0 +1,16 @@
+{
+   "name": "multus",
+   "apiVersion": "0.0.1",
+   "kind": "ksonnet.io/parts",
+   "description": "multus component.\n",
+   "quickStart": {
+      "prototype": "io.ksonnet.pkg.dkube",
+      "componentName": "multus",
+      "flags": {
+         "name": "multus",
+         "namespace": "default",
+         "disks": ""
+      },
+      "comment": "multus components."
+   },
+}

@@ -61,6 +61,7 @@ spec:
       command:
         - /usr/local/bin/install.sh
         - delete
+        - all+rdma
 
   serviceAccountName: dkube-installer-sa
   volumes: 

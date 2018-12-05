@@ -1,16 +1,16 @@
 {
-   "name": "rdma",
+   "name": "ipam",
    "apiVersion": "0.0.1",
    "kind": "ksonnet.io/parts",
-   "description": "rdma component.\n",
+   "description": "ipam component.\n",
    "quickStart": {
       "prototype": "io.ksonnet.pkg.dkube",
-      "componentName": "rdma",
+      "componentName": "ipam",
       "flags": {
-         "name": "rdma",
+         "name": "ipam",
          "namespace": "default",
          "disks": ""
       },
-      "comment": "rdma components."
+      "comment": "ipam components."
    },
 }
