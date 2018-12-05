@@ -59,8 +59,10 @@ spec:
           mountPath: /var/dkube
           name: dkubestore
       command:
-        - /usr/local/bin/install.sh
-        - install
+        - sleep
+        - infinity
+        #- /usr/local/bin/install.sh
+        #- install
 
   serviceAccountName: dkube-installer-sa
   volumes: 
