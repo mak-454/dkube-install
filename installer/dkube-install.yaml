@@ -58,11 +58,13 @@ spec:
         - 
           mountPath: /var/dkube
           name: dkubestore
+        -
+          mountPath: /etc/cni
+          name: cni-conf
       command:
-        - sleep
-        - infinity
-        #- /usr/local/bin/install.sh
-        #- install
+        - /usr/local/bin/install.sh
+        - install
+        - all+rdma
 
   serviceAccountName: dkube-installer-sa
   volumes: 
@@ -73,6 +75,11 @@ spec:
     - 
       hostPath: 
         path: /var/dkube
-        type: Directory
+        type: DirectoryOrCreate
       name: dkubestore
+    -
+      name: cni-conf
+      hostPath:
+        path: /etc/cni
+        type: DirectoryOrCreate
 

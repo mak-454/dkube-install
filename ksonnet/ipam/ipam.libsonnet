@@ -8,7 +8,6 @@
         "namespace": "dkube"
       },
       "spec": {
-        "clusterIP": "10.96.0.64",
         "ports": [
           {
             "name": "ipam",

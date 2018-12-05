@@ -16,7 +16,13 @@ libraries:
   ui:
     version: master
     path: ui
-  rdma:
+  multus:
     version: master
-    path: rdma
+    path: multus
+  ipam:
+    version: master
+    path: ipam
+  ipam-requestor:
+    version: master
+    path: ipam-requestor
 
