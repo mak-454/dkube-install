@@ -76,6 +76,17 @@
         }, 
         {
           "apiGroups": [
+            "kubeflow.org"
+          ], 
+          "resources": [
+            "mpijobs"
+          ], 
+          "verbs": [
+            "*"
+          ]
+        }, 
+        {
+          "apiGroups": [
             "*"
           ], 
           "resources": [
