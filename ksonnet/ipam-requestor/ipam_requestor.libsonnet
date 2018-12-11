@@ -36,6 +36,11 @@
             }
           },
           "spec": {
+            "imagePullSecrets": [
+              {
+                "name": "dkube-dockerhub-secret"
+              }
+            ],
             "containers": [
               {
                 "args": [
