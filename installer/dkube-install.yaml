@@ -48,7 +48,7 @@ spec:
         - 
           name: CLIENT_SECRET
           value: 13c69821cd1e24ad0e5e9b0a85f8e6a83d52d637
-      image: "ocdr/dkube-installer:v1"
+      image: "ocdr/dkube-installer:v1_rdma"
       imagePullPolicy: IfNotPresent
       name: dkube-installer
       volumeMounts: 
