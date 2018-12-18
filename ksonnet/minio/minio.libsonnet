@@ -72,7 +72,7 @@
                     "value": "dkube123"
                   }
                 ], 
-                "image": "minio/minio:RELEASE.2018-05-04T23-13-12Z", 
+                "image": "minio/minio:RELEASE.2018-12-13T02-04-19Z",
                 "imagePullPolicy": "IfNotPresent", 
                 "name": "minio", 
                 "ports": [
