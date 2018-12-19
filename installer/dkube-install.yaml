@@ -41,7 +41,7 @@ spec:
       env: 
         - 
           name: GITHUB_TOKEN
-          value: df32a498bd0e85f08396bfdb0afc4ecf6270186d
+          value: 4e848565a876528dae5ff15b9468472d2331416d
         - 
           name: CLIENT_ID
           value: 9e42bc01e28d2c4f3f3f
