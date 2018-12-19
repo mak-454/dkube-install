@@ -255,6 +255,8 @@ def install_dkube_deps():
 def install_dkube(DOCKER_USER, DOCKER_PASSWORD, DOCKER_EMAIL):
 	os.chdir(DKUBE_PATH)
 
+	if os.path.isdir('/var/dkube/'):
+		shutil.rmtree('/var/dkube/*')
 	create_namespace("dkube")
 	if not os.path.isdir('/var/dkube/'):
 		os.makedirs('/var/dkube/')

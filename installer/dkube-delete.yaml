@@ -41,13 +41,7 @@ spec:
       env: 
         - 
           name: GITHUB_TOKEN
-          value: 0623466be105f1aa0b4e81d7d6fb3a7e3a933360
-        - 
-          name: CLIENT_ID
-          value: e48e19a508229c0617ad
-        - 
-          name: CLIENT_SECRET
-          value: fa67ef01778859f935d7a90dfc40b8c6f8f7c27a
+          value: 4e848565a876528dae5ff15b9468472d2331416d
       image: "ocdr/dkube-installer:v1"
       imagePullPolicy: IfNotPresent
       name: dkube-installer
@@ -71,6 +65,6 @@ spec:
     - 
       hostPath: 
         path: /var/dkube
-        type: Directory
+        type: DirectoryOrCreate
       name: dkubestore
 
