@@ -17,8 +17,9 @@ BASE_DIR = '/tmp'
 DKUBE_PATH = BASE_DIR + '/dkube'
 KUBEFLOW_APPNAME = 'my-kubeflow'
 KUBEFLOW_PATH = BASE_DIR + '/' + KUBEFLOW_APPNAME
+KUBEFLOW_CONFIG = KUBEFLOW_PATH + '/config'
 KF_ENV = 'nocloud'
-VERSION = 'v0.1.2'
+VERSION = 'v0.3.4'
 PWD = os.getcwd()
 default_dockerhub_creds = ["lucifer001", "lucifer@dkube", "ocdlgit@oneconvergence.com"]
 
@@ -75,39 +76,28 @@ def operator_delete(user, org):
     pretty_red("This Feature is not available for now !!! please check the installation document")
     sys.exit(1)
 
-def init_kubeflow():
+def execute(cmd):
+    sp.call(cmd, shell=True, executable='/bin/bash')
+
+def install_kubeflow():
 	os.chdir(BASE_DIR)
 	if os.path.isdir(KUBEFLOW_PATH):
 		shutil.rmtree(KUBEFLOW_PATH)
+        os.mkdir(KUBEFLOW_PATH)
+        os.chdir(KUBEFLOW_PATH)
 
-	if sp.call("ks init %s"% KUBEFLOW_APPNAME,shell=True, executable='/bin/bash'):
-		pretty_red("ks init kubeflow Failed")
-		sys.exit(1)
-	time.sleep(1)
-	os.chdir(KUBEFLOW_APPNAME)
-	if sp.call("ks registry add kubeflow github.com/kubeflow/kubeflow/tree/%s/kubeflow"% VERSION,shell=True, executable='/bin/bash'):
-		pretty_red("Adding kubeflow registry Failed")
-		sys.exit(1)
-	time.sleep(1)
-
-	if sp.call("ks pkg install kubeflow/core@%s"% VERSION,shell=True, executable='/bin/bash'):
-		pretty_red("installing kubeflow/core Failed")
-		sys.exit(1)
-	time.sleep(1)
-
-	if os.system("ks generate core kubeflow-core --name=kubeflow-core"):
-		pretty_red("Creating Kubeflow core component Failed")
-		sys.exit(1)
-	time.sleep(1)
-
-	sp.call("ks param set kubeflow-core reportUsage true",shell=True, executable='/bin/bash')
-	uuid = sp.check_output("uuidgen",shell=True)
-	sp.call("ks param set kubeflow-core usageId %s"% uuid,shell=True, executable='/bin/bash')
-
-	if sp.call("ks env add nocloud",shell=True, executable='/bin/bash'):
-		pretty_red("adding env Failed")
-		sys.exit(1)
-		
+        execute("curl https://raw.githubusercontent.com/kubeflow/kubeflow/%s/scripts/download.sh | bash" % VERSION)
+	create_namespace("kubeflow")
+        os.mkdir(KUBEFLOW_CONFIG)
+        os.chdir(KUBEFLOW_CONFIG)
+        execute("ks init ks_app")
+        os.chdir("ks_app")
+        execute("ks env rm default")
+        execute("ks registry add kubeflow %s/kubeflow" % KUBEFLOW_PATH)
+        execute("ks pkg install kubeflow/core")
+        execute("ks generate tf-job-operator tf-job-operator")
+        execute("ks env add default --namespace kubeflow")
+        execute("ks apply default -c tf-job-operator")
 
 def create_secret(namespace, docker_user, docker_password, docker_email):
 	if sp.call("kubectl get secret -n %s dkube-dockerhub-secret &> /dev/null"%namespace,shell=True, executable='/bin/bash'):
@@ -145,30 +135,10 @@ def delete_namespace(ns_name):
 	if not sp.call("kubectl get namespaces %s &> /dev/null"%ns_name,shell=True, executable='/bin/bash'):
 		sp.call("kubectl delete namespace %s"%ns_name,shell=True, executable='/bin/bash')
 
-def install_kubeflow():
-	os.chdir(KUBEFLOW_PATH)
-
-	create_namespace("kubeflow")
-	time.sleep(1)
-
-	sp.call("ks env set %s --namespace kubeflow"%KF_ENV,shell=True, executable='/bin/bash')
-	if sp.call("ks apply %s -c kubeflow-core"%KF_ENV,shell=True, executable='/bin/bash'):
-		pretty_red("Applying kubeflow-core component Failed")
-		sys.exit(1)
-	time.sleep(1)
-
 def kubeflow_delete():
-	os.chdir(KUBEFLOW_PATH)
-
-	sp.call("ks env set %s --namespace kubeflow"%KF_ENV,shell=True, executable='/bin/bash')
-	if sp.call("ks delete %s -c kubeflow-core"%KF_ENV,shell=True, executable='/bin/bash'):
-		pretty_red("Deleting kubeflow-core component Failed")
-		sys.exit(1)
-	time.sleep(1)
-
 	delete_namespace("kubeflow")
 	os.chdir(BASE_DIR)
-	shutil.rmtree(KUBEFLOW_PATH)
+	shutil.rmtree(KUBEFLOW_PATH, ignore_errors=True)
 
 def init_dkube():
 	os.chdir(BASE_DIR)
@@ -342,7 +312,6 @@ def deploy_all(args):
 		cmd_help("deploy")
 		
 	pretty_green("Starting kubeflow installation ...")
-	init_kubeflow()
 	install_kubeflow()
 	pretty_green("Kubeflow installation is done !!!")
 	time.sleep(1)
@@ -412,7 +381,6 @@ def deploy_dkube_ui(args):
 
 def deploy_kubeflow(args):
 	pretty_green("Starting kubeflow installation ...")
-	init_kubeflow()
 	install_kubeflow()
 	pretty_green("Kubeflow installation is done !!!")
 	time.sleep(1)
@@ -435,7 +403,6 @@ def delete_all():
 	time.sleep(1)
 
 	pretty_green("Deleting kubeflow ...")
-	init_kubeflow()
 	kubeflow_delete()
 	pretty_green("Kubeflow deletion is Done")
 
@@ -485,7 +452,6 @@ def delete_dkube_ui():
 
 def delete_kubeflow():
 	pretty_green("Deleting kubeflow ...")
-	init_kubeflow()
 	kubeflow_delete()
 	pretty_green("Kubeflow deletion is Done")
 
