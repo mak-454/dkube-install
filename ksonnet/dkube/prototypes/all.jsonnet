@@ -4,11 +4,12 @@
 // @param name string Name to give to each of the components
 // @shortDescription DKube components. This currently includes dkube api server and dkube tf controller.
 // @optionalParam namespace string dkube Namespace to use for the components. It is automatically inherited from the environment if not set.
-// @optionalParam dkubeApiServerImage string ocdr/dkube-d3api:alpha3 The image for dkube api server.
+// @optionalParam dkubeApiServerImage string ocdr/dkube-d3api:alpha3.1 The image for dkube api server.
 // @optionalParam dkubeApiServerAddr string 0.0.0.0:5000 The address of dkube api server
 // @optionalParam dkubeMountPath string /home/dkube/d3s Mount path to mount artifacts in dkube
 // @optionalParam ambassadorNodeport number 32222 Ambassador nodeport
 // @optionalParam logstashImage string ocdr/dkube-logstash:v1 Logstash image
+// @optionalParam rdmaEnabled string false RDMA enable flag
 
 local k = import "k.libsonnet";
 local all = import "dkube/dkube/all.libsonnet";

@@ -4,7 +4,7 @@
     $.parts(params.namespace).dkubeClusterRole(),
     $.parts(params.namespace).dkubeClusterRoleBinding(),
     $.parts(params.namespace).dkubeService(params.dkubeApiServerAddr),
-    $.parts(params.namespace).dkube(params.dkubeApiServerImage, params.dkubeApiServerAddr, params.dkubeMountPath, params.dkubeApiServerAddr),
+    $.parts(params.namespace).dkube(params.dkubeApiServerImage, params.dkubeApiServerAddr, params.dkubeMountPath, params.dkubeApiServerAddr, params.rdmaEnabled),
   ],
 
   parts(namespace):: {
@@ -210,7 +210,7 @@
         "type": "ClusterIP"
       }
     },  // service
-    dkube(apiServerImage, apiServerAddr, mountPath, dkubeApiServerAddr):: {
+    dkube(apiServerImage, apiServerAddr, mountPath, dkubeApiServerAddr, isRdmaEnabled):: {
       local dkubeApiServerAddrArray = std.split(dkubeApiServerAddr, ":"),
       local dkubeApiServerPort = std.parseInt(dkubeApiServerAddrArray[std.length(dkubeApiServerAddrArray)-1]),
 
@@ -264,6 +264,10 @@
                   {
                       "name": "DKUBE_SERVICE_ACCOUNT",
                       "value": "dkube"
+                  },
+                  {
+                      "name": "RDMA_ENABLED",
+                      "value": isRdmaEnabled
                   }
                 ], 
                 "volumeMounts": [

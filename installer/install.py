@@ -170,7 +170,7 @@ def kubeflow_delete():
 	os.chdir(BASE_DIR)
 	shutil.rmtree(KUBEFLOW_PATH)
 
-def init_dkube():
+def init_dkube(rdma_enabled=False)):
 	os.chdir(BASE_DIR)
 	if os.path.isdir(DKUBE_PATH):
 		shutil.rmtree(DKUBE_PATH)
@@ -207,6 +207,11 @@ def init_dkube():
 		pretty_red("Failed to generate dkube")
 		sys.exit(1)
 	time.sleep(1)
+	if rdma_enabled:
+		if sp.call("ks param set dkube rdmaEnabled true --env=default",shell=True, executable='/bin/bash'):
+			pretty_red("Failed to set param rdmaEnabled")
+			sys.exit(1)
+		time.sleep(1)
 
 	if sp.call("ks generate dkube-ui dkube-ui",shell=True, executable='/bin/bash'):
 		pretty_red("Failed to generate dkube-ui")
@@ -344,7 +349,7 @@ def delete_dkube_monitoring():
 		    pretty_red("prometheus-operator delete Failed")
 		    sys.exit(1)
 
-def deploy_all(args):
+def deploy_all(args, rdma_enabled=False):
 	if((not args.client_id) or (not args.client_secret)):
 		cmd_help("deploy")
 	else:
@@ -369,7 +374,7 @@ def deploy_all(args):
 	time.sleep(1)
 
 	pretty_green("Starting dkube installation ...")
-	init_dkube()
+	init_dkube(rdma_enabled=rdma_enabled))
 	install_dkube_deps()
 	install_dkube(DOCKER_USER, DOCKER_PASSWORD, DOCKER_EMAIL)
 	install_dkube_monitoring(DOCKER_USER, DOCKER_PASSWORD, DOCKER_EMAIL)
@@ -396,7 +401,12 @@ def install_dfabproxy():
 
 def deploy_all_rdma(args):
 	pretty_green("Starting installation all+rdma...")
-	deploy_all(args)
+
+	# Ensure sriov cni config files deleted
+        remove_file("/etc/cni/net.d/10-custom-sriov.conf")
+        remove_file("/etc/cni/net.d/10-dhcp.conf")
+
+	deploy_all(args, rdma_enabled=True)
 	time.sleep(1)
 
 	pretty_green("Starting rdma installation ...")
