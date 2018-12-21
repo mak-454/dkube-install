@@ -170,7 +170,7 @@ def kubeflow_delete():
 	os.chdir(BASE_DIR)
 	shutil.rmtree(KUBEFLOW_PATH)
 
-def init_dkube(rdma_enabled=False)):
+def init_dkube(rdma_enabled=False):
 	os.chdir(BASE_DIR)
 	if os.path.isdir(DKUBE_PATH):
 		shutil.rmtree(DKUBE_PATH)
@@ -282,10 +282,8 @@ def install_dkube(DOCKER_USER, DOCKER_PASSWORD, DOCKER_EMAIL):
 	os.chdir(DKUBE_PATH)
 
 	if os.path.isdir('/var/dkube/'):
-		shutil.rmtree('/var/dkube/*')
+		sp.call("rm -rf /var/dkube/*",shell=True, executable='/bin/bash')
 	create_namespace("dkube")
-	if not os.path.isdir('/var/dkube/'):
-		os.makedirs('/var/dkube/')
 
 	create_secret("dkube", DOCKER_USER, DOCKER_PASSWORD, DOCKER_EMAIL)
 	if sp.call("ks apply default -c dkube",shell=True, executable='/bin/bash'):
@@ -374,7 +372,7 @@ def deploy_all(args, rdma_enabled=False):
 	time.sleep(1)
 
 	pretty_green("Starting dkube installation ...")
-	init_dkube(rdma_enabled=rdma_enabled))
+	init_dkube(rdma_enabled=rdma_enabled)
 	install_dkube_deps()
 	install_dkube(DOCKER_USER, DOCKER_PASSWORD, DOCKER_EMAIL)
 	install_dkube_monitoring(DOCKER_USER, DOCKER_PASSWORD, DOCKER_EMAIL)
@@ -403,8 +401,8 @@ def deploy_all_rdma(args):
 	pretty_green("Starting installation all+rdma...")
 
 	# Ensure sriov cni config files deleted
-        remove_file("/etc/cni/net.d/10-custom-sriov.conf")
-        remove_file("/etc/cni/net.d/10-dhcp.conf")
+	remove_file("/etc/cni/net.d/10-custom-sriov.conf")
+	remove_file("/etc/cni/net.d/10-dhcp.conf")
 
 	deploy_all(args, rdma_enabled=True)
 	time.sleep(1)

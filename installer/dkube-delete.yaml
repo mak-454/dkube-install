@@ -33,6 +33,8 @@ metadata:
   name: dkube-uninstaller
   namespace: kube-system
 spec: 
+  nodeSelector:
+    node-role.kubernetes.io/master: ""
   restartPolicy: Never
   imagePullSecrets:
   - name: dkube-dockerhub-secret
@@ -58,7 +60,7 @@ spec:
       command:
         - /usr/local/bin/install.sh
         - delete
-        - all+rdma
+        - rdma=no		#Change rdma=yes for rdma installation
 
   serviceAccountName: dkube-installer-sa
   volumes: 
