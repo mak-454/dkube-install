@@ -251,6 +251,9 @@ def init_dkube(rdma_enabled=False):
 def install_dkube_deps():
     os.chdir(DKUBE_PATH)
 
+    if os.path.isdir('/var/dkube/'):
+        sp.call("rm -rf /var/dkube/*",shell=True, executable='/bin/bash')
+
     create_namespace("dkube")
     if sp.call("ks apply default -c argo",shell=True, executable='/bin/bash'):
         pretty_red("Installing argo Failed")
@@ -281,8 +284,6 @@ def install_dkube_deps():
 def install_dkube(DOCKER_USER, DOCKER_PASSWORD, DOCKER_EMAIL):
 	os.chdir(DKUBE_PATH)
 
-	if os.path.isdir('/var/dkube/'):
-		sp.call("rm -rf /var/dkube/*",shell=True, executable='/bin/bash')
 	create_namespace("dkube")
 
 	create_secret("dkube", DOCKER_USER, DOCKER_PASSWORD, DOCKER_EMAIL)
