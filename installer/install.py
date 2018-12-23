@@ -427,14 +427,17 @@ def deploy_rdma():
 	if sp.call("ks apply default -c multus",shell=True, executable='/bin/bash'):
 		pretty_red("multus component install Failed")
 		sys.exit(1)
+	time.sleep(1)
 
 	#Install ipam
 	if sp.call("ks apply default -c ipam",shell=True, executable='/bin/bash'):
 		pretty_red("ipam component install Failed")
 		sys.exit(1)
+	time.sleep(1)
 
 	#Ensure ipam is running
 	ensure_ipam_running()
+	time.sleep(5)
 
 	#Install ipam-requestor
 	if sp.call("ks apply default -c ipam-requestor",shell=True, executable='/bin/bash'):

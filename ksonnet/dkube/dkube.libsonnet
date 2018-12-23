@@ -267,7 +267,7 @@
                   },
                   {
                       "name": "RDMA_ENABLED",
-                      "value": isRdmaEnabled
+                      "value": std.toString(isRdmaEnabled)
                   }
                 ], 
                 "volumeMounts": [
