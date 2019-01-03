@@ -1,7 +1,7 @@
 {
   all(params):: [
     $.parts(params.namespace).service(),
-    $.parts(params.namespace).deploy(params.logstashImage,),
+    $.parts(params.namespace).deploy(params.logstashImage, params.dkubeDockerSecret),
   ],
 
   parts(namespace):: {
@@ -27,7 +27,7 @@
         "type": "ClusterIP"
       }
     },
-    deploy(logstashImage):: {
+    deploy(logstashImage, dkubeDockerSecret):: {
       "apiVersion": "apps/v1", 
       "kind": "Deployment", 
       "metadata": {
@@ -50,7 +50,7 @@
           "spec": {
             "imagePullSecrets": [
               {
-                "name": "dkube-dockerhub-secret"
+                "name": dkubeDockerSecret
               }
             ],
             "containers": [

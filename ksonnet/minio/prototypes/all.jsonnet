@@ -3,6 +3,7 @@
 // @description nfs components
 // @param name string Name to give to each of the components
 // @shortDescription nfs components. This create user environment.
+// @optionalParam minioStoragePV string  The Persistent Volume for minio storage
 
 local k = import "k.libsonnet";
 local all = import "dkube/minio/all.libsonnet";

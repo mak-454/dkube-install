@@ -21,6 +21,28 @@
         }
       }
     },
+
+    {
+      "kind": "PersistentVolumeClaim",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "minio-pvc",
+        "namespace": "dkube"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteMany"
+        ],
+        "storageClassName": "",
+        "resources": {
+          "requests": {
+            "storage": "100Gi"
+          }
+        },
+        "volumeName": params.minioStoragePV
+      }
+    },
+
     {
       "apiVersion": "extensions/v1beta1", 
       "kind": "Deployment", 
@@ -92,9 +114,8 @@
             ], 
             "volumes": [
               {
-                "hostPath": {
-                  "path": "/var/dkube/minio", 
-                  "type": ""
+                "persistentVolumeClaim": {
+                  "claimName": "minio-pvc",
                 }, 
                 "name": "storage"
               }

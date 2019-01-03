@@ -325,11 +325,6 @@
 		"namespace": "monitoring"
 	  }, 
 	  "spec": {
-                "imagePullSecrets": [
-                  {
-                    "name": "dkube-dockerhub-secret"
-                  }
-                ],
 		"selector": {
 		  "matchLabels": {
 			"app": "dkube-ext"
@@ -355,7 +350,7 @@
 					}
 				  }
 				], 
-				"image": "ocdr/dkube-d3ext:alpha3", 
+				"image": params.dkubeD3extImage, 
 				"imagePullPolicy": "IfNotPresent", 
 				"name": "dkube-ext", 
 				"ports": [
@@ -380,7 +375,7 @@
 			], 
 			"imagePullSecrets": [
 			  {
-				"name": "dkube-dockerhub-secret"
+				"name": params.dkubeDockerSecret
 			  }
 			], 
 			"volumes": [

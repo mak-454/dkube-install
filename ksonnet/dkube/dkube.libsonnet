@@ -1,165 +1,21 @@
 {
   all(params):: [
     $.parts(params.namespace).dkubeServiceAccount(),
-    $.parts(params.namespace).dkubeClusterRole(),
-    $.parts(params.namespace).dkubeClusterRoleBinding(),
+    $.parts(params.namespace).dkubeClusterRoleBinding(params.dkubeClusterRole),
     $.parts(params.namespace).dkubeService(params.dkubeApiServerAddr),
-    $.parts(params.namespace).dkube(params.dkubeApiServerImage, params.dkubeApiServerAddr, params.dkubeMountPath, params.dkubeApiServerAddr, params.rdmaEnabled),
+    $.parts(params.namespace).dkube(params.dkubeApiServerImage, params.dkubeApiServerAddr, params.dkubeMountPath, params.dkubeApiServerAddr, params.rdmaEnabled, params.dkubeDockerSecret),
   ],
 
   parts(namespace):: {
     dkubeServiceAccount():: {
       "apiVersion": "v1", 
       "kind": "ServiceAccount",
-      "imagePullSecrets": [
-        {
-          "name": "dkube-dockerhub-secret"
-        }
-      ],
       "metadata": {
         "name": "dkube", 
         "namespace": namespace
       }
     }, // service account
-    dkubeClusterRole():: {
-      "apiVersion": "rbac.authorization.k8s.io/v1", 
-      "kind": "ClusterRole", 
-      "metadata": {
-        "name": "dkube"
-      }, 
-      "rules": [
-        {
-          "apiGroups": [
-            ""
-          ], 
-          "resources": [
-            "pods", 
-            "pods/exec"
-          ], 
-          "verbs": [
-            "create", 
-            "get", 
-            "list", 
-            "watch", 
-            "update", 
-            "patch",
-            "delete"
-          ]
-        }, 
-        {
-          "apiGroups": [
-            "argoproj.io"
-          ], 
-          "resources": [
-            "workflows"
-          ], 
-          "verbs": [
-            "get", 
-            "list", 
-            "watch", 
-            "update", 
-            "patch", 
-            "create",
-            "delete"
-          ]
-        }, 
-        {
-          "apiGroups": [
-            "kubeflow.org"
-          ], 
-          "resources": [
-            "tfjobs"
-          ], 
-          "verbs": [
-            "*"
-          ]
-        }, 
-        {
-          "apiGroups": [
-            "kubeflow.org"
-          ], 
-          "resources": [
-            "mpijobs"
-          ], 
-          "verbs": [
-            "*"
-          ]
-        }, 
-        {
-          "apiGroups": [
-            "*"
-          ], 
-          "resources": [
-            "replicasets"
-          ], 
-          "verbs": [
-            "*"
-          ]
-        }, 
-        {
-          "apiGroups": [
-            ""
-          ], 
-          "resources": [
-            "services", 
-            "endpoints",
-            "configmaps"
-          ], 
-          "verbs": [
-            "*"
-          ]
-        }, 
-        {
-          "apiGroups": [
-            "apps", 
-            "extensions"
-          ], 
-          "resources": [
-            "deployments"
-          ], 
-          "verbs": [
-            "*"
-          ]
-        },
-        {
-            "apiGroups": [
-                ""
-            ],
-            "resources": [
-                "namespaces",
-                "nodes"
-            ],
-            "verbs": [
-                "*"
-            ]
-        },
-        {
-            "apiGroups": [
-                "rbac.authorization.k8s.io"
-            ],
-            "resources": [
-                "roles",
-                "rolebindings"
-            ],
-            "verbs": [
-                "*"
-            ]
-        },
-        {
-            "apiGroups": [
-                ""
-            ],
-            "resources": [
-                "serviceaccounts",
-                "secrets"
-            ],
-            "verbs": [
-                "*"
-            ]
-        }
-      ]
-    },  // cluster role
-    dkubeClusterRoleBinding():: {
+    dkubeClusterRoleBinding(dkubeClusterRole):: {
       "apiVersion": "rbac.authorization.k8s.io/v1", 
       "kind": "ClusterRoleBinding", 
       "metadata": {
@@ -168,7 +24,7 @@
       "roleRef": {
         "apiGroup": "rbac.authorization.k8s.io", 
         "kind": "ClusterRole", 
-        "name": "dkube"
+        "name": dkubeClusterRole
       }, 
       "subjects": [
         {
@@ -210,7 +66,7 @@
         "type": "ClusterIP"
       }
     },  // service
-    dkube(apiServerImage, apiServerAddr, mountPath, dkubeApiServerAddr, isRdmaEnabled):: {
+    dkube(apiServerImage, apiServerAddr, mountPath, dkubeApiServerAddr, isRdmaEnabled, dkubeDockerSecret):: {
       local dkubeApiServerAddrArray = std.split(dkubeApiServerAddr, ":"),
       local dkubeApiServerPort = std.parseInt(dkubeApiServerAddrArray[std.length(dkubeApiServerAddrArray)-1]),
 
@@ -238,7 +94,7 @@
           "spec": {
             "imagePullSecrets": [
               {
-                "name": "dkube-dockerhub-secret"
+                "name": dkubeDockerSecret
               }
             ],
             "containers": [
