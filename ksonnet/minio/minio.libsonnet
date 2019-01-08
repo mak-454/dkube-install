@@ -8,17 +8,18 @@
         "namespace": "dkube"
       }, 
       "spec": {
-        "clusterIP": "10.96.0.22",
         "ports": [
           {
             "port": 9000, 
+            "nodePort": 32223,
             "protocol": "TCP", 
             "targetPort": 9000
           }
         ], 
         "selector": {
           "app": "minio"
-        }
+        },
+        "type": "NodePort"
       }
     },
 

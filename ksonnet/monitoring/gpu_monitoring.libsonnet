@@ -385,7 +385,7 @@
 				  "options": {
 					"accessKey": "dkube", 
 					"bucket": "logs", 
-					"endpoint": "http://10.96.0.22:9000", 
+					"endpoint": "http://127.0.0.1:32223",
 					"s3provider": "minio", 
 					"secretKey": "dkube123"
 				  }
@@ -398,7 +398,7 @@
 				  "options": {
 					"accessKey": "dkube", 
 					"bucket": "dkube", 
-					"endpoint": "http://10.96.0.22:9000", 
+					"endpoint": "http://127.0.0.1:32222",
 					"s3provider": "minio", 
 					"secretKey": "dkube123"
 				  }
