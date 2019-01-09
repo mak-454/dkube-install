@@ -8,11 +8,12 @@
 // @optionalParam dkubeApiServerAddr string 0.0.0.0:5000 The address of dkube api server
 // @optionalParam dkubeMountPath string /home/dkube/d3s Mount path to mount artifacts in dkube
 // @optionalParam ambassadorNodeport number 32222 Ambassador nodeport
-// @optionalParam logstashImage string ocdr/dkube-logstash:v1 Logstash image
+// @optionalParam logstashImage string ocdr/dkube-logstash:v2 Logstash image
 // @optionalParam dfabProxyImage string ocdr/dkube-dfabproxy:alpha3 Dfabproxy image
 // @optionalParam rdmaEnabled string false RDMA enable flag
 // @optionalParam dkubeDockerSecret string  Docker secret for dkube images
 // @optionalParam dkubeClusterRole string  Cluster role for dkube
+// @optionalParam filebeatImage string ocdr/dkube-filebeat:v2 Filebeat image
 
 local k = import "k.libsonnet";
 local all = import "dkube/dkube/all.libsonnet";
