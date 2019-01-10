@@ -9,6 +9,7 @@
 // @optionalParam dkubeMountPath string /home/dkube/d3s Mount path to mount artifacts in dkube
 // @optionalParam ambassadorNodeport number 32222 Ambassador nodeport
 // @optionalParam logstashImage string ocdr/dkube-logstash:v1 Logstash image
+// @optionalParam dfabProxyImage string ocdr/dkube-dfabproxy:alpha3 Dfabproxy image
 // @optionalParam rdmaEnabled string false RDMA enable flag
 // @optionalParam dkubeDockerSecret string  Docker secret for dkube images
 // @optionalParam dkubeClusterRole string  Cluster role for dkube
