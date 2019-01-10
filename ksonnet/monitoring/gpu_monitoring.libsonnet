@@ -398,7 +398,7 @@
 				  "options": {
 					"accessKey": "dkube", 
 					"bucket": "dkube", 
-					"endpoint": "http://127.0.0.1:32222",
+					"endpoint": "http://127.0.0.1:32223",
 					"s3provider": "minio", 
 					"secretKey": "dkube123"
 				  }
