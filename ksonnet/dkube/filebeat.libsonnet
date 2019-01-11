@@ -50,7 +50,11 @@
 							"env": [
 							{
 								"name": "NODENAME",
-								"value": "master-44"
+								"valueFrom": {
+                                    "fieldRef": {
+                                        "fieldPath": "spec.nodeName"
+                                    }
+                                }
 							}
 							],
 							"image": filebeatImage,
