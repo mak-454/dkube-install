@@ -92,7 +92,7 @@
                   }, 
                   {
                     "name": "MINIO_SECRET_KEY", 
-                    "value": "dkube123"
+                    "value": params.minioSecretKey
                   }
                 ], 
                 "image": "minio/minio:RELEASE.2018-12-13T02-04-19Z",
