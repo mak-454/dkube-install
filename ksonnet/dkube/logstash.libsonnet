@@ -56,7 +56,9 @@
             "containers": [
               {
                 "command": [
-                  "/logstash"
+                  "logstash",
+                    "-f",
+                    "config/logstash-sample.conf"
                 ], 
                 "image": logstashImage, 
                 "imagePullPolicy": "IfNotPresent", 
