@@ -15,7 +15,7 @@
 // @optionalParam dkubeClusterRole string  Cluster role for dkube
 // @optionalParam filebeatImage string ocdr/dkube-filebeat:v2 Filebeat image
 // @optionalParam dkubeExtImage string ocdr/dkube-ext:alpha3 dkube-ext image
-
+// @optionalParam etcdStoragePV string dkube-db-volume Etcd storage volume
 
 local k = import "k.libsonnet";
 local all = import "dkube/dkube/all.libsonnet";
