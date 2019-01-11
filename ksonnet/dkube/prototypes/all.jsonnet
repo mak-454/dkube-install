@@ -14,6 +14,8 @@
 // @optionalParam dkubeDockerSecret string  Docker secret for dkube images
 // @optionalParam dkubeClusterRole string  Cluster role for dkube
 // @optionalParam filebeatImage string ocdr/dkube-filebeat:v2 Filebeat image
+// @optionalParam dkubeExtImage string ocdr/dkube-ext:alpha3 dkube-ext image
+
 
 local k = import "k.libsonnet";
 local all = import "dkube/dkube/all.libsonnet";
