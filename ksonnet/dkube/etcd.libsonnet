@@ -21,6 +21,26 @@
         "type": "ClusterIP"
       }
     },
+	{
+      "kind": "PersistentVolumeClaim",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "etcd-pvc",
+        "namespace": "dkube"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteMany"
+        ],
+        "storageClassName": "",
+        "resources": {
+          "requests": {
+            "storage": "100Gi"
+          }
+        },
+        "volumeName": params.etcdStoragePV
+      }
+    },
     {
       "apiVersion": "extensions/v1beta1",
       "kind": "Deployment",
@@ -73,8 +93,8 @@
             ],
             "volumes": [
               {
-                "hostPath": {
-                  "path": "/var/dkube/etcd"
+                "persistentVolumeClaim": {
+                  "claimName": "etcd-pvc"
                 },
                 "name": "etcd-data"
               }
