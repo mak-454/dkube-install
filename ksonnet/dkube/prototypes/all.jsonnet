@@ -13,6 +13,7 @@
 // @optionalParam rdmaEnabled string false RDMA enable flag
 // @optionalParam dkubeDockerSecret string  Docker secret for dkube images
 // @optionalParam dkubeClusterRole string  Cluster role for dkube
+// @optionalParam dkubeExtImage string ocdr/dkube-ext:alpha3 dkube-ext image
 
 local k = import "k.libsonnet";
 local all = import "dkube/dkube/all.libsonnet";
