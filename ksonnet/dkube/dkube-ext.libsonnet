@@ -1,7 +1,7 @@
 {
     all(params):: [
         $.parts(params.namespace).service(),
-        $.parts(params.namespace).deploy(params.dkubeExtImage, params.dkubeDockerSecret),
+        $.parts(params.namespace).deploy(params.dkubeExtImage, params.dkubeDockerSecret, params.minioSecretKey),
     ],
     parts(namespace):: {
         service()::	{
@@ -34,7 +34,7 @@
                 "type": "ClusterIP"
             }
         },
-        deploy(dkubeExtImage,dkubeDockerSecret):: {
+        deploy(dkubeExtImage,dkubeDockerSecret, minioSecretKey):: {
             "apiVersion": "extensions/v1beta1", 
             "kind": "DaemonSet", 
             "metadata": {
@@ -112,7 +112,7 @@
                                     "bucket": "logs", 
                                     "endpoint": "http://127.0.0.1:32223", 
                                     "s3provider": "minio", 
-                                    "secretKey": "dkube123"
+                                    "secretKey": minioSecretKey
                                 }
                             }, 
                             "name": "logs"
@@ -125,7 +125,7 @@
                                     "bucket": "dkube", 
                                     "endpoint": "http://127.0.0.1:32223", 
                                     "s3provider": "minio", 
-                                    "secretKey": "dkube123"
+                                    "secretKey": minioSecretKey
                                 }
                             }, 
                             "name": "dkube-data"

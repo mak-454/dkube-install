@@ -4,6 +4,7 @@
 // @param name string Name to give to each of the components
 // @shortDescription DKube components. This currently includes dkube api server and dkube tf controller.
 // @optionalParam namespace string dkube Namespace to use for the components. It is automatically inherited from the environment if not set.
+// @optionalParam minioSecretKey string Minio Secret Key
 // @optionalParam dkubeApiServerImage string ocdr/dkube-d3api:alpha3.1 The image for dkube api server.
 // @optionalParam dkubeApiServerAddr string 0.0.0.0:5000 The address of dkube api server
 // @optionalParam dkubeMountPath string /home/dkube/d3s Mount path to mount artifacts in dkube
