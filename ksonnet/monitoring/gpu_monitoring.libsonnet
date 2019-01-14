@@ -180,37 +180,6 @@
       "apiVersion": "v1", 
       "kind": "Service", 
       "metadata": {
-        "annotations": {
-          "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_monitoring\nprefix: /dkube/grafana/\nrewrite: /\nservice: dkube-grafana.monitoring:80\ntimeout_ms: 60000\nuse_websocket: true"
-        }, 
-        "labels": {
-          "app": "dkube-prometheus-grafana"
-        }, 
-        "name": "dkube-prometheus-grafana-proxy", 
-        "namespace": "dkube"
-      }, 
-      "spec": {
-        "externalTrafficPolicy": "Cluster", 
-        "ports": [
-          {
-            "name": "http", 
-            "nodePort": 31227, 
-            "port": 80, 
-            "protocol": "TCP", 
-            "targetPort": 3000
-          }
-        ], 
-        "selector": {
-          "app": "dkube-prometheus-grafana"
-        }, 
-        "sessionAffinity": "None", 
-        "type": "NodePort"
-      }
-    },
-    {
-      "apiVersion": "v1", 
-      "kind": "Service", 
-      "metadata": {
         "annotations": null, 
         "labels": {
           "app": "dkube-prometheus-grafana"
@@ -266,23 +235,7 @@
           }
         }
       }
-    },
-	{
-	  "apiVersion": "v1", 
-	  "kind": "Service", 
-	  "metadata": {
-		"annotations": {
-		  "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  \"prometheus\"\nuse_websocket: true\nprefix: \"/dkube/v2/prometheus/api/v1\"\nrewrite: \"/api/v1\"\nservice: \"kube-prometheus.monitoring:9090\"\ncors:\n origins: \"*\"\n methods: \"*\"\n headers: \"*\"\n---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  \"prometheus-alert-manager\"\nuse_websocket: true\nprefix: \"/dkube/v2/prometheus/alertmanager/api/v1\"\nrewrite: \"/api/v1\"\nservice: \"kube-prometheus-alertmanager.monitoring:9093\"\ncors:\n origins: \"*\"\n methods: \"*\"\n headers: \"*\""
-		}, 
-		"name": "prometheus-maping-service", 
-		"namespace": "dkube"
-	  }, 
-	  "spec": {
-		"clusterIP": "None", 
-		"sessionAffinity": "None", 
-		"type": "ClusterIP"
-	  }
-	}
+    }
   ]
 }
 
