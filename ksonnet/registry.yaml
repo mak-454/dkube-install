@@ -25,4 +25,7 @@ libraries:
   ipam-requestor:
     version: master
     path: ipam-requestor
+  service:
+    version: master
+    path: service
 
