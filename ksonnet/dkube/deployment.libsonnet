@@ -178,6 +178,10 @@
 			    {
 				"mountPath": mountPath, 
 				"name": "store"
+			    },
+			    {
+				"mountPath": "/var/log/dkube", 
+				"name": "dkube-logs"
 			    }
 			    ]
 			}
@@ -196,6 +200,20 @@
 				}
 			    }, 
 			    "name": "store"
+			},
+			{
+			    "flexVolume": {
+				"driver": "oc/d3", 
+				"options": {
+				    "accessKey": "dkube", 
+				    "bucket": "logs", 
+                    "prefix": "dkube",
+				    "endpoint": "http://127.0.0.1:32223",
+				    "s3provider": "minio", 
+				    "secretKey": minioSecretKey
+				}
+			    }, 
+			    "name": "dkube-logs"
 			}
 			]
 		    }
