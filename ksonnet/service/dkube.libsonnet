@@ -5,7 +5,6 @@
     $.parts(params.namespace).dkubeServiceAccount(),
     $.parts(params.namespace).dkubeClusterRoleBinding(params.dkubeClusterRole),
     $.parts(params.namespace).dkubeService(params.dkubeApiServerAddr),
-    $.parts(params.namespace).dkube(params.dkubeApiServerImage, params.dkubeApiServerAddr, params.dkubeMountPath, params.dkubeApiServerAddr, params.rdmaEnabled, params.dkubeDockerSecret, params.minioSecretKey),
   ],
 
   parts(namespace):: {
@@ -116,113 +115,7 @@
         }, 
         "type": "ClusterIP"
       }
-    },  // service
-    dkube(apiServerImage, apiServerAddr, mountPath, dkubeApiServerAddr, isRdmaEnabled, dkubeDockerSecret, minioSecretKey):: {
-      local dkubeApiServerAddrArray = std.split(dkubeApiServerAddr, ":"),
-      local dkubeApiServerPort = std.parseInt(dkubeApiServerAddrArray[std.length(dkubeApiServerAddrArray)-1]),
-
-      "apiVersion": "extensions/v1beta1", 
-      "kind": "Deployment", 
-      "metadata": {
-        "labels": {
-          "app": "dkube-d3api"
-        }, 
-        "name": "dkube-d3api", 
-        "namespace": namespace
-      }, 
-      "spec": {
-        "selector": {
-          "matchLabels": {
-            "app": "dkube-d3api"
-          }
-        }, 
-        "template": {
-          "metadata": {
-            "labels": {
-              "app": "dkube-d3api"
-            }
-          }, 
-          "spec": {
-            "imagePullSecrets": [
-              {
-                "name": dkubeDockerSecret
-              }
-            ],
-            "containers": [
-              {
-                "image": apiServerImage, 
-                "imagePullPolicy": "IfNotPresent", 
-                "name": "dkube-d3api", 
-                "securityContext": {
-                    "runAsUser": 0
-                },
-                "ports": [
-                  {
-                    "containerPort": dkubeApiServerPort, 
-                    "name": "dkube-d3api", 
-                    "protocol": "TCP"
-                  }
-                ], 
-                "env": [
-                  {
-                    "name": "DKUBE_MOUNT_PATH", 
-                    "value": mountPath
-                  },
-                  {
-                      "name": "DKUBE_SERVICE_ACCOUNT",
-                      "value": "dkube"
-                  },
-                  {
-                      "name": "RDMA_ENABLED",
-                      "value": std.toString(isRdmaEnabled)
-                  }
-                ], 
-                "volumeMounts": [
-                  {
-                    "mountPath": mountPath, 
-                    "name": "store"
-                  },
-                  {
-                    "mountPath": "/var/log/dkube",
-                    "name": "d3api-logs"
-                  }
-                ]
-              }
-            ], 
-            "serviceAccount": "dkube", 
-            "volumes": [
-              {
-                "flexVolume": {
-                  "driver": "oc/d3", 
-                  "options": {
-                    "accessKey": "dkube", 
-                    "bucket": "dkube", 
-                    "endpoint": "http://127.0.0.1:32223",
-                    "s3provider": "minio", 
-                    "secretKey": minioSecretKey
-                  }
-                }, 
-                "name": "store"
-              },
-              {
-                "flexVolume": {
-                  "driver": "oc/d3",
-                  "options": {
-                    "accessKey": "dkube",
-                    "bucket": "logs",
-                    "prefix": "dkube",
-                    "endpoint": "http://127.0.0.1:32223",
-                    "s3provider": "minio",
-                    "secretKey": minioSecretKey
-                  }
-                },
-                "name": "d3api-logs"
-              }
-            ]
-          }
-        }
-      }
-    }, // deployment
+    } //service
   }, // parts
 }
 
