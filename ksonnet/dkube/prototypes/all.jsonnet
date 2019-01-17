@@ -14,7 +14,7 @@
 // @optionalParam filebeatImage string ocdr/dkube-filebeat:v2 Filebeat image
 // @optionalParam dkubeExtImage string ocdr/dkube-ext:alpha3 dkube-ext image
 // @optionalParam tag string v1 tag for component
-
+// @optionalParam dkubeApiServerAddr string 0.0.0.0:5000 The address of dkube api server
 
 local k = import "k.libsonnet";
 local all = import "dkube/dkube/all.libsonnet";
