@@ -15,7 +15,6 @@
                 "namespace": "dkube",
             },
             "spec": {
-                "clusterIP": "10.108.1.159",
                 "ports": [
                 {
                     "name": "dfabproxy",
