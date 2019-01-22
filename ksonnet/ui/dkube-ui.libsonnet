@@ -27,9 +27,6 @@
             }
           }, 
           "spec": {
-            "nodeSelector": {
-              "node-role.kubernetes.io/master": ""
-            },
             "tolerations": [
               {
                 key: "node-role.kubernetes.io/master",
