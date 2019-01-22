@@ -101,7 +101,7 @@
                     "name": "rootfs"
                   },
                   {
-                    "mountPath": "/var/run:ro",
+                    "mountPath": "/var/run:rw",
                     "name": "run"
                   },
                   {
@@ -109,7 +109,7 @@
                     "name": "sys"
                   },
                   {
-                    "mountPath": "/var/lib/docker:ro",
+                    "mountPath": "/var/lib/docker:rw",
                     "name": "docker"
                   }
                 ]
