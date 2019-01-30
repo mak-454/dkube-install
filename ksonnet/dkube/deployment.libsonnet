@@ -71,14 +71,6 @@
 			}
 		    },
 		    "spec": {
-			"tolerations": [
-			{
-                           key: "node-role.kubernetes.io/master",
-                           operator: "Equal",
-                           value: "",
-                            effect: "NoSchedule"
-			}
-			],
 			"containers": [
 			{
 			    "command": [
