@@ -148,6 +148,15 @@
             }
           },
           "spec": {
+            "nodeSelector": {
+                "d3.nodetype": "dkube"
+            },
+            "tolerations": [
+              {
+                "effect": "NoSchedule",
+                "key": "node-role.kubernetes.io/master"
+              },
+            ],
             "containers": [
               {
                 "args": [
