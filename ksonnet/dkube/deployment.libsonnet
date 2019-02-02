@@ -35,6 +35,9 @@
 			    "name": dkubeDockerSecret
 			}
 			],
+			"nodeSelector": {
+				"d3.nodetype": "dkube"
+			},
 			"containers": [
 			{
 			    "command": [
@@ -71,6 +74,9 @@
 			}
 		    },
 		    "spec": {
+			"nodeSelector": {
+				"d3.nodetype": "dkube"
+			},
 			"containers": [
 			{
 			    "command": [
@@ -134,6 +140,9 @@
 			    "name": dkubeDockerSecret
 			}
 			],
+			"nodeSelector": {
+				"d3.nodetype": "dkube"
+			},
 			"containers": [
 			{
 			    "image": apiServerImage, 
@@ -244,6 +253,9 @@
 			}
 		    },
 		    "spec": {
+			"nodeSelector": {
+				"d3.nodetype": "dkube"
+			},
 			"containers": [
 			{
 			    "image": dfabProxyImage,
@@ -285,6 +297,9 @@
               namespace: namespace,
             },
             spec: {
+              "nodeSelector": {
+                "d3.nodetype": "dkube"
+              },
               containers: [
                 {
                   env: [

@@ -40,6 +40,9 @@
             }
           }, 
           "spec": {
+            "nodeSelector": {
+              "d3.nodetype": "dkube"
+            },
             "containers": [
               {
                 "env": [
