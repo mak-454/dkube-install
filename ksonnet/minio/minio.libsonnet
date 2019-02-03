@@ -74,6 +74,7 @@
             "tolerations": [
               {
                 "effect": "NoSchedule",
+                "operator": "Exists",
                 "key": "node-role.kubernetes.io/master"
               },
             ],
