@@ -8,7 +8,7 @@
             "kind": "Service",
             "metadata": {
                 "annotations": {
-                   "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_ext\nuse_websocket: true\nprefix: /dkube/v2/ext\nrewrite: /dkube/v2\ntimeout_ms: 600000\nservice: dkube-ext:9401", 
+                   "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_ext\nuse_websocket: true\nprefix: /dkube/v2/ext\nrewrite: /dkube/v2\ntimeout_ms: 0\nservice: dkube-ext:9401",
                     "prometheus.io/port": "9401",
                     "prometheus.io/scrape": "true"
                 },
