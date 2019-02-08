@@ -13,6 +13,9 @@
       apiVersion: "v1",
       kind: "Service",
       metadata: {
+        annotations: {
+            "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind: Module\nname: tls\nconfig:\n  server:\n    enabled: True\n"
+        },
         labels: {
           service: "ambassador",
         },
@@ -23,9 +26,9 @@
         ports: [
           {
             name: "ambassador",
-            port: 80,
+            port: 443,
             nodePort: nodePort,
-            targetPort: 80,
+            targetPort: 443,
           },
         ],
         selector: {
