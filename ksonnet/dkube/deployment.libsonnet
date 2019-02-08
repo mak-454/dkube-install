@@ -8,7 +8,7 @@
     ],
 
     parts(namespace):: {
-        local ambassadorImage = "quay.io/datawire/ambassador:0.30.1",
+        local ambassadorImage = "quay.io/datawire/ambassador:0.50.0",
 	logstash(tag,logstashImage, dkubeDockerSecret):: {
 	    "apiVersion": "apps/v1", 
 	    "kind": "Deployment", 

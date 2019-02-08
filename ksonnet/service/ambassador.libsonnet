@@ -8,13 +8,12 @@
   ],
 
   parts(namespace):: {
-    local ambassadorImage = "quay.io/datawire/ambassador:0.30.1",
     service(nodePort):: {
       apiVersion: "v1",
       kind: "Service",
       metadata: {
         annotations: {
-            "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind: Module\nname: tls\nconfig:\n  server:\n    enabled: True\n"
+            "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind: Module\nname: tls\nconfig:\n  server:\n    enabled: True\n    secret: dkube-certificate-secret\n"
         },
         labels: {
           service: "ambassador",
