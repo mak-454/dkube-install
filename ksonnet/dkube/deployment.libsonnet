@@ -195,7 +195,11 @@
 			    {
 				"mountPath": "/var/log/dkube", 
 				"name": "dkube-logs"
-			    }
+			    },
+				{
+				"mountPath": "/var/log/host/dkube",
+				"name": "dkube-host-log"
+				}
 			    ]
 			}
 			], 
@@ -227,6 +231,13 @@
 				}
 			    }, 
 			    "name": "dkube-logs"
+			},
+			{
+				"hostPath": {
+					"path": "/var/log/dkube",
+					"type": "DirectoryOrCreate"
+				},
+				"name": "dkube-host-log"
 			}
 			]
 		    }
