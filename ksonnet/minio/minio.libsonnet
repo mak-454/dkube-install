@@ -101,7 +101,11 @@
                     "protocol": "TCP"
                   }
                 ], 
-                "resources": {}, 
+                "resources": {
+                  "limits": {
+                    "memory": "5Gi"
+                  }
+                },
                 "volumeMounts": [
                   {
                     "mountPath": "/storage", 
