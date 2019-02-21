@@ -59,7 +59,7 @@
           "app": "pod-exporter"
         },
         "sessionAffinity": "None",
-        "type": "NodePort"
+        "type": "ClusterIP"
       }
     },
     {

@@ -200,7 +200,6 @@
         "ports": [
           {
             "name": "http", 
-            "nodePort": 30990, 
             "port": 80, 
             "protocol": "TCP", 
             "targetPort": 3000
@@ -210,7 +209,7 @@
           "app": "dkube-prometheus-grafana"
         }, 
         "sessionAffinity": "None", 
-        "type": "NodePort"
+        "type": "ClusterIP"
       }
     },
     {
