@@ -23,7 +23,6 @@
         "namespace": "dkube"
       }, 
       "spec": {
-        "externalTrafficPolicy": "Cluster", 
         "ports": [
           {
             "name": "http", 

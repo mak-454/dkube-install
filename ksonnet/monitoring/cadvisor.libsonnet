@@ -46,7 +46,6 @@
         "namespace": "monitoring"
       },
       "spec": {
-        "externalTrafficPolicy": "Cluster",
         "ports": [
           {
             "name": "http-metrics",

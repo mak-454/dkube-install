@@ -196,11 +196,9 @@
         "namespace": "monitoring"
       }, 
       "spec": {
-        "externalTrafficPolicy": "Cluster", 
         "ports": [
           {
             "name": "http", 
-            "nodePort": 32224,
             "port": 80, 
             "protocol": "TCP", 
             "targetPort": 3000
@@ -210,7 +208,7 @@
           "app": "dkube-prometheus-grafana"
         }, 
         "sessionAffinity": "None", 
-        "type": "NodePort"
+        "type": "ClusterIP"
       }
     },
     {
