@@ -67,6 +67,17 @@
 			    ]
 			}
 			], 
+            "dnsConfig": {
+                "options": [
+                    {
+                        "name": "single-request-reopen"
+                    },
+                    {
+                        "name": "timeout",
+                        "value": "30"
+                    }
+                ]
+            },
 			"imagePullSecrets": [
 			{
 			    "name": dkubeDockerSecret
@@ -176,6 +187,17 @@
 			    ]
 			}
 			],
+            "dnsConfig": {
+                "options": [
+                    {
+                        "name": "single-request-reopen"
+                    },
+                    {
+                        "name": "timeout",
+                        "value": "30"
+                    }
+                ]
+            },
 			"dnsPolicy": "ClusterFirst",
 			"initContainers": [
 			{

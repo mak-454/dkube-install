@@ -153,6 +153,17 @@
                 ]
               }
             ], 
+            "dnsConfig": {
+                "options": [
+                    {
+                        "name": "single-request-reopen"
+                    },
+                    {
+                        "name": "timeout",
+                        "value": "30"
+                    }
+                ]
+            },
             "dnsPolicy": "ClusterFirst", 
             "restartPolicy": "Always", 
             "schedulerName": "default-scheduler", 

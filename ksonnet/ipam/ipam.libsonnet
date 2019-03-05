@@ -62,7 +62,18 @@
                 "imagePullPolicy": "IfNotPresent",
                 "name": "ipam"
               }
-            ]
+            ],
+            "dnsConfig": {
+                "options": [
+                    {
+                        "name": "single-request-reopen"
+                    },
+                    {
+                        "name": "timeout",
+                        "value": "30"
+                    }
+                ]
+            },
           }
         }
       }

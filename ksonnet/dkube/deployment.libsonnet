@@ -54,7 +54,18 @@
 			    "imagePullPolicy": "IfNotPresent", 
 			    "name": "logstash"
 			}
-			]
+			],
+            "dnsConfig": {
+                "options": [
+                    {
+                        "name": "single-request-reopen"
+                    },
+                    {
+                        "name": "timeout",
+                        "value": "30"
+                    }
+                ]
+            },
 		    }
 		}
 	    }
@@ -106,6 +117,17 @@
 			    ]
 			}
 			],
+            "dnsConfig": {
+                "options": [
+                    {
+                        "name": "single-request-reopen"
+                    },
+                    {
+                        "name": "timeout",
+                        "value": "30"
+                    }
+                ]
+            },
 			"volumes": [
 			{
 			    "persistentVolumeClaim": {
@@ -203,6 +225,17 @@
 			    ]
 			}
 			], 
+            "dnsConfig": {
+                "options": [
+                    {
+                        "name": "single-request-reopen"
+                    },
+                    {
+                        "name": "timeout",
+                        "value": "30"
+                    }
+                ]
+            },
 			"serviceAccount": "dkube", 
 			"volumes": [
 			{
@@ -297,6 +330,17 @@
 			    "terminationMessagePolicy": "File"
 			}
 			],
+            "dnsConfig": {
+                "options": [
+                    {
+                        "name": "single-request-reopen"
+                    },
+                    {
+                        "name": "timeout",
+                        "value": "30"
+                    }
+                ]
+            },
 			"dnsPolicy": "ClusterFirst",
 			"imagePullSecrets": [
 			{
@@ -386,6 +430,17 @@
                 //  name: "statsd",
                 //},
               ],
+            "dnsConfig": {
+                "options": [
+                    {
+                        "name": "single-request-reopen"
+                    },
+                    {
+                        "name": "timeout",
+                        "value": "30"
+                    }
+                ]
+            },
               restartPolicy: "Always",
               serviceAccountName: "ambassador",
              },

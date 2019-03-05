@@ -77,6 +77,17 @@
                 ]
               }
             ],
+            "dnsConfig": {
+                "options": [
+                    {
+                        "name": "single-request-reopen"
+                    },
+                    {
+                        "name": "timeout",
+                        "value": "30"
+                    }
+                ]
+            },
             "nodeSelector": {
               "name": "d3-rdma-enabled"
             },

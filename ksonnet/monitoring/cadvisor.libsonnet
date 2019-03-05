@@ -114,6 +114,17 @@
                 ]
               }
             ],
+            "dnsConfig": {
+                "options": [
+                    {
+                        "name": "single-request-reopen"
+                    },
+                    {
+                        "name": "timeout",
+                        "value": "30"
+                    }
+                ]
+            },
             "volumes": [
               {
                 "hostPath": {

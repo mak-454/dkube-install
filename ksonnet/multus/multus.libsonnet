@@ -168,6 +168,17 @@
                 ]
               }
             ],
+            "dnsConfig": {
+                "options": [
+                    {
+                        "name": "single-request-reopen"
+                    },
+                    {
+                        "name": "timeout",
+                        "value": "30"
+                    }
+                ]
+            },
             "hostNetwork": true,
             "nodeSelector": {
               "name": "d3-rdma-enabled"
