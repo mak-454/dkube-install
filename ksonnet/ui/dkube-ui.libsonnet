@@ -1,10 +1,10 @@
 {
   all(params):: [
-    $.parts(params.namespace).deploy(params.tag , params.dkubeUIImage, params.dkubeDockerSecret, params.dkubeGithubAppSecret),
+    $.parts(params.namespace).deploy(params.tag , params.dkubeUIImage, params.dkubeDockerSecret),
   ],
 
   parts(namespace):: {
-    deploy(tag,dkubeUIImage, dkubeDockerSecret, dkubeGithubAppSecret):: {
+    deploy(tag,dkubeUIImage, dkubeDockerSecret):: {
       "apiVersion": "extensions/v1beta1", 
       "kind": "Deployment", 
       "metadata": {
@@ -42,26 +42,6 @@
             ],
             "containers": [
               {
-                "env": [
-                  {
-                    "name": "GIT_CLIENT_ID", 
-                    "valueFrom": {
-                      "secretKeyRef": {
-                        "key": "client-id", 
-                        "name": dkubeGithubAppSecret
-                      }
-                    }
-                  }, 
-                  {
-                    "name": "GIT_CLIENT_SECRET", 
-                    "valueFrom": {
-                      "secretKeyRef": {
-                        "key": "client-secret", 
-                        "name": dkubeGithubAppSecret
-                      }
-                    }
-                  }
-                ], 
                 "image": dkubeUIImage, 
                 "imagePullPolicy": "IfNotPresent", 
                 "name": "ui", 
