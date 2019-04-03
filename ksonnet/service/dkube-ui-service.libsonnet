@@ -12,7 +12,7 @@
           service: "dkube-ui",
         },
         "annotations": {
-          "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_ui\nprefix: /dkube/ui\nrewrite: /dkube/ui\nservice: dkube-ui:3000\ntimeout_ms: 60000"
+          "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_ui\nprefix: /\nrewrite: /\nservice: dkube-ui:3000\ntimeout_ms: 60000"
         },
         name: "dkube-ui",
         namespace: namespace,
