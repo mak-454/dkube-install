@@ -32,13 +32,13 @@
 	    "accessModes": [
 		"ReadWriteMany"
 	    ],
-	    "storageClassName": "",
+	    "storageClassName": params.storageClass,
 	    "resources": {
 		"requests": {
 		    "storage": "100Gi"
 		}
 	    },
-	    "volumeName": params.etcdStoragePV
+	    [if params.storageClass=="" then "volumeName"]: params.etcdStoragePV
 	}
     }
 
