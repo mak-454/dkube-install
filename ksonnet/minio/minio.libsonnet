@@ -30,8 +30,10 @@
       "apiVersion": "v1",
       "metadata": {
         "name": "minio-pvc",
-        "namespace": "dkube"
-      },
+        "namespace": "dkube",
+        "annotations": {
+           "volume.beta.kubernetes.io/storage-class": "dkube-nfs"
+        },
       "spec": {
         "accessModes": [
           "ReadWriteMany"

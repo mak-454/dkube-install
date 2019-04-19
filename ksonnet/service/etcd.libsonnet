@@ -26,7 +26,10 @@
 	"apiVersion": "v1",
 	"metadata": {
 	    "name": "etcd-pvc",
-	    "namespace": "dkube"
+	    "namespace": "dkube",
+        "annotations": {
+           "volume.beta.kubernetes.io/storage-class": "dkube-nfs"
+        },
 	},
 	"spec": {
 	    "accessModes": [
