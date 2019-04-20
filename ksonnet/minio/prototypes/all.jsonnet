@@ -5,7 +5,7 @@
 // @shortDescription nfs components. This create user environment.
 // @optionalParam minioStoragePV string  The Persistent Volume for minio storage
 // @optionalParam minioSecretKey string The Secret Key for minio storage
-// @optionalParam StorageClass  string Storage class name
+// @optionalParam StorageClass string  Storage class name
 
 local k = import "k.libsonnet";
 local all = import "dkube/minio/all.libsonnet";
