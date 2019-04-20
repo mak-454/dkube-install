@@ -35,7 +35,7 @@
 	    "storageClassName": params.StorageClass,
 	    "resources": {
 		"requests": {
-		    "storage": "100Gi"
+		    "storage": "75Gi"
 		}
 	    },
 	    "volumeName": params.etcdStoragePV
