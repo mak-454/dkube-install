@@ -27,15 +27,12 @@
 	"metadata": {
 	    "name": "etcd-pvc",
 	    "namespace": "dkube",
-        "annotations": {
-           "volume.beta.kubernetes.io/storage-class": "dkube-nfs"
-        },
 	},
 	"spec": {
 	    "accessModes": [
 		"ReadWriteMany"
 	    ],
-	    "storageClassName": "",
+	    "storageClassName": params.StorageClass,
 	    "resources": {
 		"requests": {
 		    "storage": "100Gi"
