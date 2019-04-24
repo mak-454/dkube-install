@@ -130,7 +130,7 @@
             "volumes": [
               {
                 "persistentVolumeClaim": {
-                  "claimName": "minio-pvc",
+                  "claimName": "dkube-pvc",
                 }, 
                 "name": "storage"
               }
