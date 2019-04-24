@@ -20,27 +20,6 @@
 		},
 		"type": "ClusterIP"
 	    }
-    },
-    {
-	"kind": "PersistentVolumeClaim",
-	"apiVersion": "v1",
-	"metadata": {
-	    "name": "etcd-pvc",
-	    "namespace": "dkube",
-	},
-	"spec": {
-	    "accessModes": [
-		"ReadWriteMany"
-	    ],
-	    "storageClassName": params.StorageClass,
-	    "resources": {
-		"requests": {
-		    "storage": "75Gi"
-		}
-	    },
-	    "volumeName": params.etcdStoragePV
-	}
     }
-
     ],
 }

@@ -131,7 +131,7 @@
 			"volumes": [
 			{
 			    "persistentVolumeClaim": {
-				"claimName": "etcd-pvc"
+				"claimName": "dkube-pvc"
 			    },
 			    "name": "etcd-data"
 			}

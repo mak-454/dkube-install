@@ -29,7 +29,7 @@
       "kind": "PersistentVolumeClaim",
       "apiVersion": "v1",
       "metadata": {
-        "name": "minio-pvc",
+        "name": "dkube-pvc",
         "namespace": "dkube",
         },
       "spec": {
@@ -42,7 +42,7 @@
             "storage": "75Gi"
           }
         },
-        "volumeName": params.minioStoragePV
+        "volumeName": params.StoragePV
       }
     },
 
