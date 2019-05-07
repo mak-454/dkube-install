@@ -1,0 +1,16 @@
+{
+   "name": "monitoring",
+   "apiVersion": "0.0.1",
+   "kind": "ksonnet.io/parts",
+   "description": "monitoring component.\n",
+   "quickStart": {
+      "prototype": "io.ksonnet.pkg.dkube",
+      "componentName": "monitoring",
+      "flags": {
+         "name": "monitoring",
+         "namespace": "default",
+         "disks": ""
+      },
+      "comment": "monitoring components."
+   },
+}
