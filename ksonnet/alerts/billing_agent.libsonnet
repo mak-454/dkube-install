@@ -8,7 +8,7 @@
             "app": "billing-agent"
         },
         "name": "billing-agent-svc",
-        "namespace": "default",
+        "namespace": "dkube",
     },
     "spec": {
         "ports": [
@@ -45,7 +45,7 @@
         ],
         "namespaceSelector": {
             "matchNames": [
-                "default"
+                "dkube"
             ]
         },
         "selector": {
@@ -56,21 +56,26 @@
     }
 },
 {
-    "apiVersion": "batch/v1",
-    "kind": "Job",
+    "apiVersion": "extensions/v1beta1",
+    "kind": "Deployment",
     "metadata": {
         "labels": {
             "app.kubernetes.io/name": "exporter"
         },
         "name": "metering",
-        "namespace": "default",
+        "namespace": "dkube",
     },
     "spec": {
+        "selector": {
+            "matchLabels": {
+                "app": "billing-agent"
+            }
+        },
         "template": {
             "metadata": {
                 "labels": {
                     "app": "billing-agent",
-                    "app.kubernetes.io/name": "exporter",
+                    "app.kubernetes.io/name": "exporter"
                 }
             },
             "spec": {
@@ -105,7 +110,7 @@
                         "name": params.dkubeDockerSecret
                     }
                 ],
-                "restartPolicy": "OnFailure",
+                "restartPolicy": "Always",
             }
         }
     },
