@@ -15,6 +15,7 @@
 // @optionalParam dkubeExtImage string ocdr/dkube-ext:alpha3 dkube-ext image
 // @optionalParam tag string v1 tag for component
 // @optionalParam dkubeApiServerAddr string 0.0.0.0:5000 The address of dkube api server
+// @optionalParam dkubePVC string dkube-pvc The PVC for dkube etcd server
 
 local k = import "k.libsonnet";
 local all = import "dkube/dkube/all.libsonnet";

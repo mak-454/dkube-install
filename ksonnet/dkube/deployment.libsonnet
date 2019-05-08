@@ -1,7 +1,7 @@
 {
     all(params):: [
 	$.parts(params.namespace).logstash(params.tag, params.logstashImage, params.dkubeDockerSecret),
-	$.parts(params.namespace).dkubeEtcd(params.tag),
+	$.parts(params.namespace).dkubeEtcd(params.tag, params.dkubePVC),
 	$.parts(params.namespace).dkubeD3api(params.tag, params.dkubeApiServerImage, params.dkubeApiServerAddr, params.dkubeMountPath, params.dkubeApiServerAddr, params.rdmaEnabled, params.dkubeDockerSecret, params.minioSecretKey),
 	$.parts(params.namespace).dfabProxy(params.tag,params.dfabProxyImage, params.dkubeDockerSecret),
 	$.parts(params.namespace).ambassdor(params.tag),
@@ -70,7 +70,7 @@
 		}
 	    }
 	},
-	dkubeEtcd(tag):: {
+	dkubeEtcd(tag, dkubePVC):: {
 	    "apiVersion": "extensions/v1beta1",
 	    "kind": "Deployment",
 	    "metadata": {
@@ -131,7 +131,7 @@
 			"volumes": [
 			{
 			    "persistentVolumeClaim": {
-				"claimName": "dkube-pvc"
+				"claimName": dkubePVC
 			    },
 			    "name": "etcd-data"
 			}
