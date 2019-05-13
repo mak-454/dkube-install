@@ -53,6 +53,13 @@
 			    "image": logstashImage, 
 			    "imagePullPolicy": "IfNotPresent", 
 			    "name": "logstash"
+			    "resources": {},
+                "volumeMounts": [
+                    {
+                        "mountPath": "/var/nfs/logstash/logs",
+                        "name": "nfsserver"
+                    }
+                ]
 			}
 			],
             "dnsConfig": {
@@ -66,6 +73,15 @@
                     }
                 ]
             },
+            "volumes": [
+	                    {
+	                        "hostPath": {
+	                            "path": "/var/nfs/data/logs",
+	                            "type": ""
+	                        },
+	                        "name": "nfsserver"
+	                    }
+	                ]
 		    }
 		}
 	    }
