@@ -52,7 +52,7 @@
 			    ], 
 			    "image": logstashImage, 
 			    "imagePullPolicy": "IfNotPresent", 
-			    "name": "logstash"
+			    "name": "logstash",
 			    "resources": {},
                 "volumeMounts": [
                     {
