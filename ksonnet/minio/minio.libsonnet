@@ -4,7 +4,10 @@
 		"apiVersion": "v1",
 		"kind": "PersistentVolume",
 		"metadata": {
-			"name": "pv-d3minio"
+			"name": "pv-d3minio",
+			"labels": {
+				"owner": "dkube"
+			}
 		},
 		"spec": {
 			"accessModes": [

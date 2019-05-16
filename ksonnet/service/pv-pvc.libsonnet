@@ -11,7 +11,10 @@
 		"apiVersion": "v1",
 		"kind": "PersistentVolume",
 		"metadata": {
-			"name": "pv-d3"
+			"name": "pv-d3",
+			"labels": {
+				"owner": "dkube"
+			}
 		},
 		"spec": {
 			"accessModes": [
@@ -58,7 +61,10 @@
 		"apiVersion": "v1",
 		"kind": "PersistentVolume",
 		"metadata": {
-			"name": "pv-d3store"
+			"name": "pv-d3store",
+			"labels": {
+				"owner": "dkube"
+			}
 		},
 		"spec": {
 			"accessModes": [
@@ -105,7 +111,10 @@
 		"apiVersion": "v1",
 		"kind": "PersistentVolume",
 		"metadata": {
-			"name": "pv-d3user-logs"
+			"name": "pv-d3user-logs",
+			"labels": {
+				"owner": "dkube"
+			}
 		},
 		"spec": {
 			"accessModes": [
