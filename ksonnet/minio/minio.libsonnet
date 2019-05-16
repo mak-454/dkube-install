@@ -16,7 +16,7 @@
 			"storageClassName": "",
 			"claimRef": {
 				"name": "pvc-d3minio",
-				"namespace": namespace
+				"namespace": params.namespace
 			},
 			"nfs": {
 				"path": "/",
@@ -30,7 +30,7 @@
 		"kind": "PersistentVolumeClaim",
 		"metadata": {
 			"name": "pvc-d3minio",
-			"namespace": namespace
+			"namespace": params.namespace
 		},
 		"spec": {
 			"accessModes": [
@@ -155,7 +155,7 @@
             "volumes": [
               {
                 "persistentVolumeClaim": {
-                  "claimName": "pvc-d3",
+                  "claimName": "pvc-d3minio",
                 }, 
                 "name": "storage"
               }
