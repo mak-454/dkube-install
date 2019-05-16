@@ -2,7 +2,7 @@
     all(params):: [
 	$.parts(params.namespace).logstash(params.tag, params.logstashImage, params.dkubeDockerSecret),
 	$.parts(params.namespace).dkubeEtcd(params.tag, params.dkubePVC),
-	$.parts(params.namespace).dkubeD3api(params.tag, params.dkubeApiServerImage, params.dkubeApiServerAddr, params.dkubeMountPath, params.dkubeApiServerAddr, params.rdmaEnabled, params.dkubeDockerSecret, params.minioSecretKey),
+	$.parts(params.namespace).dkubeD3api(params.tag, params.dkubeApiServerImage, params.dkubeApiServerAddr, params.dkubeMountPath, params.dkubeApiServerAddr, params.rdmaEnabled, params.dkubeDockerSecret, params.minioSecretKey, params.nfsServer),
 	$.parts(params.namespace).dfabProxy(params.tag,params.dfabProxyImage, params.dkubeDockerSecret),
 	$.parts(params.namespace).ambassdor(params.tag),
     ],
@@ -141,7 +141,7 @@
 	    }
 	},
 
-	dkubeD3api(tag, apiServerImage, apiServerAddr, mountPath, dkubeApiServerAddr, isRdmaEnabled, dkubeDockerSecret, minioSecretKey):: {
+	dkubeD3api(tag, apiServerImage, apiServerAddr, mountPath, dkubeApiServerAddr, isRdmaEnabled, dkubeDockerSecret, minioSecretKey, nfsServer):: {
 	    local dkubeApiServerAddrArray = std.split(dkubeApiServerAddr, ":"),
 	    local dkubeApiServerPort = std.parseInt(dkubeApiServerAddrArray[std.length(dkubeApiServerAddrArray)-1]),
 
@@ -208,6 +208,10 @@
 				"name": "RDMA_ENABLED",
 				"value": std.toString(isRdmaEnabled)
 			    }
+                {
+                  "name": "NFS_SERVER",
+                  "value": nfsServer
+                }
 			    ], 
 			    "volumeMounts": [
 			    {
