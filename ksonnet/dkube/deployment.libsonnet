@@ -236,7 +236,7 @@
 			"volumes": [
 			{
 				"persistentVolumeClaim": {
-					"claimName": "pv-d3store"
+					"claimName": "pvc-d3store"
 				},
 			    "name": "store"
 			},
