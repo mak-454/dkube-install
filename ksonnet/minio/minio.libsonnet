@@ -1,5 +1,51 @@
 {
   all(params):: [
+	{
+		"apiVersion": "v1",
+		"kind": "PersistentVolume",
+		"metadata": {
+			"name": "pv-d3minio"
+		},
+		"spec": {
+			"accessModes": [
+				"ReadWriteMany"
+			],
+			"capacity": {
+				"storage": "20Gi"
+			},
+			"storageClassName": "",
+			"claimRef": {
+				"name": "pvc-d3minio",
+				"namespace": namespace
+			},
+			"nfs": {
+				"path": "/",
+				"server": params.nfsServer
+			},
+			"persistentVolumeReclaimPolicy": "Retain"
+		}
+	},
+	{
+		"apiVersion": "v1",
+		"kind": "PersistentVolumeClaim",
+		"metadata": {
+			"name": "pvc-d3minio",
+			"namespace": namespace
+		},
+		"spec": {
+			"accessModes": [
+				"ReadWriteMany"
+			],
+			"resources": {
+				"requests": {
+					"storage": "20Gi"
+				}
+			},
+			"storageClassName": "",
+			"volumeName": "pv-d3minio"
+		}
+	},
+
     {
       "apiVersion": "v1", 
       "kind": "Service", 
