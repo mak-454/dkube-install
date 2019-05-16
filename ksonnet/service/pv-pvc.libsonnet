@@ -143,7 +143,7 @@
 				}
 			},
 			"storageClassName": "",
-			"volumeName": "pv-d3userlogs"
+			"volumeName": "pv-d3user-logs"
 		}
 	}
 	]
