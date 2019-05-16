@@ -26,27 +26,6 @@
     },
 
     {
-      "kind": "PersistentVolumeClaim",
-      "apiVersion": "v1",
-      "metadata": {
-        "name": "dkube-pvc",
-        "namespace": "dkube",
-        },
-      "spec": {
-        "accessModes": [
-          "ReadWriteMany"
-        ],
-        "storageClassName": params.StorageClass,
-        "resources": {
-          "requests": {
-            "storage": "75Gi"
-          }
-        },
-        "volumeName": params.StoragePV
-      }
-    },
-
-    {
       "apiVersion": "extensions/v1beta1", 
       "kind": "Deployment", 
       "metadata": {
@@ -130,7 +109,7 @@
             "volumes": [
               {
                 "persistentVolumeClaim": {
-                  "claimName": "dkube-pvc",
+                  "claimName": "pvc-d3",
                 }, 
                 "name": "storage"
               }

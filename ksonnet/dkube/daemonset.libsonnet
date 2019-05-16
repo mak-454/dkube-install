@@ -85,29 +85,15 @@
 			], 
 			"volumes": [
 			{
-			    "flexVolume": {
-				"driver": "oc/d3", 
-				"options": {
-				    "accessKey": "dkube", 
-				    "bucket": "logs", 
-				    "endpoint": "http://127.0.0.1:32223", 
-				    "s3provider": "minio", 
-				    "secretKey": minioSecretKey
-				}
-			    }, 
+				"persistentVolumeClaim": {
+					"claimName": "pvc-d3user-logs"
+				},
 			    "name": "logs"
 			}, 
 			{
-			    "flexVolume": {
-				"driver": "oc/d3", 
-				"options": {
-				    "accessKey": "dkube", 
-				    "bucket": "dkube", 
-				    "endpoint": "http://127.0.0.1:32223", 
-				    "s3provider": "minio", 
-				    "secretKey": minioSecretKey
-				}
-			    }, 
+				"persistentVolumeClaim": {
+					"claimName": "pvc-d3store"
+				},
 			    "name": "dkube-data"
 			}
 			]
