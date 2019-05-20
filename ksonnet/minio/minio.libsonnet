@@ -4,9 +4,9 @@
 		"apiVersion": "v1",
 		"kind": "PersistentVolume",
 		"metadata": {
-			"name": "pv-d3minio",
+			"name": "pv-dkube-user",
 			"labels": {
-				"owner": "dkube"
+				"scope": "dkube"
 			}
 		},
 		"spec": {
@@ -18,7 +18,7 @@
 			},
 			"storageClassName": "",
 			"claimRef": {
-				"name": "pvc-d3minio",
+				"name": "pvc-dkube-user",
 				"namespace": params.namespace
 			},
 			"nfs": {
@@ -32,8 +32,11 @@
 		"apiVersion": "v1",
 		"kind": "PersistentVolumeClaim",
 		"metadata": {
-			"name": "pvc-d3minio",
-			"namespace": params.namespace
+			"name": "pvc-dkube-user",
+			"namespace": params.namespace,
+			"labels": {
+				"scope": "dkube"
+			}
 		},
 		"spec": {
 			"accessModes": [
@@ -45,7 +48,7 @@
 				}
 			},
 			"storageClassName": "",
-			"volumeName": "pv-d3minio"
+			"volumeName": "pv-dkube-user"
 		}
 	},
 
@@ -158,7 +161,7 @@
             "volumes": [
               {
                 "persistentVolumeClaim": {
-                  "claimName": "pvc-d3minio",
+                  "claimName": "pvc-dkube-user",
                 }, 
                 "name": "storage"
               }

@@ -57,12 +57,8 @@
 			    ], 
 			    "volumeMounts": [
 			    {
-				"mountPath": "/var/log/containerlogs", 
-				"name": "logs"
-			    }, 
-			    {
-				"mountPath": "/tmp/dkube/store", 
-				"name": "dkube-data"
+				"mountPath": "/tmp/dkube-user", 
+				"name": "dkube-user"
 			    }
 			    ]
 			}
@@ -86,16 +82,10 @@
 			"volumes": [
 			{
 				"persistentVolumeClaim": {
-					"claimName": "pvc-d3user-logs"
+					"claimName": "pvc-dkube-user"
 				},
-			    "name": "logs"
-			}, 
-			{
-				"persistentVolumeClaim": {
-					"claimName": "pvc-d3store"
-				},
-			    "name": "dkube-data"
-			}
+			    "name": "dkube-user"
+			} 
 			]
 		    }
 		}

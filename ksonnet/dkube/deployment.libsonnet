@@ -131,7 +131,7 @@
 			"volumes": [
 			{
 			    "persistentVolumeClaim": {
-				"claimName": "pvc-d3"
+				"claimName": "pvc-dkube-system-db"
 			    },
 			    "name": "etcd-data"
 			}
@@ -214,13 +214,9 @@
                 }
 			    ], 
 			    "volumeMounts": [
-			    {
-				"mountPath": mountPath, 
-				"name": "store"
-			    },
 				{
 				"mountPath": "/var/log/dkube",
-				"name": "dkube-logs-host"
+				"name": "dkube-logs"
 				}
 			    ]
 			}
@@ -239,17 +235,10 @@
 			"serviceAccount": "dkube", 
 			"volumes": [
 			{
-				"persistentVolumeClaim": {
-					"claimName": "pvc-d3store"
+				"persistentVolumeclaim": {
+					"claimName": "pvc-dkube-system-logs",
 				},
-			    "name": "store"
-			},
-			{
-				"hostPath": {
-					"path": "/var/log/dkube",
-					"type": "DirectoryOrCreate"
-				},
-				"name": "dkube-logs-host"
+				"name": "dkube-logs"
 			}
 			]
 		    }
