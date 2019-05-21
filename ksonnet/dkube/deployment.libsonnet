@@ -235,7 +235,7 @@
 			"serviceAccount": "dkube", 
 			"volumes": [
 			{
-				"persistentVolumeclaim": {
+				"persistentVolumeClaim": {
 					"claimName": "pvc-dkube-system-logs",
 				},
 				"name": "dkube-logs"
