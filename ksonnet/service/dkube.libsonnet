@@ -5,6 +5,7 @@
     $.parts(params.namespace).dkubeServiceAccount(),
     $.parts(params.namespace).dkubeClusterRoleBinding(params.dkubeClusterRole),
     $.parts(params.namespace).dkubeService(params.dkubeApiServerAddr),
+    $.parts(params.namespace).dkubeHeadlessService(params.dkubeApiServerAddr),
   ],
 
   parts(namespace):: {
@@ -99,7 +100,35 @@
         "namespace": namespace
       }, 
       "spec": {
-        "clusterIP": "None", 
+        "ports": [
+          {
+            "name": "dkube-d3api", 
+            "port": dkubeApiServerPort, 
+            "protocol": "TCP", 
+            "targetPort": dkubeApiServerPort
+          }
+        ], 
+        "selector": {
+          "app": "dkube-d3api"
+        }, 
+        "type": "ClusterIP"
+      }
+    }, //service
+    dkubeHeadlessService(dkubeApiServerAddr):: {
+      local dkubeApiServerAddrArray = std.split(dkubeApiServerAddr, ":"),
+      local dkubeApiServerPort = std.parseInt(dkubeApiServerAddrArray[std.length(dkubeApiServerAddrArray)-1]),
+
+      "apiVersion": "v1", 
+      "kind": "Service", 
+      "metadata": {
+        "labels": {
+          "app": "dkube-d3api"
+        }, 
+        "name": "dkube-d3api-headless", 
+        "namespace": namespace
+      }, 
+      "spec": {
+        "clusterIP": "None",
         "ports": [
           {
             "name": "dkube-d3api", 
