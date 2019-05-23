@@ -4,7 +4,7 @@
 		"apiVersion": "v1",
 		"kind": "PersistentVolume",
 		"metadata": {
-			"name": "pv-dkube-user",
+			"name": "pv-dkube-users",
 			"labels": {
 				"scope": "dkube"
 			}
@@ -18,7 +18,7 @@
 			},
 			"storageClassName": "",
 			"claimRef": {
-				"name": "pvc-dkube-user",
+				"name": "pvc-dkube-users",
 				"namespace": params.namespace
 			},
 			"nfs": {
@@ -32,7 +32,7 @@
 		"apiVersion": "v1",
 		"kind": "PersistentVolumeClaim",
 		"metadata": {
-			"name": "pvc-dkube-user",
+			"name": "pvc-dkube-users",
 			"namespace": params.namespace,
 			"labels": {
 				"scope": "dkube"
@@ -48,7 +48,7 @@
 				}
 			},
 			"storageClassName": "",
-			"volumeName": "pv-dkube-user"
+			"volumeName": "pv-dkube-users"
 		}
 	},
 
@@ -161,7 +161,7 @@
             "volumes": [
               {
                 "persistentVolumeClaim": {
-                  "claimName": "pvc-dkube-user",
+                  "claimName": "pvc-dkube-users",
                 }, 
                 "name": "storage"
               }
