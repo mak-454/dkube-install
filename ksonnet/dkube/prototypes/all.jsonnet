@@ -13,6 +13,7 @@
 // @optionalParam dkubeDockerSecret string  Docker secret for dkube images
 // @optionalParam filebeatImage string ocdr/dkube-filebeat:v2 Filebeat image
 // @optionalParam dkubeExtImage string ocdr/dkube-ext:alpha3 dkube-ext image
+// @optionalParam dkubeWatcherImage string ocdr/dkube-d3watcher:1.1.2 dkube-d3watcher image
 // @optionalParam tag string v1 tag for component
 // @optionalParam dkubeApiServerAddr string 0.0.0.0:5000 The address of dkube api server
 // @optionalParam dkubePVC string dkube-pvc The PVC for dkube etcd server
