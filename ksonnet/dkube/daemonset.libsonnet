@@ -82,7 +82,7 @@
 			"volumes": [
 			{
 				"persistentVolumeClaim": {
-					"claimName": "pvc-dkube-user"
+					"claimName": "pvc-dkube-users"
 				},
 			    "name": "dkube-user"
 			} 
