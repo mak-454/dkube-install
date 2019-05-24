@@ -213,7 +213,13 @@
                   "name": "NFS_SERVER",
                   "value": nfsServer
                 }
-			    ]
+                ],
+                "volumeMounts": [
+                    {
+                        "name": "dkube-logs-host",
+                        "mountPath": "/var/log/dkube"
+                    }
+                ]
 			}
 			], 
             "dnsConfig": {
@@ -227,8 +233,17 @@
                     }
                 ]
             },
-			"serviceAccount": "dkube"
-		    }
+            "serviceAccount": "dkube",
+            "volumes": [
+                {
+                    "name": "dkube-logs-host",
+                    "hostPath": {
+                        "path": "/var/log/dkube",
+                        "type": "DirectoryOrCreate"
+                    }
+                }
+            ]
+            }
 		}
 	    }
 	}, 
