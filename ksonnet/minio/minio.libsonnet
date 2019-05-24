@@ -1,57 +1,5 @@
 {
   all(params):: [
-	{
-		"apiVersion": "v1",
-		"kind": "PersistentVolume",
-		"metadata": {
-			"name": "pv-dkube-users",
-			"labels": {
-				"scope": "dkube"
-			}
-		},
-		"spec": {
-			"accessModes": [
-				"ReadWriteMany"
-			],
-			"capacity": {
-				"storage": "20Gi"
-			},
-			"storageClassName": "",
-			"claimRef": {
-				"name": "pvc-dkube-users",
-				"namespace": params.namespace
-			},
-			"nfs": {
-				"path": "/",
-				"server": params.nfsServer
-			},
-			"persistentVolumeReclaimPolicy": "Retain"
-		}
-	},
-	{
-		"apiVersion": "v1",
-		"kind": "PersistentVolumeClaim",
-		"metadata": {
-			"name": "pvc-dkube-users",
-			"namespace": params.namespace,
-			"labels": {
-				"scope": "dkube"
-			}
-		},
-		"spec": {
-			"accessModes": [
-				"ReadWriteMany"
-			],
-			"resources": {
-				"requests": {
-					"storage": "20Gi"
-				}
-			},
-			"storageClassName": "",
-			"volumeName": "pv-dkube-users"
-		}
-	},
-
     {
       "apiVersion": "v1", 
       "kind": "Service", 
@@ -160,9 +108,10 @@
             },
             "volumes": [
               {
-                "persistentVolumeClaim": {
-                  "claimName": "pvc-dkube-users",
-                }, 
+			    "nfs": {
+			    	"path": "/",
+			    	"server": params.nfsServer
+			    },
                 "name": "storage"
               }
             ]

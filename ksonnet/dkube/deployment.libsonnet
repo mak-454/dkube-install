@@ -1,7 +1,7 @@
 {
     all(params):: [
 	$.parts(params.namespace).logstash(params.tag, params.logstashImage, params.dkubeDockerSecret),
-	$.parts(params.namespace).dkubeEtcd(params.tag, params.dkubePVC),
+	$.parts(params.namespace).dkubeEtcd(params.tag, params.nfsServer),
 	$.parts(params.namespace).dkubeD3api(params.tag, params.dkubeApiServerImage, params.dkubeApiServerAddr, params.dkubeMountPath, params.dkubeApiServerAddr, params.rdmaEnabled, params.dkubeDockerSecret, params.minioSecretKey, params.nfsServer),
 	$.parts(params.namespace).dfabProxy(params.tag,params.dfabProxyImage, params.dkubeDockerSecret),
 	$.parts(params.namespace).ambassdor(params.tag),
@@ -70,7 +70,7 @@
 		}
 	    }
 	},
-	dkubeEtcd(tag, dkubePVC):: {
+	dkubeEtcd(tag, nfsServer):: {
 	    "apiVersion": "extensions/v1beta1",
 	    "kind": "Deployment",
 	    "metadata": {
@@ -130,8 +130,9 @@
             },
 			"volumes": [
 			{
-			    "persistentVolumeClaim": {
-				"claimName": "pvc-dkube-system-db"
+			    "nfs": {
+				    "server": nfsServer,
+                    "path": "/dkube-system/db"
 			    },
 			    "name": "etcd-data"
 			}
@@ -212,12 +213,6 @@
                   "name": "NFS_SERVER",
                   "value": nfsServer
                 }
-			    ], 
-			    "volumeMounts": [
-				{
-				"mountPath": "/var/log/dkube",
-				"name": "dkube-logs"
-				}
 			    ]
 			}
 			], 
@@ -232,15 +227,7 @@
                     }
                 ]
             },
-			"serviceAccount": "dkube", 
-			"volumes": [
-			{
-				"persistentVolumeClaim": {
-					"claimName": "pvc-dkube-system-logs",
-				},
-				"name": "dkube-logs"
-			}
-			]
+			"serviceAccount": "dkube"
 		    }
 		}
 	    }

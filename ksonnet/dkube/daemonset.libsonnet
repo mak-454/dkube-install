@@ -54,12 +54,6 @@
 				"name": "http-metrics", 
 				"protocol": "TCP"
 			    }
-			    ], 
-			    "volumeMounts": [
-			    {
-				"mountPath": "/tmp/dkube-user", 
-				"name": "dkube-user"
-			    }
 			    ]
 			}
 			], 
@@ -78,14 +72,6 @@
 			{
 			    "name": dkubeDockerSecret
 			}
-			], 
-			"volumes": [
-			{
-				"persistentVolumeClaim": {
-					"claimName": "pvc-dkube-users"
-				},
-			    "name": "dkube-user"
-			} 
 			]
 		    }
 		}

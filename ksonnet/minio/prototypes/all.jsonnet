@@ -7,6 +7,7 @@
 // @optionalParam minioSecretKey string The Secret Key for minio storage
 // @optionalParam StorageClass string  Storage class name
 // @optionalParam namespace string dkube Dkube-namespace
+// @optionalParam nfsServer string  NFS server IP
 
 local k = import "k.libsonnet";
 local all = import "dkube/minio/all.libsonnet";
