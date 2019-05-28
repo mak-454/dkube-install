@@ -1,6 +1,26 @@
 {
   all(params):: [
     {
+      "kind": "PersistentVolumeClaim",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "pvc-data",
+        "namespace": "dkube",
+        },
+      "spec": {
+        "accessModes": [
+          "ReadWriteMany"
+        ],
+        "storageClassName": params.StorageClass,
+        "resources": {
+          "requests": {
+            "storage": "75Gi"
+          }
+        },
+        "volumeName": params.StoragePV
+      }
+    },
+    {
       "apiVersion": "v1", 
       "kind": "Service", 
       "metadata": {
@@ -59,9 +79,9 @@
             ],
             "containers": [
               {
-                "args": [
-                  "server", 
-                  "/storage"
+                "command": [
+                  "sh", "-c",
+                  "mkdir /storage/data; minio server /storage;"
                 ], 
                 "env": [
                   {
@@ -108,9 +128,8 @@
             },
             "volumes": [
               {
-			    "nfs": {
-			    	"path": "/",
-			    	"server": params.nfsServer
+			    "persistentVolumeClaim": {
+			        "claimName": "pvc-data",
 			    },
                 "name": "storage"
               }
