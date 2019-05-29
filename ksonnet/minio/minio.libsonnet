@@ -9,7 +9,7 @@
         },
       "spec": {
         "accessModes": [
-          "ReadWriteMany"
+          "ReadWriteOnce"
         ],
         "storageClassName": params.StorageClass,
         "resources": {
