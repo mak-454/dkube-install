@@ -79,9 +79,9 @@
             ],
             "containers": [
               {
-                "command": [
-                  "sh", "-c",
-                  "mkdir -p /storage/data; minio server /storage;"
+                "args": [
+                  "server",
+                  "/storage"
                 ], 
                 "env": [
                   {
