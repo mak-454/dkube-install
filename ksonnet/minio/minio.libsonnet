@@ -81,7 +81,7 @@
               {
                 "command": [
                   "sh", "-c",
-                  "mkdir /storage/data; minio server /storage;"
+                  "mkdir -p /storage/data; minio server /storage;"
                 ], 
                 "env": [
                   {
