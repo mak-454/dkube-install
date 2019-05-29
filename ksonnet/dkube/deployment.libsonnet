@@ -218,6 +218,10 @@
                     {
                         "name": "dkube-logs-host",
                         "mountPath": "/var/log/dkube"
+                    },
+                    {
+                        "name": "dkube-system",
+                        "mountPath": mountPath
                     }
                 ]
 			}
@@ -240,6 +244,13 @@
                     "hostPath": {
                         "path": "/var/log/dkube",
                         "type": "DirectoryOrCreate"
+                    }
+                },
+                {
+                    "name": "dkube-system",
+                    "nfs": {
+                        "server": nfsServer,
+                        "path": "/dkube-system"
                     }
                 }
             ]
