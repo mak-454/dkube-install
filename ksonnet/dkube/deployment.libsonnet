@@ -4,11 +4,10 @@
 	$.parts(params.namespace).dkubeEtcd(params.tag, params.dkubePVC),
 	$.parts(params.namespace).dfabProxy(params.tag,params.dfabProxyImage, params.dkubeDockerSecret),
 	$.parts(params.namespace).dkubeWatcher(params.tag, params.dkubeWatcherImage, params.dkubeDockerSecret),
-	$.parts(params.namespace).ambassdor(params.tag),
+	$.parts(params.namespace).ambassdor(params.tag, params.ambassadorImage),
     ],
 
     parts(namespace):: {
-        local ambassadorImage = "quay.io/datawire/ambassador:0.53.1",
 	logstash(tag,logstashImage, dkubeDockerSecret):: {
 	    "apiVersion": "apps/v1", 
 	    "kind": "Deployment", 
@@ -310,97 +309,107 @@
         }
     },
     },
-      ambassdor(tag):: {
-        apiVersion: "extensions/v1beta1",
-        kind: "Deployment",
-        metadata: {
-          name: "ambassador-"+ tag ,
-          namespace: namespace,
-        },
-        spec: {
-          replicas: 1,
-          template: {
-            metadata: {
-              labels: {
-                service: "ambassador",
-              },
-              namespace: namespace,
+      ambassdor(tag, ambassadorImage):: {
+   "apiVersion": "extensions/v1beta1",
+   "kind": "Deployment",
+   "metadata": {
+      "name": "ambassador-" + tag,
+      "namespace": "dkube"
+   },
+   "spec": {
+      "replicas": 3,
+      "template": {
+         "metadata": {
+            "annotations": {
+               "sidecar.istio.io/inject": "false",
+               "consul.hashicorp.com/connect-inject": "false"
             },
-            spec: {
-              "nodeSelector": {
-                "d3.nodetype": "dkube"
-              },
-              "tolerations": [
-                {
-                  "operator": "Exists"
-                },
-              ],
-              containers: [
-                {
-                  env: [
-                    {
-                      name: "AMBASSADOR_NAMESPACE",
-                      valueFrom: {
-                        fieldRef: {
-                          fieldPath: "metadata.namespace",
-                        },
-                      },
-                    },
-                    {
-                      name: "AMBASSADOR_SINGLE_NAMESPACE",
-                      value: "false",
-                    },
+            "labels": {
+               "service": "ambassador"
+            }
+         },
+         "spec": {
+            "affinity": {
+               "podAntiAffinity": {
+                  "preferredDuringSchedulingIgnoredDuringExecution": [
+                     {
+                        "weight": 100,
+                        "podAffinityTerm": {
+                           "labelSelector": {
+                              "matchLabels": {
+                                 "service": "ambassador"
+                              }
+                           },
+                           "topologyKey": "kubernetes.io/hostname"
+                        }
+                     }
+                  ]
+               }
+            },
+            "serviceAccountName": "ambassador",
+            "containers": [
+               {
+                  "name": "ambassador",
+                  "image": ambassadorImage,
+                  "resources": {
+                     "limits": {
+                        "cpu": 1,
+                        "memory": "400Mi"
+                     },
+                     "requests": {
+                        "cpu": "200m",
+                        "memory": "100Mi"
+                     }
+                  },
+                  "env": [
+                     {
+                        "name": "AMBASSADOR_NAMESPACE",
+                        "valueFrom": {
+                           "fieldRef": {
+                              "fieldPath": "metadata.namespace"
+                           }
+                        }
+                     }
                   ],
-                  image: ambassadorImage,
-                  livenessProbe: {
-                    httpGet: {
-                      path: "/ambassador/v0/check_alive",
-                      port: 8877,
-                    },
-                    initialDelaySeconds: 30,
-                    periodSeconds: 30,
+                  "ports": [
+                     {
+                        "name": "http",
+                        "containerPort": 8080
+                     },
+                     {
+                        "name": "https",
+                        "containerPort": 8443
+                     },
+                     {
+                        "name": "admin",
+                        "containerPort": 8877
+                     }
+                  ],
+                  "livenessProbe": {
+                     "httpGet": {
+                        "path": "/ambassador/v0/check_alive",
+                        "port": 8877
+                     },
+                     "initialDelaySeconds": 30,
+                     "periodSeconds": 3
                   },
-                  name: "ambassador",
-                  readinessProbe: {
-                    httpGet: {
-                      path: "/ambassador/v0/check_ready",
-                      port: 8877,
-                    },
-                    initialDelaySeconds: 30,
-                    periodSeconds: 30,
-                  },
-                  resources: {
-                    limits: {
-                      cpu: 1,
-                      memory: "400Mi",
-                    },
-                    requests: {
-                      cpu: "200m",
-                      memory: "100Mi",
-                    },
-                  },
-                },
-                //{
-                //  image: "quay.io/datawire/statsd:0.30.1",
-                //  name: "statsd",
-                //},
-              ],
-            "dnsConfig": {
-                "options": [
-                    {
-                        "name": "single-request-reopen"
-                    },
-                    {
-                        "name": "timeout",
-                        "value": "30"
-                    }
-                ]
-            },
-              restartPolicy: "Always",
-              serviceAccountName: "ambassador",
-             },
-            },
-          },
+                  "readinessProbe": {
+                     "httpGet": {
+                        "path": "/ambassador/v0/check_ready",
+                        "port": 8877
+                     },
+                     "initialDelaySeconds": 30,
+                     "periodSeconds": 3
+                  }
+               }
+            ],
+            "restartPolicy": "Always",
+            "securityContext": {
+               "runAsUser": 8888
+            }
+         }
+      }
+   }
         }
     },
 }
