@@ -32,6 +32,25 @@
 			}
 		    }, 
 		    "spec": {
+                        "affinity": {
+                            "nodeAffinity": {
+                                "requiredDuringSchedulingIgnoredDuringExecution": {
+                                    "nodeSelectorTerms": [
+                                        {
+                                            "matchExpressions": [
+                                                {
+                                                    "key": "d3.dkube",
+                                                    "operator": "In",
+                                                    "values": [
+                                                        "yes"
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            }
+                        },
 			"containers": [
 			{
 			    "env": [
