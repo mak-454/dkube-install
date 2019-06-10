@@ -3,7 +3,7 @@
 	$.parts(params.namespace).logstash(params.tag, params.logstashImage, params.dkubeDockerSecret),
 	$.parts(params.namespace).dkubeEtcd(params.tag, params.dkubePVC),
 	$.parts(params.namespace).dfabProxy(params.tag,params.dfabProxyImage, params.dkubeDockerSecret),
-	$.parts(params.namespace).dkubeWatcher(params.tag, params.dkubeWatcherImage, params.dkubeDockerSecret),
+	$.parts(params.namespace).dkubeWatcher(params.tag, params.dkubeWatcherImage, params.dkubeDockerSecret, params.isRdmaEnabled),
 	$.parts(params.namespace).ambassdor(params.tag),
     ],
 
@@ -233,7 +233,7 @@
 		}
 	    },
 	},
-	dkubeWatcher(tag , dkubeWatcherImage, dkubeDockerSecret):: {
+	dkubeWatcher(tag , dkubeWatcherImage, dkubeDockerSecret, isRdmaEnabled):: {
 	        "apiVersion": "extensions/v1beta1",
     "kind": "Deployment",
     "metadata": {
@@ -263,7 +263,11 @@
                             {
                                 "name": "DKUBE_SERVICE_ACCOUNT",
                                 "value": "dkube"
-                            }
+                            },
+							{
+								"name": "RDMA_ENABLED",
+								"value": std.toString(isRdmaEnabled)
+							}
                         ],
                         "image": dkubeWatcherImage,
                         "imagePullPolicy": "IfNotPresent",
