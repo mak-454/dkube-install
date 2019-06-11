@@ -1,5 +1,6 @@
 {
   all(params):: [
+    $.parts(params.namespace).katibServiceMapping(),
     $.parts(params.namespace).grafanaServiceMapping(),
     $.parts(params.namespace).prometheusServiceMapping(),
     $.parts(params.namespace).dkubeServiceAccount(),
@@ -10,6 +11,22 @@
 
   parts(namespace):: {
 
+    katibServiceMapping():: {
+      "apiVersion": "v1",
+      "kind": "Service",
+      "metadata": {
+        "annotations": {
+          "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  \"katib\"\ntimeout_ms: 600000\nuse_websocket: true\nprefix: \"/katib\"\nrewrite: \"/katib\"\nservice: \"katib-ui.kubeflow:80\""
+        },
+        "name": "katib-maping-service",
+        "namespace": "dkube"
+      },
+      "spec": {
+        "clusterIP": "None",
+        "sessionAffinity": "None",
+        "type": "ClusterIP"
+      }
+    },
     grafanaServiceMapping():: {
       "apiVersion": "v1", 
       "kind": "Service", 

@@ -162,12 +162,12 @@
                   "--configmap",
                   "workflow-controller-configmap",
                   "--executor-image",
-                  "argoproj/argoexec:v2.2.0"
+                  "argoproj/argoexec:v2.3.0"
                 ],
                 "command": [
                   "workflow-controller"
                 ],
-                "image": "argoproj/workflow-controller:v2.2.0",
+                "image": "argoproj/workflow-controller:v2.3.0",
                 "name": "workflow-controller"
               }
             ],
