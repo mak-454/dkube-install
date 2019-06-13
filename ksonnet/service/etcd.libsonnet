@@ -1,6 +1,26 @@
 {
     all(params):: [
     {
+      "kind": "PersistentVolumeClaim",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "etcd-pvc",
+        "namespace": "dkube",
+        },
+      "spec": {
+        "accessModes": [
+          "ReadWriteMany"
+        ],
+        "storageClassName": "",
+        "resources": {
+          "requests": {
+            "storage": "50Gi"
+          }
+        },
+        "volumeName": "d3etcd"
+      }
+    },
+    {
 	"apiVersion": "v1",
 	    "kind": "Service",
 	    "metadata": {

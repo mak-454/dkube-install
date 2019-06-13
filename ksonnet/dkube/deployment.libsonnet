@@ -1,7 +1,7 @@
 {
     all(params):: [
 	$.parts(params.namespace).logstash(params.tag, params.logstashImage, params.dkubeDockerSecret),
-	$.parts(params.namespace).dkubeEtcd(params.tag, params.dkubePVC),
+	$.parts(params.namespace).dkubeEtcd(params.tag, params.etcdPVC),
 	$.parts(params.namespace).dfabProxy(params.tag,params.dfabProxyImage, params.dkubeDockerSecret),
 	$.parts(params.namespace).dkubeWatcher(params.tag, params.dkubeWatcherImage, params.dkubeDockerSecret),
 	$.parts(params.namespace).ambassdor(params.tag),
@@ -86,7 +86,7 @@
 		}
 	    }
 	},
-	dkubeEtcd(tag, dkubePVC):: {
+	dkubeEtcd(tag, etcdPVC):: {
 	    "apiVersion": "extensions/v1beta1",
 	    "kind": "Deployment",
 	    "metadata": {
@@ -147,7 +147,7 @@
 			"volumes": [
 			{
 			    "persistentVolumeClaim": {
-				"claimName": dkubePVC
+				"claimName": etcdPVC
 			    },
 			    "name": "etcd-data"
 			}
