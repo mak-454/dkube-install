@@ -110,7 +110,7 @@
                     {
                         "nfs": {
                             "server": nfsServer,
-                            "path": "/"
+                            "path": "/dkube"
                         },
                         "name": "store"
                     },
