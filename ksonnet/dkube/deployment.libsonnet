@@ -76,7 +76,7 @@
             "volumes": [
 	              {
 	                "nfs": {
-	                   "path": "/system/logs",
+	                   "path": "/dkube/system/logs",
 	                   "server": nfsServer
 	                 },
 	                  "name": "logs"
