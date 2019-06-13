@@ -1,6 +1,6 @@
 {
     all(params):: [
-	$.parts(params.namespace).logstash(params.tag, params.logstashImage, params.dkubeDockerSecret),
+	$.parts(params.namespace).logstash(params.tag, params.logstashImage, params.dkubeDockerSecret, params.nfsServer),
 	$.parts(params.namespace).dkubeEtcd(params.tag, params.etcdPVC),
 	$.parts(params.namespace).dfabProxy(params.tag,params.dfabProxyImage, params.dkubeDockerSecret),
 	$.parts(params.namespace).dkubeWatcher(params.tag, params.dkubeWatcherImage, params.dkubeDockerSecret),
@@ -9,7 +9,7 @@
 
     parts(namespace):: {
         local ambassadorImage = "quay.io/datawire/ambassador:0.53.1",
-	logstash(tag,logstashImage, dkubeDockerSecret):: {
+	logstash(tag,logstashImage, dkubeDockerSecret, nfsServer):: {
 	    "apiVersion": "apps/v1", 
 	    "kind": "Deployment", 
 	    "metadata": {
@@ -56,8 +56,8 @@
 			    "resources": {},
                             "volumeMounts": [
                                {
-                                  "mountPath": "/var/nfs/logstash/logs",
-                                  "name": "nfsserver"
+                                  "mountPath": "/opt/logstash/logs",
+                                  "name": "logs"
                                 }
                              ]
 			}
@@ -75,11 +75,11 @@
             },
             "volumes": [
 	              {
-	                "hostPath": {
-	                   "path": "/var/nfs/data/logs",
-	                   "type": ""
+	                "nfs": {
+	                   "path": "/system/logs",
+	                   "server": nfsServer
 	                 },
-	                  "name": "nfsserver"
+	                  "name": "logs"
 	                }
 	              ]
 		    }
