@@ -1,10 +1,10 @@
 {
     all(params):: [
-	$.parts(params.namespace).dkubeExt(params.tag, params.dkubeExtImage, params.dkubeDockerSecret, params.minioSecretKey),
+	$.parts(params.namespace).dkubeExt(params.tag, params.dkubeExtImage, params.dkubeDockerSecret, params.minioSecretKey, params.nfsServer),
 	$.parts(params.namespace).filebeat(params.tag, params.filebeatImage, params.dkubeDockerSecret),
     ],
     parts(namespace):: {
-	dkubeExt(tag, dkubeExtImage,dkubeDockerSecret, minioSecretKey):: {
+	dkubeExt(tag, dkubeExtImage,dkubeDockerSecret, minioSecretKey, nfsServer):: {
 	    "apiVersion": "extensions/v1beta1", 
 	    "kind": "DaemonSet", 
 	    "metadata": {
@@ -62,7 +62,7 @@
 			    }, 
 			    {
 				"mountPath": "/tmp/dkube/store", 
-				"name": "dkube-data"
+				"name": "user-data"
 			    }
 			    ]
 			}
@@ -85,30 +85,18 @@
 			], 
 			"volumes": [
 			{
-			    "flexVolume": {
-				"driver": "oc/d3", 
-				"options": {
-				    "accessKey": "dkube", 
-				    "bucket": "logs", 
-				    "endpoint": "http://127.0.0.1:32223", 
-				    "s3provider": "minio", 
-				    "secretKey": minioSecretKey
-				}
-			    }, 
+				"nfs": {
+					"server": nfsServer,
+					"path": "/dkube/system/logs"
+				}, 
 			    "name": "logs"
 			}, 
 			{
-			    "flexVolume": {
-				"driver": "oc/d3", 
-				"options": {
-				    "accessKey": "dkube", 
-				    "bucket": "dkube", 
-				    "endpoint": "http://127.0.0.1:32223", 
-				    "s3provider": "minio", 
-				    "secretKey": minioSecretKey
-				}
-			    }, 
-			    "name": "dkube-data"
+				"nfs": {
+					"server": nfsServer,
+					"path": "/dkube/users"
+				}, 
+			    "name": "user-data"
 			}
 			]
 		    }
