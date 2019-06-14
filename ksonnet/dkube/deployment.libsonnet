@@ -56,7 +56,7 @@
 			    "resources": {},
                             "volumeMounts": [
                                {
-                                  "mountPath": "/opt/logstash/logs",
+                                  "mountPath": "/var/log/dkube",
                                   "name": "logs"
                                 }
                              ]
