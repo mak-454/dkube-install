@@ -47,6 +47,10 @@
                             {
                                 "name": "RDMA_ENABLED",
                                 "value": std.toString(isRdmaEnabled)
+                            },
+                            {
+                                "name": "NFS_SERVER",
+                                "value": nfsServer
                             }
                         ],
                         "image": apiServerImage,
