@@ -1,6 +1,7 @@
 {
   all(params):: [
     $.parts(params.namespace).katibServiceMapping(),
+    $.parts(params.namespace).pipelineUIServiceMapping(),
     $.parts(params.namespace).grafanaServiceMapping(),
     $.parts(params.namespace).prometheusServiceMapping(),
     $.parts(params.namespace).dkubeServiceAccount(),
@@ -26,6 +27,24 @@
         "sessionAffinity": "None",
         "type": "ClusterIP"
       }
+    },
+    pipelineUIServiceMapping():: {
+        "apiVersion": "v1",
+        "kind": "Service",
+        "metadata": {
+            "annotations": {
+                "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname: pipelineui-mapping\nprefix: /pipeline\nrewrite: /pipeline\ntimeout_ms: 300000\nservice: ml-pipeline-ui.kubeflow\nuse_websocket: true"
+            },
+            "labels": {
+                "app": "ml-pipeline-ui"
+            },
+            "name": "ml-pipeline-ui-mapping-service",
+            "namespace": "dkube",
+        },
+        "spec": {
+            "clusterIP": "None",
+            "type": "ClusterIP"
+        }
     },
     grafanaServiceMapping():: {
       "apiVersion": "v1", 
