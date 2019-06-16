@@ -1,10 +1,10 @@
 {
     all(params):: [
-	$.parts(params.namespace).dkubeD3api(params.tag, params.dkubeApiServerImage, params.dkubeApiServerAddr, params.dkubeMountPath, params.dkubeApiServerAddr, params.rdmaEnabled, params.dkubeDockerSecret, params.minioSecretKey),
+	$.parts(params.namespace).dkubeD3api(params.tag, params.dkubeApiServerImage, params.dkubeApiServerAddr, params.dkubeMountPath, params.dkubeApiServerAddr, params.rdmaEnabled, params.dkubeDockerSecret, params.minioSecretKey, params.nfsServer),
     ],
 
     parts(namespace):: {
-	dkubeD3api(tag, apiServerImage, apiServerAddr, mountPath, dkubeApiServerAddr, isRdmaEnabled, dkubeDockerSecret, minioSecretKey):: {
+	dkubeD3api(tag, apiServerImage, apiServerAddr, mountPath, dkubeApiServerAddr, isRdmaEnabled, dkubeDockerSecret, minioSecretKey, nfsServer):: {
 	    local dkubeApiServerAddrArray = std.split(dkubeApiServerAddr, ":"),
 	    local dkubeApiServerPort = std.parseInt(dkubeApiServerAddrArray[std.length(dkubeApiServerAddrArray)-1]),
 
@@ -47,6 +47,10 @@
                             {
                                 "name": "RDMA_ENABLED",
                                 "value": std.toString(isRdmaEnabled)
+                            },
+                            {
+                                "name": "NFS_SERVER",
+                                "value": nfsServer
                             }
                         ],
                         "image": apiServerImage,
@@ -70,10 +74,6 @@
                             {
                                 "mountPath": mountPath,
                                 "name": "store"
-                            },
-                            {
-                                "mountPath": "/var/log/minio/dkube",
-                                "name": "dkube-logs"
                             },
                             {
                                 "mountPath": "/var/log/dkube",
@@ -112,31 +112,11 @@
                 ],
                 "volumes": [
                     {
-                        "flexVolume": {
-                            "driver": "oc/d3",
-                            "options": {
-                                "accessKey": "dkube",
-                                "bucket": "dkube",
-                                "endpoint": "http://127.0.0.1:32223",
-                                "s3provider": "minio",
-                                "secretKey": minioSecretKey
-                            }
+                        "nfs": {
+                            "server": nfsServer,
+                            "path": "/dkube"
                         },
                         "name": "store"
-                    },
-                    {
-                        "flexVolume": {
-                            "driver": "oc/d3",
-                            "options": {
-                                "accessKey": "dkube",
-                                "bucket": "logs",
-                                "endpoint": "http://127.0.0.1:32223",
-                                "prefix": "dkube",
-                                "s3provider": "minio",
-                                "secretKey": minioSecretKey
-                            }
-                        },
-                        "name": "dkube-logs"
                     },
                     {
                         "hostPath": {
