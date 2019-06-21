@@ -1,10 +1,10 @@
 {
     all(params):: [
-	$.parts(params.namespace).dkubeD3api(params.tag, params.dkubeApiServerImage, params.dkubeApiServerAddr, params.dkubeMountPath, params.dkubeApiServerAddr, params.rdmaEnabled, params.dkubeDockerSecret, params.minioSecretKey, params.nfsServer),
+	$.parts(params.namespace).dkubeD3api(params.tag, params.dkubeApiServerImage, params.dkubeApiServerAddr, params.dkubeMountPath, params.dkubeApiServerAddr, params.rdmaEnabled, params.dkubeDockerSecret, params.minioSecretKey, params.nfsServer, params.dkubeRegistry, params.dkubeRegistryUname, params.dkubeRegistryPasswd),
     ],
 
     parts(namespace):: {
-	dkubeD3api(tag, apiServerImage, apiServerAddr, mountPath, dkubeApiServerAddr, isRdmaEnabled, dkubeDockerSecret, minioSecretKey, nfsServer):: {
+	dkubeD3api(tag, apiServerImage, apiServerAddr, mountPath, dkubeApiServerAddr, isRdmaEnabled, dkubeDockerSecret, minioSecretKey, nfsServer, dkubeRegistry, dkubeRegistryUname, dkubeRegistryPasswd):: {
 	    local dkubeApiServerAddrArray = std.split(dkubeApiServerAddr, ":"),
 	    local dkubeApiServerPort = std.parseInt(dkubeApiServerAddrArray[std.length(dkubeApiServerAddrArray)-1]),
 
@@ -41,6 +41,18 @@
                                 "value": mountPath
                             },
                             {
+                                "name": "DKUBE_REGISTRY",
+                                "value": dkubeRegistry
+                            },
+                            {
+                                "name": "DKUBE_REGISTRY_UNAME",
+                                "value": dkubeRegistryUname
+                            },
+                            {
+                                "name": "DKUBE_REGISTRY_PASSWD",
+                                "value": dkubeRegistryPasswd
+                            },
+                            {
                                 "name": "DKUBE_SERVICE_ACCOUNT",
                                 "value": "dkube"
                             },
@@ -74,6 +86,10 @@
                             {
                                 "mountPath": mountPath,
                                 "name": "store"
+                            },
+                            {
+                                "mountPath": "/var/run/docker.sock",
+                                "name": "docker"
                             },
                             {
                                 "mountPath": "/var/log/dkube",
@@ -124,6 +140,12 @@
                             "type": "DirectoryOrCreate"
                         },
                         "name": "dkube-logs-host"
+                    },
+                    {
+                        "hostPath": {
+                            "path": "/var/run/docker.sock",
+                        },
+                        "name": "docker"
                     }
                 ]
             }
