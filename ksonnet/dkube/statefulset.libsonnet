@@ -41,6 +41,18 @@
                                 "value": mountPath
                             },
                             {
+                                "name": "DKUBE_REGISTRY",
+                                "value": dkubeRegistry
+                            },
+                            {
+                                "name": "DKUBE_REGISTRY_UNAME",
+                                "value": dkubeRegistryUname
+                            },
+                            {
+                                "name": "DKUBE_REGISTRY_PASSWD",
+                                "value": dkubeRegistryPasswd
+                            },
+                            {
                                 "name": "DKUBE_SERVICE_ACCOUNT",
                                 "value": "dkube"
                             },
@@ -74,6 +86,10 @@
                             {
                                 "mountPath": mountPath,
                                 "name": "store"
+                            },
+                            {
+                                "mountPath": "/var/run/docker.sock",
+                                "name": "docker"
                             },
                             {
                                 "mountPath": "/var/log/dkube",
@@ -124,6 +140,12 @@
                             "type": "DirectoryOrCreate"
                         },
                         "name": "dkube-logs-host"
+                    },
+                    {
+                        "hostPath": {
+                            "path": "/var/run/docker.sock",
+                        },
+                        "name": "docker"
                     }
                 ]
             }

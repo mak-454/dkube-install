@@ -18,6 +18,9 @@
 // @optionalParam dkubeApiServerAddr string 0.0.0.0:5000 The address of dkube api server
 // @optionalParam etcdPVC string etcd-pvc The PVC for dkube etcd server
 // @optionalParam nfsServer string 1.2.3.4 The ip of nfs server
+// @optionalParam dkubeRegistry string docker.io Dkube container registry
+// @optionalParam dkubeRegistryUname string  Dkube container registry username
+// @optionalParam dkubeRegistryPasswd string  Dkube container registry password
 
 local k = import "k.libsonnet";
 local all = import "dkube/dkube/all.libsonnet";
