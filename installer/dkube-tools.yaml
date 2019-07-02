@@ -30,10 +30,10 @@ spec:
       - image: ocdr/dkube-docs:1.2.1
         name: docs
         imagePullPolicy: IfNotPresent
-        imagePullSecrets:
-          - name: dkube-dockerhub-secret
         ports:
         - containerPort: 8888
+      imagePullSecrets:
+      - name: dkube-dockerhub-secret
 ---
 apiVersion: v1
 kind: Service
