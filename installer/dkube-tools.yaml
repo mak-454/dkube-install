@@ -1,7 +1,3 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: dkube-tools
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -314,12 +310,3 @@ subjects:
 - kind: ServiceAccount
   name: ambassador
   namespace: dkube-tools
----
-apiVersion: v1
-data:
-  .dockerconfigjson: eyJhdXRocyI6eyJkb2NrZXIuaW8vb2NkciI6eyJ1c2VybmFtZSI6Imx1Y2lmZXIwMDEiLCJwYXNzd29yZCI6Imx1Y2lmZXJAZGt1YmUiLCJlbWFpbCI6Im9jZGxnaXRAb25lY29udmVyZ2VuY2UuY29tIiwiYXV0aCI6ImJIVmphV1psY2pBd01UcHNkV05wWm1WeVFHUnJkV0psIn19fQ==
-kind: Secret
-metadata:
-  name: dkube-dockerhub-secret
-  namespace: dkube-tools
-type: kubernetes.io/dockerconfigjson
