@@ -270,6 +270,12 @@
                             "protocol": "TCP"
                         }
                         ],
+                        "volumeMounts": [
+                        {
+                            "mountPath": "/var/log/dkube",
+                            "name": "dkube-logs-host"
+                        }
+                        ]
                     }
                     ],
                     "dnsConfig": {
@@ -292,6 +298,15 @@
                     "nodeSelector": {
                         "d3.nodetype": "dkube"
                     },
+                    "volumes": [
+                    {
+                        "hostPath": {
+                            "path": "/var/log/dkube",
+                            "type": "DirectoryOrCreate"
+                        },
+                        "name": "dkube-logs-host"
+                    }
+                    ]
                 }
             }
         },
