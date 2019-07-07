@@ -8,6 +8,7 @@
     $.parts(params.namespace).dkubeClusterRoleBinding(params.dkubeClusterRole),
     $.parts(params.namespace).dkubeService(params.dkubeApiServerAddr),
     $.parts(params.namespace).dkubeHeadlessService(params.dkubeApiServerAddr),
+    $.parts(params.namespace).dkubeAuthService(),
   ],
 
   parts(namespace):: {
@@ -178,7 +179,29 @@
         }, 
         "type": "ClusterIP"
       }
-    } //service
+    }, //service
+    dkubeAuthService():: {
+        "apiVersion": "v1",
+        "kind": "Service",
+        "metadata": {
+            "name": "dkube-auth",
+            "namespace": namespace,
+        },
+        "spec": {
+            "ports": [
+            {
+                "name": "dkube-auth",
+                "port": 3000,
+                "protocol": "TCP",
+                "targetPort": "http-api"
+            }
+            ],
+            "selector": {
+                "app": "dkube-auth"
+            },
+            "type": "ClusterIP"
+        }
+    }
   }, // parts
 }
 
