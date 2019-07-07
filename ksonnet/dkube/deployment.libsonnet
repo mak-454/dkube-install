@@ -4,6 +4,7 @@
 	$.parts(params.namespace).dkubeEtcd(params.tag, params.etcdPVC),
 	$.parts(params.namespace).dfabProxy(params.tag,params.dfabProxyImage, params.dkubeDockerSecret),
 	$.parts(params.namespace).dkubeWatcher(params.tag, params.dkubeWatcherImage, params.dkubeDockerSecret),
+	$.parts(params.namespace).dkubeAuth(params.tag, params.dkubeAuthImage, params.dkubeDockerSecret),
 	$.parts(params.namespace).ambassdor(params.tag),
     ],
 
@@ -233,6 +234,68 @@
 		}
 	    },
 	},
+    dkubeAuth(tag, dkubeAuthImage, dkubeDockerSecret):: {
+        "apiVersion": "extensions/v1beta1",
+        "kind": "Deployment",
+        "metadata": {
+            "labels": {
+                "app": "dkube-auth"
+            },
+            "name": "dkube-auth-" + tag,
+            "namespace": "dkube",
+        },
+        "spec": {
+            "replicas": 2,
+            "selector": {
+                "matchLabels": {
+                    "app": "dkube-auth"
+                }
+            },
+            "template": {
+                "metadata": {
+                    "labels": {
+                        "app": "dkube-auth"
+                    }
+                },
+                "spec": {
+                    "containers": [
+                    {
+                        "image": dkubeAuthImage,
+                        "imagePullPolicy": "IfNotPresent",
+                        "name": "dkube-auth",
+                        "ports": [
+                        {
+                            "containerPort": 3000,
+                            "name": "http-api",
+                            "protocol": "TCP"
+                        }
+                        ],
+                    }
+                    ],
+                    "dnsConfig": {
+                        "options": [
+                        {
+                            "name": "single-request-reopen"
+                        },
+                        {
+                            "name": "timeout",
+                            "value": "30"
+                        }
+                        ]
+                    },
+                    "dnsPolicy": "ClusterFirst",
+                    "imagePullSecrets": [
+                    {
+                        "name": dkubeDockerSecret
+                    }
+                    ],
+                    "nodeSelector": {
+                        "d3.nodetype": "dkube"
+                    },
+                }
+            }
+        },
+    },
 	dkubeWatcher(tag , dkubeWatcherImage, dkubeDockerSecret):: {
 	        "apiVersion": "extensions/v1beta1",
     "kind": "Deployment",
