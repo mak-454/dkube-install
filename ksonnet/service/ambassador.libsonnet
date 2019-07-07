@@ -14,7 +14,6 @@
       metadata: {
         annotations: {
             "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind: Module\nname: tls\nconfig:\n  server:\n    enabled: True\n    secret: dkube-certificate-secret\n    alpn_protocols: h2\n---\napiVersion: ambassador/v1\nkind:  AuthService\nname:  authentication\nauth_service: \"dkube-auth:3000\"\n"
-            "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind: Module\nname: tls\nconfig:\n  server:\n    enabled: True\n    secret: dkube-certificate-secret\n    alpn_protocols: h2\n"
         },
         labels: {
           service: "ambassador",
