@@ -26,6 +26,9 @@
       "metadata": {
         "name": "workflow-controller-configmap",
         "namespace": "dkube"
+      },
+      "data": {
+        "config": "instanceID: dkube\n"
       }
     },
     
