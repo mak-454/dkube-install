@@ -23,9 +23,12 @@
     {
 	"apiVersion": "v1",
 	    "kind": "Service",
-	    "metadata": {
-		"name": "dkube-etcd-server",
-		"namespace": "dkube"
+        "metadata": {
+            "annotations": {
+                "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_etcd\nprefix: /dkube/v2/etcd/\nrewrite: /\ntimeout_ms: 600000\nservice: dkube-etcd-server:2379"
+            },
+            "name": "dkube-etcd-server",
+            "namespace": "dkube"
 	    },
 	    "spec": {
 		"ports": [
