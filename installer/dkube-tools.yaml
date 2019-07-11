@@ -18,7 +18,7 @@ spec:
         inference: webapp
     spec:
       containers:
-      - image: ocdr/dkube-d3inf:1.2.1
+      - image: ocdr/dkube-d3inf:1.2.2
         imagePullPolicy: IfNotPresent
         name: inference
         ports:
@@ -310,3 +310,33 @@ subjects:
 - kind: ServiceAccount
   name: ambassador
   namespace: dkube-tools
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    getambassador.io/config: |-
+      ---
+      apiVersion: ambassador/v0
+      kind:  Mapping
+      name:  dkube_webapp_predict
+      prefix: /predict
+      rewrite: /predict
+      timeout_ms: 600000
+      service: dkube-webapp.dkube-tools:8000
+      cors:
+       origins: "*"
+       methods: "*"
+       headers: "*"
+  name: dkube-webapp
+  namespace: dkube
+spec:
+  ports:
+  - name: serve
+    port: 8000
+    protocol: TCP
+    targetPort: 8000
+  selector:
+    inference: webapp
+  type: ClusterIP
+
