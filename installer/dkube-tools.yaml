@@ -18,7 +18,7 @@ spec:
         inference: webapp
     spec:
       containers:
-      - image: ocdr/dkube-d3inf:1.2.1
+      - image: ocdr/dkube-d3inf:1.2.2
         imagePullPolicy: IfNotPresent
         name: inference
         ports:
