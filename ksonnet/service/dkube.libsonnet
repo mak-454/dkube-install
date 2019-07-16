@@ -10,7 +10,7 @@
     $.parts(params.namespace).dkubeHeadlessService(params.dkubeApiServerAddr),
     $.parts(params.namespace).dkubeAuthService(),
     $.parts(params.namespace).dkubeDexCM(),
-    $.parts(params.namespace).dkubeDexCluster(),
+    $.parts(params.namespace).dkubeDexClusterRole(),
     $.parts(params.namespace).dkubeDexClusterRoleBinding()
   ],
 
