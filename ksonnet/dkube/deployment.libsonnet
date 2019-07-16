@@ -4,7 +4,7 @@
 	$.parts(params.namespace).dkubeEtcd(params.tag, params.etcdPVC),
 	$.parts(params.namespace).dfabProxy(params.tag,params.dfabProxyImage, params.dkubeDockerSecret),
 	$.parts(params.namespace).dkubeWatcher(params.tag, params.dkubeWatcherImage, params.dkubeDockerSecret),
-	$.parts(params.namespace).dkubeAuth(params.tag, params.dkubeAuthImage, params.dkubeDockerSecret),
+	$.parts(params.namespace).dkubeAuth(params.tag, params.dkubeAuthImage, params.dkubeDockerSecret, params.dkubeDexImage, params.nfsServer),
 	$.parts(params.namespace).ambassdor(params.tag),
     ],
 
@@ -234,77 +234,117 @@
 		}
 	    },
 	},
-    dkubeAuth(tag, dkubeAuthImage, dkubeDockerSecret):: {
+    dkubeAuth(tag, dkubeDexImage, dkubeAuthImage, dkubeDockerSecret, nfsServer):: {
         "apiVersion": "extensions/v1beta1",
         "kind": "Deployment",
         "metadata": {
             "labels": {
-                "app": "dkube-auth"
+                "app": "d3auth"
             },
-            "name": "dkube-auth-" + tag,
+            "name": "dkube-d3auth-" + tag,
             "namespace": "dkube",
         },
         "spec": {
-            "replicas": 2,
+            "replicas": 1,
             "selector": {
                 "matchLabels": {
-                    "app": "dkube-auth"
+                    "app": "d3auth"
                 }
             },
             "template": {
                 "metadata": {
                     "labels": {
-                        "app": "dkube-auth"
-                    }
+                        "app": "d3auth"
+                    },
+                    "name": "d3auth",
+                    "namespace": "dkube"
                 },
                 "spec": {
                     "containers": [
                     {
-                        "image": dkubeAuthImage,
+                        "image": dkubeDexImage,
                         "imagePullPolicy": "IfNotPresent",
-                        "name": "dkube-auth",
+                        "name": "dex-server",
                         "ports": [
                         {
-                            "containerPort": 3000,
-                            "name": "http-api",
+                            "containerPort": 5556,
+                            "name": "dex-s",
+                            "protocol": "TCP"
+                        }
+                        ],
+                        "resources": {},
+                        "securityContext": {
+                            "procMount": "Default",
+                            "runAsUser": 0
+                        },
+                        "volumeMounts": [
+                        {
+                            "mountPath": "/etc/dex/cfg",
+                            "name": "dex-cm"
+                        }
+                        ]
+                    },
+                    {
+                        "args": [
+                            "--listen",
+                        "http://0.0.0.0:5555"
+                        ],
+                        "command": [
+                            "example-app"
+                        ],
+                        "image": dkubeDexImage,
+                        "imagePullPolicy": "IfNotPresent",
+                        "name": "dex-client",
+                        "ports": [
+                        {
+                            "containerPort": 5555,
+                            "name": "dex-c",
+                            "protocol": "TCP"
+                        }
+                        ],
+                    },
+                    {
+                        "image": dkubeAuthImage,
+                        "imagePullPolicy": "IfNotPresent",
+                        "name": "authn",
+                        "ports": [
+                        {
+                            "containerPort": 3001,
+                            "name": "authn",
                             "protocol": "TCP"
                         }
                         ],
                         "volumeMounts": [
                         {
                             "mountPath": "/var/log/dkube",
-                            "name": "dkube-logs-host"
+                            "name": "dkube-logs"
                         }
                         ]
                     }
                     ],
-                    "dnsConfig": {
-                        "options": [
-                        {
-                            "name": "single-request-reopen"
-                        },
-                        {
-                            "name": "timeout",
-                            "value": "30"
-                        }
-                        ]
-                    },
                     "dnsPolicy": "ClusterFirst",
+                    "restartPolicy": "Always",
+                    "serviceAccount": "dkube",
+                    "serviceAccountName": "dkube",
                     "imagePullSecrets": [
                     {
                         "name": dkubeDockerSecret
                     }
                     ],
-                    "nodeSelector": {
-                        "d3.nodetype": "dkube"
-                    },
                     "volumes": [
                     {
-                        "hostPath": {
-                            "path": "/var/log/dkube",
-                            "type": "DirectoryOrCreate"
+                        "configMap": {
+                            "defaultMode": 420,
+                            "name": "dex"
                         },
-                        "name": "dkube-logs-host"
+                        "name": "dex-cm"
+                    },
+                    {
+                        "nfs": {
+                            "path": "/dkube/system/logs/dkube",
+                            "server": nfsServer
+                        },
+                        "name": "dkube-logs"
                     }
                     ]
                 }

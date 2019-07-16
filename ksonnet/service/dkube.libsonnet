@@ -9,6 +9,9 @@
     $.parts(params.namespace).dkubeService(params.dkubeApiServerAddr),
     $.parts(params.namespace).dkubeHeadlessService(params.dkubeApiServerAddr),
     $.parts(params.namespace).dkubeAuthService(),
+    $.parts(params.namespace).dkubeDexCM(),
+    $.parts(params.namespace).dkubeDexCluster(),
+    $.parts(params.namespace).dkubeDexClusterRoleBinding()
   ],
 
   parts(namespace):: {
@@ -184,24 +187,103 @@
         "apiVersion": "v1",
         "kind": "Service",
         "metadata": {
-            "name": "dkube-auth",
-            "namespace": namespace,
+            "annotations": {
+                "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  d3auth-login\nprefix: /dkube/v2/login\nrewrite: /login\ntimeout_ms: 600000\nservice: d3auth:3001\n---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  d3auth-logout\nprefix: /dkube/v2/logout\nrewrite: /logout\ntimeout_ms: 600000\nservice: d3auth:3001"
+            },
+            "labels": {
+                "app": "d3auth"
+            },
+            "name": "dkube-d3auth",
+            "namespace": "dkube",
         },
         "spec": {
             "ports": [
             {
-                "name": "dkube-auth",
-                "port": 3000,
+                "name": "dex-s",
+                "port": 5556,
                 "protocol": "TCP",
-                "targetPort": "http-api"
+                "targetPort": 5556
+            },
+            {
+                "name": "dex-c",
+                "port": 5555,
+                "protocol": "TCP",
+                "targetPort": 5555
+            },
+            {
+                "name": "authn",
+                "port": 3001,
+                "protocol": "TCP",
+                "targetPort": 3001
             }
             ],
             "selector": {
-                "app": "dkube-auth"
+                "app": "d3auth"
             },
             "type": "ClusterIP"
+        },
+    },
+    dkubeDexCM():: {
+        "apiVersion": "v1",
+        "data": {
+            "config.yaml": "issuer: http://127.0.0.1:5556/dex\nstorage:\n  type: kubernetes\n  config:\n    inCluster: true\nweb:\n  http: 0.0.0.0:5556\ntelemetry:\n  http: 0.0.0.0:5558\nexpiry:\n  idTokens: \"72h\"\nstaticClients:\n- id: dkube-app\n  redirectURIs:\n  - 'http://127.0.0.1:5555/callback'\n  name: 'Dkube App'\n  secret: ZXhhbXBsZS1hcHAtc2VjcmV0\nconnectors:\n- type: dkube\n  id: dkube\n  name: Dkube\n  config:\n    username: fake\n    password: fakeAgain\nenablePasswordDB: true\nstaticPasswords:\n- email: \"admin@example.com\"\n  # bcrypt hash of the string \"password\"\n  hash: \"$2a$10$2b2cU8CPhOTaGrs1HRQuAueS7JTT5ZHsHSzYiFPm1leZck7Mc8T4W\"\n  username: \"admin\"\n  userID: \"08a8684b-db88-4b73-90a9-3cd1661f5466\"\n"
+        },
+        "kind": "ConfigMap",
+        "metadata": {
+            "name": "dex",
+            "namespace": "dkube",
         }
-    }
+    },
+    dkubeDexClusterRole():: {
+        "apiVersion": "rbac.authorization.k8s.io/v1",
+        "kind": "ClusterRole",
+        "metadata": {
+            "name": "dex",
+        },
+        "rules": [
+        {
+            "apiGroups": [
+                "dex.coreos.com"
+            ],
+            "resources": [
+                "*"
+            ],
+            "verbs": [
+                "*"
+            ]
+        },
+        {
+            "apiGroups": [
+                "apiextensions.k8s.io"
+            ],
+            "resources": [
+                "customresourcedefinitions"
+            ],
+            "verbs": [
+                "create"
+            ]
+        }
+        ]
+    },
+    dkubeDexClusterRoleBinding():: {
+        "apiVersion": "rbac.authorization.k8s.io/v1",
+        "kind": "ClusterRoleBinding",
+        "metadata": {
+            "name": "dex",
+        },
+        "roleRef": {
+            "apiGroup": "rbac.authorization.k8s.io",
+            "kind": "ClusterRole",
+            "name": "dex"
+        },
+        "subjects": [
+        {
+            "kind": "ServiceAccount",
+            "name": "dkube",
+            "namespace": "dkube"
+        }
+        ]
+    },
   }, // parts
 }
 
