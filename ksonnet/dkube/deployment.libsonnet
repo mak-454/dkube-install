@@ -234,7 +234,7 @@
 		}
 	    },
 	},
-    dkubeAuth(tag, dkubeDexImage, dkubeAuthImage, dkubeDockerSecret, nfsServer):: {
+    dkubeAuth(tag, dkubeAuthImage, dkubeDockerSecret, dkubeDexImage, nfsServer):: {
         "apiVersion": "extensions/v1beta1",
         "kind": "Deployment",
         "metadata": {
