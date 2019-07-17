@@ -9,10 +9,10 @@
             "metadata": {
                 "labels": {
                     "app.kubernetes.io/deploy-manager": "ksonnet",
-                    "ksonnet.io/component": "monitoring"
+                    "ksonnet.io/component": "dkube"
                 },
                 "name": "dkube-grafana-init",
-                "namespace": "monitoring",
+                "namespace": "dkube",
             }
     },
    {
@@ -32,7 +32,7 @@
             "app.kubernetes.io/deploy-manager": "ksonnet"
         },
         "name": "dkube-grafana-dashboard",
-        "namespace": "monitoring",
+        "namespace": "dkube",
     }
   }
     ]

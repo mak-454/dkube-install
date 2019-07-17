@@ -1,6 +1,82 @@
 {
   all(params):: [
-
+    {
+      "apiVersion": "rbac.authorization.k8s.io/v1", 
+      "kind": "Role", 
+      "metadata": {
+        "labels": {
+          "app": "dkube-prometheus-grafana"
+        }, 
+        "name": "dkube-prometheus-grafana", 
+        "namespace": "monitoring"
+      }, 
+      "rules": [
+        {
+          "apiGroups": [
+            "extensions"
+          ], 
+          "resourceNames": [
+            "kube-prometheus-grafana"
+          ], 
+          "resources": [
+            "podsecuritypolicies"
+          ], 
+          "verbs": [
+            "use"
+          ]
+        }
+      ]
+    },
+    {
+      "apiVersion": "rbac.authorization.k8s.io/v1", 
+      "kind": "RoleBinding", 
+      "metadata": {
+        "labels": {
+          "app": "dkube-prometheus-grafana"
+        }, 
+        "name": "dkube-prometheus-grafana", 
+        "namespace": "monitoring"
+      }, 
+      "roleRef": {
+        "apiGroup": "rbac.authorization.k8s.io", 
+        "kind": "Role", 
+        "name": "dkube-prometheus-grafana"
+      }, 
+      "subjects": [
+        {
+          "kind": "ServiceAccount", 
+          "name": "dkube-prometheus-grafana", 
+          "namespace": "dkube"
+        }
+      ]
+    },
+    {
+      "apiVersion": "v1", 
+      "kind": "ServiceAccount", 
+      "metadata": {
+        "labels": {
+          "app": "dkube-prometheus-grafana"
+        }, 
+        "name": "dkube-prometheus-grafana", 
+        "namespace": "dkube"
+      }
+    },
+    {
+      "apiVersion": "v1", 
+      "data": {
+        "password": "YWRtaW4=", 
+        "user": "YWRtaW4="
+      }, 
+      "kind": "Secret", 
+      "metadata": {
+        "labels": {
+          "app": "dkube-prometheus-grafana"
+        }, 
+        "name": "dkube-prometheus-grafana", 
+        "namespace": "dkube"
+      }, 
+      "type": "Opaque"
+    },
     {
       "apiVersion": "extensions/v1beta1", 
       "kind": "Deployment", 
@@ -13,7 +89,7 @@
           "release": "kube-prometheus"
         }, 
         "name": "dkube-grafana", 
-        "namespace": "monitoring"
+        "namespace": "dkube"
       }, 
       "spec": {
         "progressDeadlineSeconds": 600, 
@@ -168,8 +244,8 @@
             "restartPolicy": "Always", 
             "schedulerName": "default-scheduler", 
             "securityContext": {}, 
-            "serviceAccount": "kube-prometheus-grafana", 
-            "serviceAccountName": "kube-prometheus-grafana", 
+            "serviceAccount": "dkube-prometheus-grafana", 
+            "serviceAccountName": "dkube-prometheus-grafana", 
             "terminationGracePeriodSeconds": 30, 
             "volumes": [
               {
@@ -204,7 +280,7 @@
           "app": "dkube-prometheus-grafana"
         }, 
         "name": "dkube-grafana", 
-        "namespace": "monitoring"
+        "namespace": "dkube"
       }, 
       "spec": {
         "ports": [

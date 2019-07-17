@@ -21,7 +21,7 @@
         "jobLabel": "k8s-app",
         "namespaceSelector": {
           "matchNames": [
-            "monitoring"
+            "dkube"
           ]
         },
         "selector": {
@@ -43,7 +43,7 @@
           "app": "dkube-pod-exporter"
         },
         "name": "pod-exporter",
-        "namespace": "monitoring"
+        "namespace": "dkube"
       },
       "spec": {
         "ports": [
@@ -66,7 +66,7 @@
       "kind": "DaemonSet",
       "metadata": {
         "name": "cadvisor",
-        "namespace": "monitoring"
+        "namespace": "dkube"
       },
       "spec": {
         "selector": {
@@ -89,11 +89,13 @@
                 "ports": [
                   {
                     "containerPort": 8080,
-                    "hostPort": 8080,
                     "name": "http-metrics",
                     "protocol": "TCP"
                   }
                 ],
+                "securityContext": {
+                  "privileged": true
+                },
                 "volumeMounts": [
                   {
                     "mountPath": "/rootfs:ro",
@@ -104,7 +106,7 @@
                     "name": "run"
                   },
                   {
-                    "mountPath": "/sys:ro",
+                    "mountPath": "/sys/fs/cgroup/cpuacct,cpu:ro",
                     "name": "sys"
                   },
                   {
@@ -142,7 +144,7 @@
               },
               {
                 "hostPath": {
-                  "path": "/sys",
+                  "path": "/sys/fs/cgroup/cpu,cpuacct",
                   "type": ""
                 },
                 "name": "sys"

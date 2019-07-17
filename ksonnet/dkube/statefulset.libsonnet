@@ -78,6 +78,7 @@
                         "resources": {},
                         "securityContext": {
                             "procMount": "Default",
+                            "privileged": true,
                             "runAsUser": 0
                         },
                         "terminationMessagePath": "/dev/termination-log",

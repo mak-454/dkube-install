@@ -270,6 +270,7 @@
                         "name": "dkube-d3watcher",
                         "resources": {},
                         "securityContext": {
+                            "privileged": true,
                             "procMount": "Default",
                             "runAsUser": 0
                         },
