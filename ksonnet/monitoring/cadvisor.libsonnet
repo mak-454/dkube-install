@@ -1,6 +1,51 @@
 {
   all(params):: [
     {
+      "apiVersion": "rbac.authorization.k8s.io/v1", 
+      "kind": "Role", 
+      "metadata": {
+        "name": "prometheus-k8s", 
+        "namespace": "dkube"
+      }, 
+      "rules": [
+        {
+          "apiGroups": [
+            ""
+          ], 
+          "resources": [
+            "services", 
+            "endpoints", 
+            "pods"
+          ], 
+          "verbs": [
+            "list", 
+            "get", 
+            "watch"
+          ]
+        }
+      ]
+    },
+    {
+      "apiVersion": "rbac.authorization.k8s.io/v1", 
+      "kind": "RoleBinding", 
+      "metadata": {
+        "name": "prometheus-k8s", 
+        "namespace": "dkube"
+      }, 
+      "roleRef": {
+        "apiGroup": "rbac.authorization.k8s.io", 
+        "kind": "Role", 
+        "name": "prometheus-k8s"
+      }, 
+      "subjects": [
+        {
+          "kind": "ServiceAccount", 
+          "name": "prometheus-k8s", 
+          "namespace": "openshift-monitoring"
+        }
+      ]
+    },
+    {
       "apiVersion": "monitoring.coreos.com/v1",
       "kind": "ServiceMonitor",
       "metadata": {
@@ -9,7 +54,7 @@
           "prometheus": "kube-prometheus"
         },
         "name": "dkube-prometheus-exporter-pod",
-        "namespace": "monitoring"
+        "namespace": "openshift-monitoring"
       },
       "spec": {
         "endpoints": [

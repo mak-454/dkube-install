@@ -307,7 +307,7 @@
           "prometheus": "kube-prometheus"
         }, 
         "name": "dkube-prometheus-exporter-gpu", 
-        "namespace": "monitoring"
+        "namespace": "openshift-monitoring"
       }, 
       "spec": {
         "endpoints": [
