@@ -304,6 +304,7 @@
       "metadata": {
         "labels": {
           "app": "prometheus", 
+          "k8s-app": "prometheus", 
           "prometheus": "kube-prometheus"
         }, 
         "name": "dkube-prometheus-exporter-gpu", 

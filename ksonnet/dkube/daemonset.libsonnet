@@ -48,6 +48,11 @@
 			    "image": dkubeExtImage, 
 			    "imagePullPolicy": "IfNotPresent", 
 			    "name": "dkube-ext", 
+			    "securityContext": {
+			        "seLinuxOptions": {
+			            "type": "nvidia_container_t"
+			        }
+			    },
 			    "ports": [
 			    {
 				"containerPort": 9401, 
