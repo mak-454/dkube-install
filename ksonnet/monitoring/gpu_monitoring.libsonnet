@@ -16,7 +16,7 @@
             "extensions"
           ], 
           "resourceNames": [
-            "kube-prometheus-grafana"
+            "dkube-prometheus-grafana"
           ], 
           "resources": [
             "podsecuritypolicies"
@@ -140,7 +140,7 @@
                     "valueFrom": {
                       "secretKeyRef": {
                         "key": "user", 
-                        "name": "kube-prometheus-grafana"
+                        "name": "dkube-prometheus-grafana"
                       }
                     }
                   }, 
@@ -149,7 +149,7 @@
                     "valueFrom": {
                       "secretKeyRef": {
                         "key": "password", 
-                        "name": "kube-prometheus-grafana"
+                        "name": "dkube-prometheus-grafana"
                       }
                     }
                   }
@@ -201,7 +201,7 @@
                     "valueFrom": {
                       "secretKeyRef": {
                         "key": "user", 
-                        "name": "kube-prometheus-grafana"
+                        "name": "dkube-prometheus-grafana"
                       }
                     }
                   }, 
@@ -210,7 +210,7 @@
                     "valueFrom": {
                       "secretKeyRef": {
                         "key": "password", 
-                        "name": "kube-prometheus-grafana"
+                        "name": "dkube-prometheus-grafana"
                       }
                     }
                   }

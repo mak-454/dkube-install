@@ -28,7 +28,7 @@
     "kind": "ConfigMap",
     "metadata": {
         "labels": {
-            "app": "kube-prometheus-grafana",
+            "app": "dkube-prometheus-grafana",
             "app.kubernetes.io/deploy-manager": "ksonnet"
         },
         "name": "dkube-grafana-dashboard",
