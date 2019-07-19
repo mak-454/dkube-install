@@ -5,7 +5,7 @@
      "kind": "Service",
      "metadata": {
        "annotations": {
-         "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_monitoring\nprefix: /dkube/grafana/\nrewrite: /\nservice: dkube-grafana.monitoring:80\ntimeout_ms: 600000\nuse_websocket: true"
+         "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_monitoring\nprefix: /dkube/grafana/\nrewrite: /\nservice: dkube-grafana.dkube:80\ntimeout_ms: 600000\nuse_websocket: true"
        },
        "labels": {
          "app": "dkube-prometheus-grafana"
