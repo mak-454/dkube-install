@@ -165,6 +165,10 @@
 			    "imagePullPolicy": "IfNotPresent",
 			    "name": "filebeat",
 			    "resources": {},
+			    "securityContext": {
+			        "privileged": true,
+			        "runAsUser": 0
+			    },
 			    "terminationMessagePath": "/dev/termination-log",
 			    "terminationMessagePolicy": "File",
 			    "volumeMounts": [
