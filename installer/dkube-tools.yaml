@@ -18,12 +18,12 @@ spec:
         inference: webapp
     spec:
       containers:
-      - image: ocdr/dkube-d3inf:1.2.2
+      - image: ocdr/dkube-d3inf:DKUBE_VERSION
         imagePullPolicy: IfNotPresent
         name: inference
         ports:
         - containerPort: 8000
-      - image: ocdr/dkube-docs:1.2.1
+      - image: ocdr/dkube-docs:DKUBE_VERSION
         name: docs
         imagePullPolicy: IfNotPresent
         ports:
