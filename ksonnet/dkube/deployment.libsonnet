@@ -4,7 +4,7 @@
 	$.parts(params.namespace).dkubeEtcd(params.tag, params.etcdPVC),
 	$.parts(params.namespace).dfabProxy(params.tag,params.dfabProxyImage, params.dkubeDockerSecret),
 	$.parts(params.namespace).dkubeWatcher(params.tag, params.dkubeWatcherImage, params.dkubeDockerSecret),
-	$.parts(params.namespace).dkubeAuth(params.tag, params.dkubeAuthImage, params.dkubeDockerSecret, params.dkubeDexImage, params.nfsServer),
+	$.parts(params.namespace).dkubeAuth(params.tag, params.dkubeAuthImage, params.dkubeDockerSecret, params.nfsServer),
 	$.parts(params.namespace).ambassdor(params.tag),
     ],
 
@@ -234,7 +234,7 @@
 		}
 	    },
 	},
-    dkubeAuth(tag, dkubeAuthImage, dkubeDockerSecret, dkubeDexImage, nfsServer):: {
+    dkubeAuth(tag, dkubeAuthImage, dkubeDockerSecret, nfsServer):: {
         "apiVersion": "extensions/v1beta1",
         "kind": "Deployment",
         "metadata": {
@@ -262,9 +262,14 @@
                 "spec": {
                     "containers": [
                     {
-                        "image": dkubeDexImage,
+                        "image": dkubeAuthImage,
                         "imagePullPolicy": "IfNotPresent",
                         "name": "dex-server",
+                        "command": [
+                            "/opt/dkube/dex",
+                            "serve",
+                            "/etc/dex/cfg/config.yaml"
+                        ],
                         "ports": [
                         {
                             "containerPort": 5556,
@@ -283,25 +288,6 @@
                             "name": "dex-cm"
                         }
                         ]
-                    },
-                    {
-                        "args": [
-                            "--listen",
-                        "http://0.0.0.0:5555"
-                        ],
-                        "command": [
-                            "example-app"
-                        ],
-                        "image": dkubeDexImage,
-                        "imagePullPolicy": "IfNotPresent",
-                        "name": "dex-client",
-                        "ports": [
-                        {
-                            "containerPort": 5555,
-                            "name": "dex-c",
-                            "protocol": "TCP"
-                        }
-                        ],
                     },
                     {
                         "image": dkubeAuthImage,
