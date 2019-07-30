@@ -1,10 +1,10 @@
 {
     all(params):: [
-	$.parts(params.namespace).dkubeExt(params.tag, params.dkubeExtImage, params.dkubeDockerSecret, params.minioSecretKey, params.nfsServer),
+	$.parts(params.namespace).dkubeExt(params.tag, params.dkubeExtImage, params.dkubeDockerSecret, params.minioSecretKey, params.nfsServer, params.platform),
 	$.parts(params.namespace).filebeat(params.tag, params.filebeatImage, params.dkubeDockerSecret),
     ],
     parts(namespace):: {
-	dkubeExt(tag, dkubeExtImage,dkubeDockerSecret, minioSecretKey, nfsServer):: {
+	dkubeExt(tag, dkubeExtImage,dkubeDockerSecret, minioSecretKey, nfsServer, platform):: {
 	    "apiVersion": "extensions/v1beta1", 
 	    "kind": "DaemonSet", 
 	    "metadata": {
@@ -43,11 +43,22 @@
 					"fieldPath": "spec.nodeName"
 				    }
 				}
+			    },
+			    ] + (
+			    if platform == "gke" then [
+			    {
+			    "name": "LD_LIBRARY_PATH",
+			    "value": "/usr/local/nvidia/lib64"
 			    }
-			    ], 
+			    ] else []
+			    ),
 			    "image": dkubeExtImage, 
 			    "imagePullPolicy": "IfNotPresent", 
-			    "name": "dkube-ext", 
+			    "name": "dkube-ext",
+			    "securityContext":
+			    {
+			        "privileged": if platform == "gke" then true else false
+			    },
 			    "ports": [
 			    {
 				"containerPort": 9401, 
@@ -64,7 +75,14 @@
 				"mountPath": "/tmp/dkube/store", 
 				"name": "user-data"
 			    }
-			    ]
+                ] + (
+			    if platform == "gke" then [
+			    {
+			    "mountPath": "/usr/local/nvidia",
+			    "name": "nvidia-lib"
+			    }
+			    ] else []
+			    )
 			}
 			], 
             "dnsConfig": {
@@ -98,7 +116,17 @@
 				}, 
 			    "name": "user-data"
 			}
-			]
+			]+ (
+			if platform == "gke" then
+			[
+		    {
+		        "name": "nvidia-lib",
+		        "hostPath": {
+		            "path" : "/home/kubernetes/bin/nvidia"   
+		        },
+		    }
+			] else []
+			)
 		    }
 		}
 	    }
