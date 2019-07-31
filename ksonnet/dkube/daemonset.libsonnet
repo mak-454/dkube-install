@@ -32,6 +32,22 @@
 			}
 		    }, 
 		    "spec": {
+                "affinity": {
+                    "nodeAffinity": {
+                        "requiredDuringSchedulingIgnoredDuringExecution": {
+                            "nodeSelectorTerms": [
+                            {
+                                "matchExpressions": [
+                                {
+                                    "key": "Accelerator",
+                                    "operator": "Exists"
+                                }
+                                ]
+                            }
+                            ]
+                        }
+                    }
+                },
 			"containers": [
 			{
 			    "env": [
