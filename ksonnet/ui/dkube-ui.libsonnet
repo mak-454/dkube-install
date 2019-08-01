@@ -32,9 +32,6 @@
                 "name": dkubeDockerSecret
               }
             ],
-            "nodeSelector": {
-              "d3.nodetype": "dkube"
-            },
             "tolerations": [
               {
                 "operator": "Exists"

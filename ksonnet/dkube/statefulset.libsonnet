@@ -115,9 +115,6 @@
                         "name": dkubeDockerSecret
                     }
                 ],
-                "nodeSelector": {
-                    "d3.nodetype": "dkube"
-                },
                 "restartPolicy": "Always",
                 "serviceAccount": "dkube",
                 "serviceAccountName": "dkube",

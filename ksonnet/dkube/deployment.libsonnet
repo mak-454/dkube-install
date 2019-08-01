@@ -35,9 +35,6 @@
 			    "name": dkubeDockerSecret
 			}
 			],
-			"nodeSelector": {
-				"d3.nodetype": "dkube"
-			},
 			"tolerations": [
 				{
 					"operator": "Exists"
@@ -106,9 +103,6 @@
 			}
 		    },
 		    "spec": {
-			"nodeSelector": {
-				"d3.nodetype": "dkube"
-			},
 			"tolerations": [
 				{
 					"operator": "Exists"
@@ -190,9 +184,6 @@
 			}
 		    },
 		    "spec": {
-			"nodeSelector": {
-				"d3.nodetype": "dkube"
-			},
 			"tolerations": [
 				{
 					"operator": "Exists"
@@ -300,9 +291,6 @@
                         "name": dkubeDockerSecret
                     }
                 ],
-                "nodeSelector": {
-                    "d3.nodetype": "dkube"
-                },
                 "restartPolicy": "Always",
                 "schedulerName": "default-scheduler",
                 "securityContext": {},
@@ -343,9 +331,6 @@
               namespace: namespace,
             },
             spec: {
-              "nodeSelector": {
-                "d3.nodetype": "dkube"
-              },
               "tolerations": [
                 {
                   "operator": "Exists"
