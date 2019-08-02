@@ -63,7 +63,10 @@
 			    ], 
 			    "image": dkubeExtImage, 
 			    "imagePullPolicy": "IfNotPresent", 
-			    "name": "dkube-ext", 
+			    "name": "dkube-ext",
+			    "securityContext": {
+			        "privileged": true
+			    },
 			    "ports": [
 			    {
 				"containerPort": 9401, 
@@ -79,7 +82,11 @@
 			    {
 				"mountPath": "/tmp/dkube/store", 
 				"name": "user-data"
-			    }
+			    },
+			    {
+			    "mountPath": "/usr/local/nvidia/lib64",
+			    "name": "nvidia-lib"
+                }
 			    ]
 			}
 			], 
@@ -113,6 +120,12 @@
 					"path": "/dkube/users"
 				}, 
 			    "name": "user-data"
+			},
+			{
+			    "hostPath": {
+			        "path": "/usr/lib64/nvidia"
+			    },
+			    "name": "nvidia-lib"
 			}
 			]
 		    }

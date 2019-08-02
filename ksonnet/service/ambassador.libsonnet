@@ -8,34 +8,36 @@
   ],
 
   parts(namespace):: {
-    service(nodePort):: {
-      apiVersion: "v1",
-      kind: "Service",
-      metadata: {
-        annotations: {
-            "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind: Module\nname: tls\nconfig:\n  server:\n    enabled: True\n    secret: dkube-certificate-secret\n    alpn_protocols: h2\n"
-        },
-        labels: {
-          service: "ambassador",
-        },
-        name: "ambassador",
-        namespace: namespace,
-      },
-      spec: {
-        ports: [
-          {
-            name: "ambassador",
-            port: 443,
-            nodePort: nodePort,
-            targetPort: 443,
+      service(nodePort):: {
+          "apiVersion": "v1",
+          "kind": "Service",
+          "metadata": {
+              "annotations": {
+                  "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind: Module\nname: tls\nconfig:\n  server:\n    enabled: True\n    secret: dkube-certificate-secret\n    alpn_protocols: h2\n---\napiVersion: ambassador/v1\nkind:  AuthService\nname:  d3-auth\nauth_service: dkube-d3auth:3001\nallowed_authorization_headers:\n- \"d3-uname\"\n- \"d3-role\"\n",
+              },
+              "labels": {
+                  "service": "ambassador"
+              },
+              "name": "ambassador",
+              "namespace": "dkube",
           },
-        ],
-        selector: {
-          service: "ambassador",
-        },
-        type: "NodePort",
-      },
-    },  // service
+          "spec": {
+              "externalTrafficPolicy": "Cluster",
+              "ports": [
+              {
+                  "name": "ambassador",
+                  "nodePort": nodePort,
+                  "port": 443,
+                  "protocol": "TCP",
+                  "targetPort": 443
+              }
+              ],
+              "selector": {
+                  "service": "ambassador"
+              },
+              "type": "NodePort"
+          },
+      },  // service
 
     adminService:: {
       apiVersion: "v1",

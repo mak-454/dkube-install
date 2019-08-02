@@ -4,6 +4,7 @@
 	$.parts(params.namespace).dkubeEtcd(params.tag, params.etcdPVC),
 	$.parts(params.namespace).dfabProxy(params.tag,params.dfabProxyImage, params.dkubeDockerSecret),
 	$.parts(params.namespace).dkubeWatcher(params.tag, params.dkubeWatcherImage, params.dkubeDockerSecret),
+	$.parts(params.namespace).dkubeAuth(params.tag, params.dkubeAuthImage, params.dkubeDockerSecret, params.nfsServer),
 	$.parts(params.namespace).ambassdor(params.tag),
     ],
 
@@ -233,6 +234,109 @@
 		}
 	    },
 	},
+    dkubeAuth(tag, dkubeAuthImage, dkubeDockerSecret, nfsServer):: {
+        "apiVersion": "extensions/v1beta1",
+        "kind": "Deployment",
+        "metadata": {
+            "labels": {
+                "app": "d3auth"
+            },
+            "name": "dkube-d3auth-" + tag,
+            "namespace": "dkube",
+        },
+        "spec": {
+            "replicas": 1,
+            "selector": {
+                "matchLabels": {
+                    "app": "d3auth"
+                }
+            },
+            "template": {
+                "metadata": {
+                    "labels": {
+                        "app": "d3auth"
+                    },
+                    "name": "d3auth",
+                    "namespace": "dkube"
+                },
+                "spec": {
+                    "containers": [
+                    {
+                        "image": dkubeAuthImage,
+                        "imagePullPolicy": "IfNotPresent",
+                        "name": "dex-server",
+                        "command": [
+                            "/opt/dkube/dex",
+                            "serve",
+                            "/etc/dex/cfg/config.yaml"
+                        ],
+                        "ports": [
+                        {
+                            "containerPort": 5556,
+                            "name": "dex-s",
+                            "protocol": "TCP"
+                        }
+                        ],
+                        "resources": {},
+                        "securityContext": {
+                            "procMount": "Default",
+                            "runAsUser": 0
+                        },
+                        "volumeMounts": [
+                        {
+                            "mountPath": "/etc/dex/cfg",
+                            "name": "dex-cm"
+                        }
+                        ]
+                    },
+                    {
+                        "image": dkubeAuthImage,
+                        "imagePullPolicy": "IfNotPresent",
+                        "name": "authn",
+                        "ports": [
+                        {
+                            "containerPort": 3001,
+                            "name": "authn",
+                            "protocol": "TCP"
+                        }
+                        ],
+                        "volumeMounts": [
+                        {
+                            "mountPath": "/var/log/dkube",
+                            "name": "dkube-logs"
+                        }
+                        ]
+                    }
+                    ],
+                    "dnsPolicy": "ClusterFirst",
+                    "restartPolicy": "Always",
+                    "serviceAccount": "dkube",
+                    "serviceAccountName": "dkube",
+                    "imagePullSecrets": [
+                    {
+                        "name": dkubeDockerSecret
+                    }
+                    ],
+                    "volumes": [
+                    {
+                        "configMap": {
+                            "defaultMode": 420,
+                            "name": "dex"
+                        },
+                        "name": "dex-cm"
+                    },
+                    {
+                        "nfs": {
+                            "path": "/dkube/system/logs/dkube",
+                            "server": nfsServer
+                        },
+                        "name": "dkube-logs"
+                    }
+                    ]
+                }
+            }
+        },
+    },
 	dkubeWatcher(tag , dkubeWatcherImage, dkubeDockerSecret):: {
 	        "apiVersion": "extensions/v1beta1",
     "kind": "Deployment",
