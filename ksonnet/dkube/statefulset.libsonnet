@@ -18,7 +18,7 @@
         "namespace": namespace,
     },
     "spec": {
-        "replicas": 2,
+        "replicas": 1,
         "selector": {
             "matchLabels": {
                 "app": "dkube-d3api"
