@@ -317,6 +317,9 @@
                         "name": dkubeDockerSecret
                     }
                     ],
+                    "nodeSelector": {
+                        "d3.nodetype": "dkube"
+                    },
                     "volumes": [
                     {
                         "configMap": {
