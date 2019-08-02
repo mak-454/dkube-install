@@ -4,6 +4,7 @@
     $.parts(params.namespace).pipelineUIServiceMapping(),
     $.parts(params.namespace).grafanaServiceMapping(),
     $.parts(params.namespace).prometheusServiceMapping(),
+    $.parts(params.namespace).kubeflowArgoUIServiceMapping(),
     $.parts(params.namespace).dkubeServiceAccount(),
     $.parts(params.namespace).dkubeClusterRoleBinding(params.dkubeClusterRole),
     $.parts(params.namespace).dkubeService(params.dkubeApiServerAddr),
@@ -94,6 +95,22 @@
 		"clusterIP": "None", 
 		"sessionAffinity": "None", 
 		"type": "ClusterIP"
+	  }
+	},
+    kubeflowArgoUIServiceMapping():: {
+	  "apiVersion": "v1",
+	  "kind": "Service",
+	  "metadata": {
+	  	"annotations": {
+	  		"getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname: argoui-mapping\nprefix: \"/argo/logs/\"\nrewrite: \"/api/logs/\"\ntimeout_ms: 300000\nservice: \"argo-ui.kubeflow:80\"\nuse_websocket: true"
+	  	},
+	  	"name": "argo-ui-mapping-service",
+	  	"namespace": "dkube"
+	  },
+	  "spec": {
+	  	"clusterIP": "None",
+	  	"sessionAffinity": "None",
+	  	"type": "ClusterIP"
 	  }
 	},
     dkubeServiceAccount():: {
