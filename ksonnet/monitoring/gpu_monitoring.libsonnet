@@ -8,7 +8,7 @@
           "app": "dkube-prometheus-grafana"
         }, 
         "name": "dkube-prometheus-grafana", 
-        "namespace": "monitoring"
+        "namespace": "dkube"
       }, 
       "rules": [
         {
@@ -35,7 +35,7 @@
           "app": "dkube-prometheus-grafana"
         }, 
         "name": "dkube-prometheus-grafana", 
-        "namespace": "monitoring"
+        "namespace": "dkube"
       }, 
       "roleRef": {
         "apiGroup": "rbac.authorization.k8s.io", 
