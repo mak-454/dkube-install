@@ -609,7 +609,7 @@
 	                   "nfs": {
                             "path": "/dkube/users",
                             "server": nfsServer
-                       },"name": "filebeat"
+                       },
                       "name": "user-data"     
 	                
 	                }
