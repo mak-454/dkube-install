@@ -8,13 +8,9 @@
             "kind": "Service",
             "metadata": {
                 "annotations": {
-                    "prometheus.io/port": "9401",
-                    "prometheus.io/scrape": "true"
+                   "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_downloader\nuse_websocket: true\nprefix: /dkube/v2/ext\nrewrite: /dkube/v2\ntimeout_ms: 0\nservice: dkube-d3downloader:9401\ncors:\n origins: \"*\"\n methods: \"*\"\n headers: \"*\""
                 },
-                "labels": {
-                    "app": "dkube-gpu-exporter"
-                },
-                "name": "dkube-ext",
+                "name": "dkube-d3downloader",
                 "namespace": "dkube"
             },
             "spec": {
@@ -27,7 +23,7 @@
                 }
                 ],
                 "selector": {
-                    "app": "dkube-ext"
+                    "app": "dkube-d3downloader"
                 },
                 "type": "ClusterIP"
             }

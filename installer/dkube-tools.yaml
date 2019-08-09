@@ -30,6 +30,10 @@ spec:
         - containerPort: 8888
       imagePullSecrets:
       - name: dkube-dockerhub-secret
+      nodeSelector: 
+        d3.nodetype: "dkube"
+      tolerations: 
+       - operator: Exists
 ---
 apiVersion: v1
 kind: Service
