@@ -6,6 +6,7 @@
 	$.parts(params.namespace).dkubeWatcher(params.tag, params.dkubeWatcherImage, params.dkubeDockerSecret),
 	$.parts(params.namespace).dkubeAuth(params.tag, params.dkubeAuthImage, params.dkubeDockerSecret, params.nfsServer),
 	$.parts(params.namespace).ambassdor(params.tag),
+	$.parts(params.namespace).dkubeDownloader(params.tag, params.dkubeDownloaderImage, params.dkubeDockerSecret, params.nfsServer),
     ],
 
     parts(namespace):: {
@@ -525,6 +526,97 @@
              },
             },
           },
-        }
+        },
+    dkubeDownloader(tag,dkubeDownloaderImage, dkubeDockerSecret, nfsServer):: {
+	    "apiVersion": "apps/v1",
+	    "kind": "Deployment",
+	    "metadata": {
+		"name": "dkube-d3downloader-" + tag,
+		"namespace": "dkube"
+	    },
+	    "spec": {
+		"replicas": 1,
+		"selector": {
+		    "matchLabels": {
+			"app": "dkube-d3downloader"
+		    }
+		},
+		"template": {
+		    "metadata": {
+			"labels": {
+			    "app": "dkube-d3downloader"
+			}
+		    },
+		    "spec": {
+			"imagePullSecrets": [
+			{
+			    "name": dkubeDockerSecret
+			}
+			],
+			"dnsConfig": {
+                "options": [
+                    {
+                        "name": "single-request-reopen"
+                    },
+                    {
+                        "name": "timeout",
+                        "value": "30"
+                    }
+                ]
+            },
+            "dnsPolicy": "ClusterFirst",
+			"nodeSelector": {
+				"d3.nodetype": "dkube"
+			},
+			"serviceAccount": "dkube",
+            "serviceAccountName": "dkube",
+			"tolerations": [
+				{
+					"operator": "Exists"
+				},
+			],
+			"containers": [
+			{
+			    "image": dkubeDownloaderImage,
+			    "imagePullPolicy": "IfNotPresent",
+			    "name": "d3downloader",
+			    "resources": {},
+			    "securityContext": {
+                    "procMount": "Default",
+                    "runAsUser": 0
+                },
+                "volumeMounts": [
+                   {
+                      "mountPath": "/var/log/containerlogs",
+                      "name": "logs"
+                    },
+                    {
+                      "mountPath": "/tmp/dkube/store",
+                      "name": "user-data"
+                    }
+                 ]
+			}
+			],
+            "volumes": [
+	              {
+	                "nfs": {
+	                   "path": "/dkube/system/logs",
+	                   "server": nfsServer
+	                 },
+	                  "name": "logs"
+	                },
+	                {
+	                   "nfs": {
+                            "path": "/dkube/users",
+                            "server": nfsServer
+                       },"name": "filebeat"
+                      "name": "user-data"     
+	                
+	                }
+	              ]
+		    }
+		}
+	    }
+	}
     },
 }

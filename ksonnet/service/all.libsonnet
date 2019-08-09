@@ -7,6 +7,7 @@
     local etcd = import "dkube/service/etcd.libsonnet",
     local d3ext = import "dkube/service/dkube-ext.libsonnet",
     local dfabproxy = import "dkube/service/dfabproxy.libsonnet",
+    local d3downloader = import "dkube/service/dkube-d3downloader.libsonnet",
 
     all:: dkubeUiService.all(params)
           + ambassador.all(params)
@@ -15,5 +16,6 @@
           + etcd.all(params)
           + d3ext.all(params)
           + dfabproxy.all(params)
+          + d3downloader.all(params)
   },
 }
