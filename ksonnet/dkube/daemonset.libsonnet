@@ -76,14 +76,6 @@
 			    ], 
 			    "volumeMounts": [
 			    {
-				"mountPath": "/var/log/containerlogs", 
-				"name": "logs"
-			    }, 
-			    {
-				"mountPath": "/tmp/dkube/store", 
-				"name": "user-data"
-			    },
-			    {
 			    "mountPath": "/usr/local/nvidia/lib64",
 			    "name": "nvidia-lib"
                 }
@@ -107,20 +99,6 @@
 			}
 			], 
 			"volumes": [
-			{
-				"nfs": {
-					"server": nfsServer,
-					"path": "/dkube/system/logs"
-				}, 
-			    "name": "logs"
-			}, 
-			{
-				"nfs": {
-					"server": nfsServer,
-					"path": "/dkube/users"
-				}, 
-			    "name": "user-data"
-			},
 			{
 			    "hostPath": {
 			        "path": "/usr/lib64/nvidia"
