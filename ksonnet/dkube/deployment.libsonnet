@@ -321,6 +321,11 @@
                     "nodeSelector": {
                         "d3.nodetype": "dkube"
                     },
+                    "tolerations": [
+                        {
+                            "operator": "Exists"
+                        },
+                    ],
                     "volumes": [
                     {
                         "configMap": {
