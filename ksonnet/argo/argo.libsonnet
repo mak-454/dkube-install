@@ -151,9 +151,7 @@
             }
           },
           "spec": {
-            "nodeSelector": {
-                "d3.nodetype": "dkube"
-            },
+            "nodeSelector": if params.nodebind == "yes" then {"d3.nodetype": "dkube"} else {},
             "tolerations": [
               {
                 "operator": "Exists"

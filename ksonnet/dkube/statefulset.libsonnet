@@ -1,9 +1,9 @@
 {
     all(params):: [
-	$.parts(params.namespace).dkubeD3api(params.tag, params.dkubeApiServerImage, params.dkubeApiServerAddr, params.dkubeMountPath, params.dkubeApiServerAddr, params.rdmaEnabled, params.dkubeDockerSecret, params.minioSecretKey, params.nfsServer, params.dkubeRegistry, params.dkubeRegistryUname, params.dkubeRegistryPasswd),
+	$.parts(params.namespace, params.nodebind).dkubeD3api(params.tag, params.dkubeApiServerImage, params.dkubeApiServerAddr, params.dkubeMountPath, params.dkubeApiServerAddr, params.rdmaEnabled, params.dkubeDockerSecret, params.minioSecretKey, params.nfsServer, params.dkubeRegistry, params.dkubeRegistryUname, params.dkubeRegistryPasswd),
     ],
 
-    parts(namespace):: {
+    parts(namespace, nodebind):: {
 	dkubeD3api(tag, apiServerImage, apiServerAddr, mountPath, dkubeApiServerAddr, isRdmaEnabled, dkubeDockerSecret, minioSecretKey, nfsServer, dkubeRegistry, dkubeRegistryUname, dkubeRegistryPasswd):: {
 	    local dkubeApiServerAddrArray = std.split(dkubeApiServerAddr, ":"),
 	    local dkubeApiServerPort = std.parseInt(dkubeApiServerAddrArray[std.length(dkubeApiServerAddrArray)-1]),
@@ -115,9 +115,7 @@
                         "name": dkubeDockerSecret
                     }
                 ],
-                "nodeSelector": {
-                    "d3.nodetype": "dkube"
-                },
+                "nodeSelector": if nodebind == "yes" then {"d3.nodetype": "dkube"} else {},
                 "restartPolicy": "Always",
                 "serviceAccount": "dkube",
                 "serviceAccountName": "dkube",

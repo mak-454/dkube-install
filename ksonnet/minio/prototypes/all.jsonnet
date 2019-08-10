@@ -6,6 +6,7 @@
 // @optionalParam StoragePV string  The Persistent Volume for minio storage
 // @optionalParam minioSecretKey string The Secret Key for minio storage
 // @optionalParam StorageClass string  Storage class name
+// @optionalParam nodebind string yes Node selector flag
 
 local k = import "k.libsonnet";
 local all = import "dkube/minio/all.libsonnet";

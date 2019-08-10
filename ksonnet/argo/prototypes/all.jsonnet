@@ -3,6 +3,7 @@
 // @description argo components
 // @param name string Name to give to each of the components
 // @shortDescription argo components. This create user environment.
+// @optionalParam nodebind string yes Node selector flag
 
 local k = import "k.libsonnet";
 local all = import "dkube/argo/all.libsonnet";
