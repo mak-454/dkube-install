@@ -60,7 +60,7 @@
         selector: {
           service: "ambassador",
         },
-        type: "ClusterIP",
+        type: "NodePort",
       },
     },  // adminService
 
