@@ -156,6 +156,10 @@
                     "name": "sys"
                   },
                   {
+                    "mountPath": "/sys/fs/cgroup/memory:ro",
+                    "name": "sys-mem"
+                  },
+                  {
                     "mountPath": "/var/lib/docker:rw",
                     "name": "docker"
                   }
@@ -194,6 +198,13 @@
                   "type": ""
                 },
                 "name": "sys"
+              },
+              {
+                "hostPath": {
+                  "path": "/sys/fs/cgroup/memory",
+                  "type": ""
+                },
+                "name": "sys-mem"
               },
               {
                 "hostPath": {
