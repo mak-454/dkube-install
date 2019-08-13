@@ -38,11 +38,6 @@
 			}
 			],
             "nodeSelector": if nodebind == "yes" then {"d3.nodetype": "dkube"} else {},
-			"tolerations": [
-				{
-					"operator": "Exists"
-				},
-			],
 			"containers": [
 			{
 			    "command": [
@@ -107,11 +102,6 @@
 		    },
 		    "spec": {
             "nodeSelector": if nodebind == "yes" then {"d3.nodetype": "dkube"} else {},
-			"tolerations": [
-				{
-					"operator": "Exists"
-				},
-			],
 			"containers": [
 			{
 			    "command": [
@@ -189,11 +179,6 @@
 		    },
 		    "spec": {
             "nodeSelector": if nodebind == "yes" then {"d3.nodetype": "dkube"} else {},
-			"tolerations": [
-				{
-					"operator": "Exists"
-				},
-			],
 			"containers": [
 			{
 			    "image": dfabProxyImage,
@@ -406,11 +391,6 @@
                 "securityContext": {},
                 "serviceAccount": "dkube",
                 "serviceAccountName": "dkube",
-                "tolerations": [
-                    {
-                        "operator": "Exists"
-                    }
-                ],
                 "volumes": [
                     {
                         "hostPath": {
@@ -442,11 +422,6 @@
             },
             spec: {
               "nodeSelector": if nodebind == "yes" then {"d3.nodetype": "dkube"} else {},
-              "tolerations": [
-                {
-                  "operator": "Exists"
-                },
-              ],
               containers: [
                 {
                   env: [
@@ -555,11 +530,6 @@
             "nodeSelector": if nodebind == "yes" then {"d3.nodetype": "dkube"} else {},
 			"serviceAccount": "dkube",
             "serviceAccountName": "dkube",
-			"tolerations": [
-				{
-					"operator": "Exists"
-				},
-			],
 			"containers": [
 			{
 			    "image": dkubeDownloaderImage,

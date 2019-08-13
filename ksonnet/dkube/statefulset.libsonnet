@@ -119,11 +119,6 @@
                 "restartPolicy": "Always",
                 "serviceAccount": "dkube",
                 "serviceAccountName": "dkube",
-                "tolerations": [
-                    {
-                        "operator": "Exists"
-                    }
-                ],
                 "volumes": [
                     {
                         "nfs": {
