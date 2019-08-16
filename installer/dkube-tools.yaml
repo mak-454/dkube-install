@@ -31,8 +31,6 @@ spec:
       imagePullSecrets:
       - name: dkube-dockerhub-secret
       nodeSelector: {}
-      tolerations: 
-       - operator: Exists
 ---
 apiVersion: v1
 kind: Service
