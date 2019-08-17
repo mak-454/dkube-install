@@ -248,7 +248,7 @@ metadata:
 spec:
   ports:
   - name: ambassador
-    nodePort: 32333
+    nodePort: 32334
     port: 443
     protocol: TCP
     targetPort: 443
