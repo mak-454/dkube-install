@@ -30,10 +30,7 @@ spec:
         - containerPort: 8888
       imagePullSecrets:
       - name: dkube-dockerhub-secret
-      nodeSelector: 
-        d3.nodetype: "dkube"
-      tolerations: 
-       - operator: Exists
+      nodeSelector: {}
 ---
 apiVersion: v1
 kind: Service
@@ -156,8 +153,7 @@ spec:
           requests:
             cpu: 200m
             memory: 100Mi
-      nodeSelector:
-        d3.nodetype: dkube
+      nodeSelector: {}
       restartPolicy: Always
       serviceAccount: ambassador
       serviceAccountName: ambassador
@@ -252,7 +248,7 @@ metadata:
 spec:
   ports:
   - name: ambassador
-    nodePort: 32333
+    nodePort: 32334
     port: 443
     protocol: TCP
     targetPort: 443

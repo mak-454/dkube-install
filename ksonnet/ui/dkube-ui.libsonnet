@@ -1,9 +1,9 @@
 {
   all(params):: [
-    $.parts(params.namespace).deploy(params.tag , params.dkubeUIImage, params.dkubeDockerSecret),
+    $.parts(params.namespace, params.nodebind).deploy(params.tag , params.dkubeUIImage, params.dkubeDockerSecret),
   ],
 
-  parts(namespace):: {
+  parts(namespace, nodebind):: {
     deploy(tag,dkubeUIImage, dkubeDockerSecret):: {
       "apiVersion": "extensions/v1beta1", 
       "kind": "Deployment", 
@@ -32,14 +32,7 @@
                 "name": dkubeDockerSecret
               }
             ],
-            "nodeSelector": {
-              "d3.nodetype": "dkube"
-            },
-            "tolerations": [
-              {
-                "operator": "Exists"
-              },
-            ],
+            "nodeSelector": if nodebind == "yes" then {"d3.nodetype": "dkube"} else {},
             "containers": [
               {
                 "image": dkubeUIImage, 

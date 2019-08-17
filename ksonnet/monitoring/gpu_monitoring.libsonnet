@@ -116,14 +116,7 @@
             }
           }, 
           "spec": {
-            "nodeSelector": {
-              "d3.nodetype": "dkube"
-            },
-            "tolerations": [
-              {
-                "operator": "Exists"
-              },
-            ],
+            "nodeSelector": if params.nodebind == "yes" then {"d3.nodetype": "dkube"} else {},
             "containers": [
               {
                 "env": [

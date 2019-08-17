@@ -7,6 +7,7 @@
 // @optionalParam dkubeDockerSecret string  Docker secret for dkube images.
 // @optionalParam tag string v1 tag for component
 // @optionalParam dkubeUIImage string ocdr/dkube-uiserver:v6.1 UI image for dkube.
+// @optionalParam nodebind string no Node selector flag
 
 local k = import "k.libsonnet";
 local all = import "dkube/ui/all.libsonnet";

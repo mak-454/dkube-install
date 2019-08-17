@@ -1,15 +1,15 @@
 {
     all(params):: [
-	$.parts(params.namespace).logstash(params.tag, params.logstashImage, params.dkubeDockerSecret, params.nfsServer),
-	$.parts(params.namespace).dkubeEtcd(params.tag, params.etcdPVC),
-	$.parts(params.namespace).dfabProxy(params.tag,params.dfabProxyImage, params.dkubeDockerSecret),
-	$.parts(params.namespace).dkubeWatcher(params.tag, params.dkubeWatcherImage, params.dkubeDockerSecret),
-	$.parts(params.namespace).dkubeAuth(params.tag, params.dkubeAuthImage, params.dkubeDockerSecret, params.nfsServer),
-	$.parts(params.namespace).ambassdor(params.tag),
-	$.parts(params.namespace).dkubeDownloader(params.tag, params.dkubeDownloaderImage, params.dkubeDockerSecret, params.nfsServer),
+	$.parts(params.namespace, params.nodebind).logstash(params.tag, params.logstashImage, params.dkubeDockerSecret, params.nfsServer),
+	$.parts(params.namespace, params.nodebind).dkubeEtcd(params.tag, params.etcdPVC),
+	$.parts(params.namespace, params.nodebind).dfabProxy(params.tag,params.dfabProxyImage, params.dkubeDockerSecret),
+	$.parts(params.namespace, params.nodebind).dkubeWatcher(params.tag, params.dkubeWatcherImage, params.dkubeDockerSecret),
+	$.parts(params.namespace, params.nodebind).dkubeAuth(params.tag, params.dkubeAuthImage, params.dkubeDockerSecret, params.nfsServer),
+	$.parts(params.namespace, params.nodebind).ambassdor(params.tag),
+	$.parts(params.namespace, params.nodebind).dkubeDownloader(params.tag, params.dkubeDownloaderImage, params.dkubeDockerSecret, params.nfsServer),
     ],
 
-    parts(namespace):: {
+    parts(namespace, nodebind):: {
         local ambassadorImage = "quay.io/datawire/ambassador:0.53.1",
 	logstash(tag,logstashImage, dkubeDockerSecret, nfsServer):: {
 	    "apiVersion": "apps/v1", 
@@ -37,14 +37,7 @@
 			    "name": dkubeDockerSecret
 			}
 			],
-			"nodeSelector": {
-				"d3.nodetype": "dkube"
-			},
-			"tolerations": [
-				{
-					"operator": "Exists"
-				},
-			],
+            "nodeSelector": if nodebind == "yes" then {"d3.nodetype": "dkube"} else {},
 			"containers": [
 			{
 			    "command": [
@@ -108,14 +101,7 @@
 			}
 		    },
 		    "spec": {
-			"nodeSelector": {
-				"d3.nodetype": "dkube"
-			},
-			"tolerations": [
-				{
-					"operator": "Exists"
-				},
-			],
+            "nodeSelector": if nodebind == "yes" then {"d3.nodetype": "dkube"} else {},
 			"containers": [
 			{
 			    "command": [
@@ -192,14 +178,7 @@
 			}
 		    },
 		    "spec": {
-			"nodeSelector": {
-				"d3.nodetype": "dkube"
-			},
-			"tolerations": [
-				{
-					"operator": "Exists"
-				},
-			],
+            "nodeSelector": if nodebind == "yes" then {"d3.nodetype": "dkube"} else {},
 			"containers": [
 			{
 			    "image": dfabProxyImage,
@@ -318,9 +297,7 @@
                         "name": dkubeDockerSecret
                     }
                     ],
-                    "nodeSelector": {
-                        "d3.nodetype": "dkube"
-                    },
+                    "nodeSelector": if nodebind == "yes" then {"d3.nodetype": "dkube"} else {},
                     "volumes": [
                     {
                         "configMap": {
@@ -409,19 +386,12 @@
                         "name": dkubeDockerSecret
                     }
                 ],
-                "nodeSelector": {
-                    "d3.nodetype": "dkube"
-                },
+                "nodeSelector": if nodebind == "yes" then {"d3.nodetype": "dkube"} else {},
                 "restartPolicy": "Always",
                 "schedulerName": "default-scheduler",
                 "securityContext": {},
                 "serviceAccount": "dkube",
                 "serviceAccountName": "dkube",
-                "tolerations": [
-                    {
-                        "operator": "Exists"
-                    }
-                ],
                 "volumes": [
                     {
                         "hostPath": {
@@ -452,14 +422,7 @@
               namespace: namespace,
             },
             spec: {
-              "nodeSelector": {
-                "d3.nodetype": "dkube"
-              },
-              "tolerations": [
-                {
-                  "operator": "Exists"
-                },
-              ],
+              "nodeSelector": if nodebind == "yes" then {"d3.nodetype": "dkube"} else {},
               containers: [
                 {
                   env: [
@@ -565,16 +528,9 @@
                 ]
             },
             "dnsPolicy": "ClusterFirst",
-			"nodeSelector": {
-				"d3.nodetype": "dkube"
-			},
+            "nodeSelector": if nodebind == "yes" then {"d3.nodetype": "dkube"} else {},
 			"serviceAccount": "dkube",
             "serviceAccountName": "dkube",
-			"tolerations": [
-				{
-					"operator": "Exists"
-				},
-			],
 			"containers": [
 			{
 			    "image": dkubeDownloaderImage,

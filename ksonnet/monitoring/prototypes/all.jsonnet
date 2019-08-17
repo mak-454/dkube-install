@@ -5,6 +5,7 @@
 // @shortDescription monitoring components. This create user environment.
 // @optionalParam dkubeDockerSecret string  Docker secret for dkube images
 // @optionalParam promBasicAuth string na Prometheus basic auth in base64
+// @optionalParam nodebind string no Node selector flag
 
 local k = import "k.libsonnet";
 local all = import "dkube/monitoring/all.libsonnet";

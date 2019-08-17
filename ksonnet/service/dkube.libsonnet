@@ -2,8 +2,8 @@
   all(params):: [
     $.parts(params.namespace).katibServiceMapping(),
     $.parts(params.namespace).pipelineUIServiceMapping(),
-    $.parts(params.namespace).dkubeServiceAccount(),
     $.parts(params.namespace).kubeflowArgoUIServiceMapping(),
+    $.parts(params.namespace).dkubeServiceAccount(),
     $.parts(params.namespace).dkubeClusterRoleBinding(params.dkubeClusterRole),
     $.parts(params.namespace).dkubeService(params.dkubeApiServerAddr),
     $.parts(params.namespace).dkubeHeadlessService(params.dkubeApiServerAddr),
