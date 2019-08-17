@@ -4,6 +4,7 @@
 // @param name string Name to give to each of the components
 // @shortDescription monitoring components. This create user environment.
 // @optionalParam dkubeDockerSecret string  Docker secret for dkube images
+// @optionalParam nodebind string no Node selector flag
 
 local k = import "k.libsonnet";
 local all = import "dkube/monitoring/all.libsonnet";
