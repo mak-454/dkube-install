@@ -141,18 +141,13 @@
 			}
 		    },
 		    "spec": {
-			"imagePullSecrets": [
-			{
-			    "name": dkubeDockerSecret
-			}
-			],
 			"containers": [
 			{
 			    "command": [
-				"bash",
-			    "-c",
-			    "while IFS='' read -r line || [[ -n \"$line\" ]]; \ndo\n  IFS='//' read -r -a array1 \u003c\u003c\u003c \"$line\";\n  a=\"/mnt/root\";\n  for i in ${!array1[@]};\n  do\n      if [ $i -ne 0 ];\n      then\n          a=\"$a/${array1[$i]}\";\n      fi;\n  done;\n  a=\"$a/containers\";\n  export DOCKERPATH=$a;\n  export NODENAME=${NODENAME}\n  sed -i -e 's@DOCKERPATH@'\"$DOCKERPATH\"'@' filebeat.yml;\n  sed -i -e 's@NODENAME@'\"$NODENAME\"'@' filebeat.yml;\ndone \u003c \"/tmp/dockerstorage/dockerpath.txt\";\nchown root:filebeat /usr/share/filebeat/filebeat.yml\n./filebeat -e;\n"
-			    ],
+                    "bash",
+                    "-c",
+                    " \u003e filebeat.yml;\n  cat cat /etc/config_data/filebeat.yml \u003e\u003e /usr/share/filebeat/filebeat.yml;\n  while IFS='' read -r line || [[ -n \"$line\" ]]; \ndo\n  IFS='//' read -r -a array1 \u003c\u003c\u003c \"$line\";\n  a=\"/mnt/root\";\n  for i in ${!array1[@]};\n  do\n      if [ $i -ne 0 ];\n      then\n          a=\"$a/${array1[$i]}\";\n      fi;\n  done;\n  a=\"$a/containers\";\n  export DOCKERPATH=$a;\n  export NODENAME=${NODENAME}\n  sed -i -e 's@DOCKERPATH@'\"$DOCKERPATH\"'@' filebeat.yml;\n  done \u003c \"/tmp/dockerstorage/dockerpath.txt\";\nchown root:filebeat /usr/share/filebeat/filebeat.yml\n./filebeat -e;\n"
+                ],
 			    "env": [
 			    {
 				"name": "NODENAME",
@@ -163,12 +158,10 @@
 				}
 			    }
 			    ],
-			    "image": filebeatImage,
+			    "image": "docker.elastic.co/beats/filebeat:7.3.0",
 			    "imagePullPolicy": "IfNotPresent",
 			    "name": "filebeat",
 			    "resources": {},
-			    "terminationMessagePath": "/dev/termination-log",
-			    "terminationMessagePolicy": "File",
 			    "volumeMounts": [
 			    {
 				"mountPath": "/mnt/root",
@@ -178,7 +171,16 @@
 			    {
 				"mountPath": "/tmp/dockerstorage",
 				"name": "tmp"
-			    }
+			    },
+			    {
+                    "mountPath": "/etc/config_data",
+                    "name": "config",
+                    "readOnly": true
+                },
+                {
+                    "mountPath": "/usr/share/filebeat/data",
+                    "name": "data"
+                }
 			    ]
 			}
 			],
@@ -240,7 +242,21 @@
 				"type": ""
 			    },
 			    "name": "dockersock"
-			}
+			},
+			{
+                "configMap": {
+                    "defaultMode": 384,
+                    "name": "filebeat-config"
+                },
+                "name": "config"
+            },
+            {
+                "hostPath": {
+                    "path": "/var/lib/filebeat-data",
+                    "type": "DirectoryOrCreate"
+                },
+                "name": "data"
+            }
 			]
 		    }
 		},

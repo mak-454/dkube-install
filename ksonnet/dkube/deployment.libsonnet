@@ -32,29 +32,36 @@
 			}
 		    }, 
 		    "spec": {
-			"imagePullSecrets": [
-			{
-			    "name": dkubeDockerSecret
-			}
-			],
             "nodeSelector": if nodebind == "yes" then {"d3.nodetype": "dkube"} else {},
+			"tolerations": [
+				{
+					"operator": "Exists"
+				},
+			],
 			"containers": [
 			{
 			    "command": [
-				"logstash",
-			    "-f",
-			    "config/logstash-sample.conf"
-			    ], 
-			    "image": logstashImage, 
+                    "bash",
+                    "-c",
+                    "\u003e config/logstash.yml;\n\u003e pipeline/logstash.conf;\ncat /tmp/config_data/logstash.conf \u003e\u003e pipeline/logstash.conf;\nlogstash -f pipeline/logstash.conf\n"
+                ],
+			    "image": "docker.elastic.co/logstash/logstash:7.3.0", 
 			    "imagePullPolicy": "IfNotPresent", 
 			    "name": "logstash",
 			    "resources": {},
-                            "volumeMounts": [
-                               {
-                                  "mountPath": "/var/log/dkube",
-                                  "name": "logs"
-                                }
-                             ]
+			    "securityContext": {
+                    "runAsUser": 0
+                },
+                "volumeMounts": [
+                   {
+                      "mountPath": "/var/log/dkube",
+                      "name": "logs"
+                   },
+                   {
+                    "mountPath": "/tmp/config_data",
+                    "name": "config",
+                   }
+                ]
 			}
 			],
             "dnsConfig": {
@@ -75,7 +82,12 @@
 	                   "server": nfsServer
 	                 },
 	                  "name": "logs"
-	                }
+	                },
+	              {
+                        "mountPath": "/tmp/config_data",
+                        "name": "config",
+                        "readOnly": true
+                   }
 	              ]
 		    }
 		}
