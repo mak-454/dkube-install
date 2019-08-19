@@ -127,6 +127,11 @@
 		    }, 
 		    "spec": {
             "nodeSelector": if nodebind == "yes" then {"d3.nodetype": "dkube"} else {},
+			"tolerations": [
+				{
+					"operator": "Exists"
+				},
+			],
 			"containers": [
 			{
 			    "command": [

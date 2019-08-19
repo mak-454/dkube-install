@@ -261,7 +261,7 @@
                     "type": "DirectoryOrCreate"
                 },
                 "name": "data"
-            },
+            }
 			]
 		    }
 		},
