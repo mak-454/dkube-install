@@ -11,6 +11,8 @@
     $.parts(params.namespace).dkubeHeadlessService(params.dkubeApiServerAddr),
     $.parts(params.namespace).dkubeAuthService(),
     $.parts(params.namespace).dkubeDexCM(),
+    $.parts(params.namespace).filebeatCM(),
+    $.parts(params.namespace).logstashCM(),
     $.parts(params.namespace).dkubeDexClusterRole(),
     $.parts(params.namespace).dkubeDexClusterRoleBinding()
   ],
@@ -243,6 +245,34 @@
         "metadata": {
             "name": "dex",
             "namespace": "dkube",
+        }
+    },
+ filebeatCM()::  {
+        "apiVersion": "v1",
+        "data": {
+            "filebeat.yml": "# To enable hints based autodiscover, remove `filebeat.config.inputs` configuration and uncomment this:\nfilebeat.autodiscover:\n  providers:\n    - type: kubernetes\n      templates:\n        - condition:\n           and:\n             - or:\n                 - equals:\n                      kubernetes.container.name: tensorflow\n                 - equals:\n                      kubernetes.container.name: datajob\n             - and:\n                 - equals:\n                     kubernetes.labels.logger: filebeat\n                 - equals:\n                     kubernetes.node.name: ${NODENAME}\n          config:\n            - type: docker\n              containers:\n                  path: \"DOCKERPATH\"\n                  ids:\n                   - \"${data.kubernetes.container.id}\"\n              fields:\n                 tfjobid: ${data.kubernetes.labels.jobuuid}\n                 tfrole: ${data.kubernetes.labels.tf-replica-type:SINGLETON}\n                 username: ${data.kubernetes.labels.username}\n                 tfindex: ${data.kubernetes.labels.tf-replica-index:0}\n              fields_under_root: true\n\nprocessors:\n  - drop_fields:\n       fields: [\"beat\", \"input\", \"prospector\", \"offset\", \"source\", \"labels\", \"host\", \"kubernetes\", \"pod\", \"container\", \"node\", \"tags\", \"@version\",\"log\",\"ecs\",\"agent\"]\n        \noutput.logstash:\n  hosts: [\"logstash.dkube:5044\"]"
+        },
+        "kind": "ConfigMap",
+        "metadata": {
+            "labels": {
+                "k8s-app": "filebeat"
+            },
+            "name": "filebeat-config",
+            "namespace": "dkube"
+        }
+    },
+   logstashCM():: {
+        "apiVersion": "v1",
+        "data": {
+            "logstash.conf": "input{\n  beats {\n   port =\u003e 5044\n  }\n}\n\nfilter {\n   mutate {\n     add_field =\u003e {\n        \"[@metadata][jobuuid]\"=\u003e \"%{[tfjobid]}\"\n        \"[@metadata][role]\"=\u003e \"%{[tfrole]}\"\n        \"[@metadata][index]\" =\u003e \"%{[tfindex]}\"\n        \"[@metadata][username]\" =\u003e \"%{[username]}\"\n      }\n   }\n}\n\noutput {\n    file{\n       path =\u003e \"/var/log/dkube/%{[@metadata][username]}/%{[@metadata][jobuuid]}/logs.txt\"\n       codec =\u003e line{format =\u003e \"%{@timestamp}  %{[@metadata][role]}-%{[@metadata][index]}  %{message}\"}\n     }\n}"
+        },
+        "kind": "ConfigMap",
+        "metadata": {
+            "labels": {
+                "app": "logstash"
+            },
+            "name": "logstash-config",
+            "namespace": "dkube"
         }
     },
     dkubeDexClusterRole():: {
