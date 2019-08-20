@@ -3,7 +3,6 @@
 	$.parts(params.namespace, params.nodebind).logstash(params.tag, params.nfsServer),
 	$.parts(params.namespace, params.nodebind).dkubeEtcd(params.tag, params.etcdPVC),
 	$.parts(params.namespace, params.nodebind).dfabProxy(params.tag,params.dfabProxyImage, params.dkubeDockerSecret),
-	$.parts(params.namespace, params.nodebind).dkubeWatcher(params.tag, params.dkubeWatcherImage, params.dkubeDockerSecret),
 	$.parts(params.namespace, params.nodebind).dkubeAuth(params.tag, params.dkubeAuthImage, params.dkubeDockerSecret, params.nfsServer),
 	$.parts(params.namespace, params.nodebind).ambassdor(params.tag),
 	$.parts(params.namespace, params.nodebind).dkubeDownloader(params.tag, params.dkubeDownloaderImage, params.dkubeDockerSecret, params.nfsServer),
@@ -420,92 +419,6 @@
                 }
             }
         },
-    },
-	dkubeWatcher(tag , dkubeWatcherImage, dkubeDockerSecret):: {
-	        "apiVersion": "extensions/v1beta1",
-    "kind": "Deployment",
-    "metadata": {
-        "labels": {
-            "app": "dkube-d3watcher"
-        },
-        "name": "dkube-d3watcher-" + tag,
-        "namespace": "dkube",
-    },
-    "spec": {
-        "replicas": 1,
-        "selector": {
-            "matchLabels": {
-                "app": "dkube-d3watcher"
-            }
-        },
-        "template": {
-            "metadata": {
-                "labels": {
-                    "app": "dkube-d3watcher"
-                }
-            },
-            "spec": {
-                "containers": [
-                    {
-                        "env": [
-                            {
-                                "name": "DKUBE_SERVICE_ACCOUNT",
-                                "value": "dkube"
-                            }
-                        ],
-                        "image": dkubeWatcherImage,
-                        "imagePullPolicy": "IfNotPresent",
-                        "name": "dkube-d3watcher",
-                        "resources": {},
-                        "securityContext": {
-                            "procMount": "Default",
-                            "runAsUser": 0
-                        },
-                        "terminationMessagePath": "/dev/termination-log",
-                        "terminationMessagePolicy": "File",
-                        "volumeMounts": [
-                            {
-                                "mountPath": "/var/log/dkube",
-                                "name": "dkube-logs-host"
-                            }
-                        ]
-                    }
-                ],
-                "dnsConfig": {
-                    "options": [
-                        {
-                            "name": "single-request-reopen"
-                        },
-                        {
-                            "name": "timeout",
-                            "value": "30"
-                        }
-                    ]
-                },
-                "dnsPolicy": "ClusterFirst",
-                "imagePullSecrets": [
-                    {
-                        "name": dkubeDockerSecret
-                    }
-                ],
-                "nodeSelector": if nodebind == "yes" then {"d3.nodetype": "dkube"} else {},
-                "restartPolicy": "Always",
-                "schedulerName": "default-scheduler",
-                "securityContext": {},
-                "serviceAccount": "dkube",
-                "serviceAccountName": "dkube",
-                "volumes": [
-                    {
-                        "hostPath": {
-                            "path": "/var/log/dkube",
-                            "type": "DirectoryOrCreate"
-                        },
-                        "name": "dkube-logs-host"
-                    }
-                ]
-            }
-        }
-    },
     },
       ambassdor(tag):: {
         apiVersion: "extensions/v1beta1",
