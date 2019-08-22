@@ -35,7 +35,7 @@
             "kind": "Service",
             "metadata": {
                 "annotations": {
-                    "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_webapp\nprefix: /inference\nrewrite: /inference\ntimeout_ms: 600000\nservice: dkube-webapp:8000\ncors:\n origins: \"*\"\n methods: \"*\"\n headers: \"*\"\n---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_webapp_predict\nprefix: /predict\nrewrite: /predict\ntimeout_ms: 600000\nservice: dkube-webapp:8000\ncors:\n origins: \"*\"\n methods: \"*\"\n headers: \"*\""
+                    "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_webapp\nprefix: /inference\nrewrite: /inference\ntimeout_ms: 600000\nservice: dkube-inference:8000\ncors:\n origins: \"*\"\n methods: \"*\"\n headers: \"*\"\n---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_webapp_predict\nprefix: /predict\nrewrite: /predict\ntimeout_ms: 600000\nservice: dkube-inference:8000\ncors:\n origins: \"*\"\n methods: \"*\"\n headers: \"*\""
                 },
                 "name": "dkube-inference",
                 "namespace": namespace

@@ -14,7 +14,7 @@
         "labels": {
             "app": "dkube-worker"
         },
-        "name": "dkube-worker-" + tag,
+        "name": "dkube-d3api-worker-ext" + tag,
         "namespace": namespace,
     },
     "spec": {
