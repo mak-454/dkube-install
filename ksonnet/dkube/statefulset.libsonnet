@@ -64,7 +64,7 @@
                                 "value": nfsServer
                             },
                             {
-                                "name": "ROLE",
+                                "name": "DKUBE_APISERVER_ROLE",
                                 "value": "master"
                             },
                         ],
