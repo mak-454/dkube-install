@@ -9,7 +9,7 @@
     $.parts(params.namespace).dkubeClusterRoleBinding(params.dkubeClusterRole),
     $.parts(params.namespace).dkubeServiceMaster(params.dkubeApiServerAddr),
     $.parts(params.namespace).dkubeServiceWorker(params.dkubeApiServerAddr),
-    $.parts(params.namespace).dkubeHeadlessService(params.dkubeApiServerAddr),
+    $.parts(params.namespace).dkubeHeadlessServiceMaster(params.dkubeApiServerAddr),
     $.parts(params.namespace).dkubeAuthService(),
     $.parts(params.namespace).dkubeDexCM(),
     $.parts(params.namespace).filebeatCM(),
@@ -169,7 +169,7 @@
           }
         ], 
         "selector": {
-          "app": "dkube-d3api-master"
+          "app": "dkube-master"
         }, 
         "type": "ClusterIP"
       }
@@ -200,12 +200,12 @@
           }
         ],
         "selector": {
-          "app": "dkube-d3api-worker"
+          "app": "dkube-worker"
         },
         "type": "ClusterIP"
       }
     }, //service worker
-    dkubeHeadlessService(dkubeApiServerAddr):: {
+    dkubeHeadlessServiceMaster(dkubeApiServerAddr):: {
       local dkubeApiServerAddrArray = std.split(dkubeApiServerAddr, ":"),
       local dkubeApiServerPort = std.parseInt(dkubeApiServerAddrArray[std.length(dkubeApiServerAddrArray)-1]),
 
@@ -213,27 +213,27 @@
       "kind": "Service", 
       "metadata": {
         "labels": {
-          "app": "dkube-d3api"
+          "app": "dkube-d3api-master"
         }, 
-        "name": "dkube-d3api-headless", 
+        "name": "dkube-d3api-headless-master", 
         "namespace": namespace
       }, 
       "spec": {
         "clusterIP": "None",
         "ports": [
           {
-            "name": "dkube-d3api", 
+            "name": "dkube-d3api-master", 
             "port": dkubeApiServerPort, 
             "protocol": "TCP", 
             "targetPort": dkubeApiServerPort
           }
         ], 
         "selector": {
-          "app": "dkube-d3api"
+          "app": "dkube-master"
         }, 
         "type": "ClusterIP"
       }
-    }, //service
+    }, //d3api master headless service
     dkubeAuthService():: {
         "apiVersion": "v1",
         "kind": "Service",

@@ -23,7 +23,7 @@
                 }
                 ],
                 "selector": {
-                    "app": "dkube-d3downloader"
+                    "app": "dkube-logger"
                 },
                 "type": "ClusterIP"
             }
