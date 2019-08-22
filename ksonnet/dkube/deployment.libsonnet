@@ -7,10 +7,13 @@
 	$.parts(params.namespace, params.nodebind).dkubeServing(params.tag, params.dkubeInferenceImage, params.dkubeDockerSecret),
 	$.parts(params.namespace, params.nodebind).dkubeDocs(params.tag, params.dkubeDocsImage, params.dkubeDockerSecret),
 	$.parts(params.namespace, params.nodebind).dkubeLogger(params.tag, params.dkubeDownloaderImage, params.dkubeDockerSecret, params.nfsServer),
+	$.parts(params.namespace, params.nodebind).dkubeServing(params.tag, params.dkubeInferenceImage, params.dkubeDockerSecret),
+	$.parts(params.namespace, params.nodebind).dkubeDocs(params.tag, params.dkubeDocsImage, params.dkubeDockerSecret),
     ],
 
     parts(namespace, nodebind):: {
         local ambassadorImage = "quay.io/datawire/ambassador:0.53.1",
+
     dkubeServing(tag, dkubeInferenceImage, dkubeDockerSecret):: {
         "apiVersion": "extensions/v1beta1",
         "kind": "Deployment",
