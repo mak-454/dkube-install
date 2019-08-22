@@ -21,7 +21,7 @@
           }
         ], 
         "selector": {
-          "app": "logstash"
+          "app": "dkube-logger"
         }, 
         "type": "ClusterIP"
       }

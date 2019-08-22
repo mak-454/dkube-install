@@ -1,35 +1,34 @@
 {
     all(params):: [
-	$.parts(params.namespace, params.nodebind).logstash(params.tag, params.logstashImage, params.dkubeDockerSecret, params.nfsServer),
 	$.parts(params.namespace, params.nodebind).dkubeEtcd(params.tag, params.etcdPVC),
 	$.parts(params.namespace, params.nodebind).dfabProxy(params.tag,params.dfabProxyImage, params.dkubeDockerSecret),
 	$.parts(params.namespace, params.nodebind).dkubeAuth(params.tag, params.dkubeAuthImage, params.dkubeDockerSecret, params.nfsServer),
 	$.parts(params.namespace, params.nodebind).ambassdor(params.tag),
-	$.parts(params.namespace, params.nodebind).dkubeDownloader(params.tag, params.dkubeDownloaderImage, params.dkubeDockerSecret, params.nfsServer),
+	$.parts(params.namespace, params.nodebind).dkubeLogger(params.tag, params.dkubeDownloaderImage, params.dkubeDockerSecret, params.nfsServer),
     ],
 
     parts(namespace, nodebind):: {
         local ambassadorImage = "quay.io/datawire/ambassador:0.53.1",
-	logstash(tag,logstashImage, dkubeDockerSecret, nfsServer):: {
-	    "apiVersion": "apps/v1", 
-	    "kind": "Deployment", 
+    dkubeLogger(tag,dkubeDownloaderImage, dkubeDockerSecret, nfsServer):: {
+	    "apiVersion": "apps/v1",
+	    "kind": "Deployment",
 	    "metadata": {
-		"name": "logstash-" + tag, 
+		"name": "dkube-logger-" + tag,
 		"namespace": "dkube"
-	    }, 
+	    },
 	    "spec": {
-		"replicas": 1, 
+		"replicas": 1,
 		"selector": {
 		    "matchLabels": {
-			"app": "logstash"
+			"app": "dkube-logger"
 		    }
-		}, 
+		},
 		"template": {
 		    "metadata": {
 			"labels": {
-			    "app": "logstash"
+			    "app": "dkube-logger"
 			}
-		    }, 
+		    },
 		    "spec": {
             "nodeSelector": if nodebind == "yes" then {"d3.nodetype": "dkube"} else {},
 			"containers": [
@@ -39,8 +38,8 @@
                     "-c",
                     "\u003e config/logstash.yml;\n\u003e pipeline/logstash.conf;\ncat /tmp/config_data/logstash.conf \u003e\u003e pipeline/logstash.conf;\nlogstash -f pipeline/logstash.conf\n"
                 ],
-			    "image": "docker.elastic.co/logstash/logstash:7.3.0", 
-			    "imagePullPolicy": "IfNotPresent", 
+			    "image": "docker.elastic.co/logstash/logstash:7.3.0",
+			    "imagePullPolicy": "IfNotPresent",
 			    "name": "logstash",
 			    "resources": {},
 			    "securityContext": {
@@ -56,6 +55,31 @@
                     "name": "config",
                    }
                 ]
+			},
+			{
+			    "image": dkubeDownloaderImage,
+			    "imagePullPolicy": "IfNotPresent",
+			    "name": "d3downloader",
+			    "resources": {},
+			    "securityContext": {
+                    "procMount": "Default",
+                    "runAsUser": 0
+                },
+                "volumeMounts": [
+                   {
+                      "mountPath": "/var/log/containerlogs",
+                      "name": "logs"
+                    },
+                    {
+                      "mountPath": "/tmp/dkube/store",
+                      "name": "user-data"
+                    }
+                 ]
+			}
+			],
+			"imagePullSecrets": [
+			{
+			    "name": dkubeDockerSecret
 			}
 			],
             "dnsConfig": {
@@ -78,10 +102,20 @@
 	                  "name": "logs"
 	                },
 	              {
-                        "mountPath": "/tmp/config_data",
-                        "name": "config",
-                        "readOnly": true
-                   }
+	                   "nfs": {
+                            "path": "/dkube/users",
+                            "server": nfsServer
+                       },
+                      "name": "user-data"     
+	                
+	              },
+	              {
+                    "configMap": {
+                        "defaultMode": 384,
+                        "name": "logstash-config"
+                    },
+                    "name": "config"
+                  },
 	              ]
 		    }
 		}
@@ -409,89 +443,5 @@
             },
           },
         },
-    dkubeDownloader(tag,dkubeDownloaderImage, dkubeDockerSecret, nfsServer):: {
-	    "apiVersion": "apps/v1",
-	    "kind": "Deployment",
-	    "metadata": {
-		"name": "dkube-d3downloader-" + tag,
-		"namespace": "dkube"
-	    },
-	    "spec": {
-		"replicas": 1,
-		"selector": {
-		    "matchLabels": {
-			"app": "dkube-d3downloader"
-		    }
-		},
-		"template": {
-		    "metadata": {
-			"labels": {
-			    "app": "dkube-d3downloader"
-			}
-		    },
-		    "spec": {
-			"imagePullSecrets": [
-			{
-			    "name": dkubeDockerSecret
-			}
-			],
-			"dnsConfig": {
-                "options": [
-                    {
-                        "name": "single-request-reopen"
-                    },
-                    {
-                        "name": "timeout",
-                        "value": "30"
-                    }
-                ]
-            },
-            "dnsPolicy": "ClusterFirst",
-            "nodeSelector": if nodebind == "yes" then {"d3.nodetype": "dkube"} else {},
-			"serviceAccount": "dkube",
-            "serviceAccountName": "dkube",
-			"containers": [
-			{
-			    "image": dkubeDownloaderImage,
-			    "imagePullPolicy": "IfNotPresent",
-			    "name": "d3downloader",
-			    "resources": {},
-			    "securityContext": {
-                    "procMount": "Default",
-                    "runAsUser": 0
-                },
-                "volumeMounts": [
-                   {
-                      "mountPath": "/var/log/containerlogs",
-                      "name": "logs"
-                    },
-                    {
-                      "mountPath": "/tmp/dkube/store",
-                      "name": "user-data"
-                    }
-                 ]
-			}
-			],
-            "volumes": [
-	              {
-	                "nfs": {
-	                   "path": "/dkube/system/logs",
-	                   "server": nfsServer
-	                 },
-	                  "name": "logs"
-	                },
-	                {
-	                   "nfs": {
-                            "path": "/dkube/users",
-                            "server": nfsServer
-                       },
-                      "name": "user-data"     
-	                
-	                }
-	              ]
-		    }
-		}
-	    }
-	}
     },
 }
