@@ -151,7 +151,7 @@
       "kind": "Service", 
       "metadata": {
         "annotations": {
-          "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_d3api_master\nprefix: /dkube/v2\nrewrite: /dkube/v2\nmethod_regex: true \nmethod: \"POST|PUT|DELETE|OPTIONS\"\ntimeout_ms: 600000\nservice: dkube-d3api-master:5000"
+          "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_d3api\nprefix: /dkube/v2\nrewrite: /dkube/v2\nmethod_regex: true\nmethod: 'POST|PUT|DELETE|OPTIONS'\ntimeout_ms: 600000\nservice: dkube-d3api-master:5000"
         }, 
         "labels": {
           "app": "dkube-d3api-master"
