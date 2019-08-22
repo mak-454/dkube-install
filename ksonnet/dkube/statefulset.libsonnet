@@ -14,7 +14,7 @@
         "labels": {
             "app": "dkube-master"
         },
-        "name": "dkube-master-" + tag,
+        "name": "dkube-d3api-master-" + tag,
         "namespace": namespace,
     },
     "spec": {
