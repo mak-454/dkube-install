@@ -1,6 +1,6 @@
 {
   all(params):: [
-    $.parts(params.namespace).service(params.ambassadorNodeport),
+    $.parts(params.namespace).service(params.ambassadorNodeport, params.exportAs),
     $.parts(params.namespace).adminService,
     $.parts(params.namespace).role,
     $.parts(params.namespace).serviceAccount,
@@ -8,7 +8,7 @@
   ],
 
   parts(namespace):: {
-      service(nodePort):: {
+      service(nodePort, exportAs):: {
           "apiVersion": "v1",
           "kind": "Service",
           "metadata": {
@@ -23,19 +23,27 @@
           },
           "spec": {
               "externalTrafficPolicy": "Cluster",
-              "ports": [
-              {
-                  "name": "ambassador",
-                  "nodePort": nodePort,
-                  "port": 443,
-                  "protocol": "TCP",
-                  "targetPort": 443
-              }
-              ],
+              "ports": if nodePort == 0 then [
+                  {
+                      "name": "ambassador",
+                      "port": 443,
+                      "protocol": "TCP",
+                      "targetPort": 443
+                  }
+                ] else [
+                  {
+                      "name": "ambassador",
+                      "nodePort": nodePort,
+                      "port": 443,
+                      "protocol": "TCP",
+                      "targetPort": 443
+                  }
+                ],
               "selector": {
                   "service": "ambassador"
               },
-              "type": "NodePort"
+              "type": if exportAs == "loadbalancer" then "LoadBalancer" else "NodePort"
+              //"type": "NodePort"
           },
       },  // service
 
