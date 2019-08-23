@@ -24,6 +24,7 @@
 // @optionalParam dkubeRegistryUname string  Dkube container registry username
 // @optionalParam dkubeRegistryPasswd string  Dkube container registry password
 // @optionalParam nodebind string no Node selector flag
+// @optionalParam dkubePort number 32222 dkube access port
 
 local k = import "k.libsonnet";
 local all = import "dkube/dkube/all.libsonnet";

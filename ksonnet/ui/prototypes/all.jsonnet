@@ -8,6 +8,7 @@
 // @optionalParam tag string v1 tag for component
 // @optionalParam dkubeUIImage string ocdr/dkube-uiserver:v6.1 UI image for dkube.
 // @optionalParam nodebind string no Node selector flag
+// @optionalParam dkubePort number 32222 dkube access port
 
 local k = import "k.libsonnet";
 local all = import "dkube/ui/all.libsonnet";

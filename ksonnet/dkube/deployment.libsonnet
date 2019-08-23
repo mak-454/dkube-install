@@ -1,15 +1,15 @@
 {
     all(params):: [
-	$.parts(params.namespace, params.nodebind).logstash(params.tag, params.logstashImage, params.dkubeDockerSecret, params.nfsServer),
-	$.parts(params.namespace, params.nodebind).dkubeEtcd(params.tag, params.etcdPVC),
-	$.parts(params.namespace, params.nodebind).dfabProxy(params.tag,params.dfabProxyImage, params.dkubeDockerSecret),
-	$.parts(params.namespace, params.nodebind).dkubeWatcher(params.tag, params.dkubeWatcherImage, params.dkubeDockerSecret),
-	$.parts(params.namespace, params.nodebind).dkubeAuth(params.tag, params.dkubeAuthImage, params.dkubeDockerSecret, params.nfsServer),
-	$.parts(params.namespace, params.nodebind).ambassdor(params.tag),
-	$.parts(params.namespace, params.nodebind).dkubeDownloader(params.tag, params.dkubeDownloaderImage, params.dkubeDockerSecret, params.nfsServer),
+	$.parts(params.namespace, params.nodebind, params.dkubePort).logstash(params.tag, params.logstashImage, params.dkubeDockerSecret, params.nfsServer),
+	$.parts(params.namespace, params.nodebind, params.dkubePort).dkubeEtcd(params.tag, params.etcdPVC),
+	$.parts(params.namespace, params.nodebind, params.dkubePort).dfabProxy(params.tag,params.dfabProxyImage, params.dkubeDockerSecret),
+	$.parts(params.namespace, params.nodebind, params.dkubePort).dkubeWatcher(params.tag, params.dkubeWatcherImage, params.dkubeDockerSecret),
+	$.parts(params.namespace, params.nodebind, params.dkubePort).dkubeAuth(params.tag, params.dkubeAuthImage, params.dkubeDockerSecret, params.nfsServer),
+	$.parts(params.namespace, params.nodebind, params.dkubePort).ambassdor(params.tag),
+	$.parts(params.namespace, params.nodebind, params.dkubePort).dkubeDownloader(params.tag, params.dkubeDownloaderImage, params.dkubeDockerSecret, params.nfsServer),
     ],
 
-    parts(namespace, nodebind):: {
+    parts(namespace, nodebind, dkubePort):: {
         local ambassadorImage = "quay.io/datawire/ambassador:0.53.1",
 	logstash(tag,logstashImage, dkubeDockerSecret, nfsServer):: {
 	    "apiVersion": "apps/v1", 
@@ -40,6 +40,12 @@
             "nodeSelector": if nodebind == "yes" then {"d3.nodetype": "dkube"} else {},
 			"containers": [
 			{
+                "env": [
+                  {
+                    "name": "dkube_port", 
+                    "value": dkubePort
+                  }
+                ],
 			    "command": [
 				"logstash",
 			    "-f",
@@ -104,6 +110,12 @@
             "nodeSelector": if nodebind == "yes" then {"d3.nodetype": "dkube"} else {},
 			"containers": [
 			{
+                "env": [
+                  {
+                    "name": "dkube_port", 
+                    "value": dkubePort
+                  }
+                ],
 			    "command": [
 				"etcd",
 			    "--listen-client-urls=http://0.0.0.0:2379",
@@ -181,6 +193,12 @@
             "nodeSelector": if nodebind == "yes" then {"d3.nodetype": "dkube"} else {},
 			"containers": [
 			{
+                "env": [
+                  {
+                    "name": "dkube_port", 
+                    "value": dkubePort
+                  }
+                ],
 			    "image": dfabProxyImage,
 			    "imagePullPolicy": "IfNotPresent",
 			    "name": "dfabproxy",
@@ -242,6 +260,12 @@
                 "spec": {
                     "containers": [
                     {
+                        "env": [
+                          {
+                            "name": "dkube_port", 
+                            "value": dkubePort
+                          }
+                        ],
                         "image": dkubeAuthImage,
                         "imagePullPolicy": "IfNotPresent",
                         "name": "dex-server",
@@ -270,6 +294,12 @@
                         ]
                     },
                     {
+                        "env": [
+                          {
+                            "name": "dkube_port", 
+                            "value": dkubePort
+                          }
+                        ],
                         "image": dkubeAuthImage,
                         "imagePullPolicy": "IfNotPresent",
                         "name": "authn",
@@ -348,6 +378,10 @@
                             {
                                 "name": "DKUBE_SERVICE_ACCOUNT",
                                 "value": "dkube"
+                            },
+                            {
+                              "name": "dkube_port", 
+                              "value": dkubePort
                             }
                         ],
                         "image": dkubeWatcherImage,
@@ -437,6 +471,10 @@
                       name: "AMBASSADOR_SINGLE_NAMESPACE",
                       value: "false",
                     },
+                    {
+                      "name": "dkube_port", 
+                      "value": dkubePort
+                    }
                   ],
                   image: ambassadorImage,
                   livenessProbe: {
@@ -532,6 +570,12 @@
             "serviceAccountName": "dkube",
 			"containers": [
 			{
+                "env": [
+                  {
+                    "name": "dkube_port", 
+                    "value": dkubePort
+                  }
+                ],
 			    "image": dkubeDownloaderImage,
 			    "imagePullPolicy": "IfNotPresent",
 			    "name": "d3downloader",

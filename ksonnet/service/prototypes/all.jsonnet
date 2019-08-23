@@ -4,8 +4,6 @@
 // @param name string Name to give to each of the components
 // @shortDescription DKube service components.
 // @optionalParam namespace string dkube Namespace for dkube service.
-// @optionalParam ambassadorNodeport number 32222 Ambassador nodeport
-// @optionalParam exportAs string nodeport type of ambassador service
 // @optionalParam dkubeClusterRole string  Cluster role for dkube
 // @optionalParam dkubeApiServerAddr string 0.0.0.0:5000 The address of dkube api server
 

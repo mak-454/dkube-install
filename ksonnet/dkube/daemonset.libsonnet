@@ -1,9 +1,9 @@
 {
     all(params):: [
-	$.parts(params.namespace).dkubeExt(params.tag, params.dkubeExtImage, params.dkubeDockerSecret, params.minioSecretKey, params.nfsServer),
-	$.parts(params.namespace).filebeat(params.tag, params.filebeatImage, params.dkubeDockerSecret),
+	$.parts(params.namespace, params.dkubePort).dkubeExt(params.tag, params.dkubeExtImage, params.dkubeDockerSecret, params.minioSecretKey, params.nfsServer),
+	$.parts(params.namespace, params.dkubePort).filebeat(params.tag, params.filebeatImage, params.dkubeDockerSecret),
     ],
-    parts(namespace):: {
+    parts(namespace, dkubePort):: {
 	dkubeExt(tag, dkubeExtImage,dkubeDockerSecret, minioSecretKey, nfsServer):: {
 	    "apiVersion": "extensions/v1beta1", 
 	    "kind": "DaemonSet", 
@@ -59,7 +59,11 @@
 					"fieldPath": "spec.nodeName"
 				    }
 				}
-			    }
+			    },
+                {
+                  "name": "dkube_port", 
+                  "value": dkubePort
+                }
 			    ], 
 			    "image": dkubeExtImage, 
 			    "imagePullPolicy": "IfNotPresent", 
@@ -161,7 +165,11 @@
 					"fieldPath": "spec.nodeName"
 				    }
 				}
-			    }
+			    },
+                {
+                    "name": "dkube_port", 
+                    "value": dkubePort
+                }
 			    ],
 			    "image": filebeatImage,
 			    "imagePullPolicy": "IfNotPresent",
@@ -196,6 +204,12 @@
 			"dnsPolicy": "ClusterFirst",
 			"initContainers": [
 			{
+                "env": [
+                  {
+                    "name": "dkube_port", 
+                    "value": dkubePort
+                  }
+                ],
 			    "command": [
 				"sh",
 			    "-c",
