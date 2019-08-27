@@ -7,10 +7,110 @@
 	$.parts(params.namespace, params.nodebind).dkubeAuth(params.tag, params.dkubeAuthImage, params.dkubeDockerSecret, params.nfsServer),
 	$.parts(params.namespace, params.nodebind).ambassdor(params.tag),
 	$.parts(params.namespace, params.nodebind).dkubeDownloader(params.tag, params.dkubeDownloaderImage, params.dkubeDockerSecret, params.nfsServer),
+	$.parts(params.namespace, params.nodebind).dkubeServing(params.tag, params.dkubeInferenceImage, params.dkubeDockerSecret),
+	$.parts(params.namespace, params.nodebind).dkubeDocs(params.tag, params.dkubeDocsImage, params.dkubeDockerSecret),
     ],
 
     parts(namespace, nodebind):: {
         local ambassadorImage = "quay.io/datawire/ambassador:0.53.1",
+    dkubeServing(tag, dkubeInferenceImage, dkubeDockerSecret):: {
+        "apiVersion": "extensions/v1beta1",
+        "kind": "Deployment",
+        "metadata": {
+            "labels": {
+                "app": "inference",
+            },
+            "name": "dkube-serving-" + tag,
+            "namespace": namespace
+        },
+        "spec": {
+            "replicas": 1,
+            "selector": {
+                "matchLabels": {
+                    "app": "inference",
+                }
+            },
+            "template": {
+                "metadata": {
+                    "labels": {
+                        "app": "inference",
+                    }
+                },
+                "spec": {
+                    "nodeSelector": if nodebind == "yes" then {"d3.nodetype": "dkube"} else {},
+                    "containers": [
+                        {
+                            "image": dkubeInferenceImage,
+                            "imagePullPolicy": "IfNotPresent",
+                            "name": "inference",
+                            "ports": [
+                                {
+                                    "containerPort": 8000,
+                                    "protocol": "TCP"
+                                }
+                            ],
+                            "resources": {}
+                        }
+                    ],
+                    "dnsPolicy": "ClusterFirst",
+                    "imagePullSecrets": [
+                        {
+                            "name": dkubeDockerSecret,
+                        }
+                    ],
+                }
+            }
+        }
+    },
+    dkubeDocs(tag, dkubeDocsImage, dkubeDockerSecret):: {
+        "apiVersion": "extensions/v1beta1",
+        "kind": "Deployment",
+        "metadata": {
+            "labels": {
+                "app": "docs",
+            },
+            "name": "dkube-docs-" + tag,
+            "namespace": namespace
+        },
+        "spec": {
+            "replicas": 1,
+            "selector": {
+                "matchLabels": {
+                    "app": "docs",
+                }
+            },
+            "template": {
+                "metadata": {
+                    "labels": {
+                        "app": "docs",
+                    }
+                },
+                "spec": {
+                    "nodeSelector": if nodebind == "yes" then {"d3.nodetype": "dkube"} else {},
+                    "containers": [
+                        {
+                            "image": dkubeDocsImage,
+                            "imagePullPolicy": "IfNotPresent",
+                            "name": "docs",
+                            "ports": [
+                                {
+                                    "containerPort": 8888,
+                                    "protocol": "TCP"
+                                }
+                            ],
+                            "resources": {}
+                        }
+                    ],
+                    "dnsPolicy": "ClusterFirst",
+                    "imagePullSecrets": [
+                        {
+                            "name": dkubeDockerSecret,
+                        }
+                    ],
+                }
+            }
+        }
+    },
 	logstash(tag,logstashImage, dkubeDockerSecret, nfsServer):: {
 	    "apiVersion": "apps/v1", 
 	    "kind": "Deployment", 
