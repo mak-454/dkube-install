@@ -21,7 +21,7 @@
                         "name": "serve",
                         "port": 8888,
                         "protocol": "TCP",
-                        "targetPort": 8888
+                        "targetPort": 80
                     }
                 ],
                 "selector": {

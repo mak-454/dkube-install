@@ -92,12 +92,6 @@
                             "image": dkubeDocsImage,
                             "imagePullPolicy": "IfNotPresent",
                             "name": "docs",
-                            "ports": [
-                                {
-                                    "containerPort": 8888,
-                                    "protocol": "TCP"
-                                }
-                            ],
                             "resources": {}
                         }
                     ],
