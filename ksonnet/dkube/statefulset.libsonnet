@@ -35,6 +35,11 @@
             "spec": {
                 "containers": [
                     {
+                        "command": [
+                              "bash",
+                              "-c",
+                              "while true;\ndo  \n    nc dkube-etcd-server.dkube 2379 -zv -w 5\n    ret1=$?\n    nc minio-service.dkube 9000 -zv -w 5\n    ret2=$?\n    if (( ret1 == 0 && ret2 == 0 )); then\n        break\n    fi\n    sleep 30\ndone\nd3\n"
+                           ],
                         "env": [
                             {
                                 "name": "DKUBE_MOUNT_PATH",
