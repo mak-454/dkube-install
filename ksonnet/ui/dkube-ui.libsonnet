@@ -35,6 +35,11 @@
             "nodeSelector": if nodebind == "yes" then {"d3.nodetype": "dkube"} else {},
             "containers": [
               {
+                 "command": [
+                   "bash",
+                   "-c",
+                   "while true;\ndo\n    nc dfabproxy.dkube 8000 -zv -w 5\n    ret1=$? \n    nc dkube-d3api.dkube 5000 -zv -w 5\n    ret2=$? \n    if (( ret1 == 0 && ret2 == 0 )); then\n        break   \n    fi      \n    sleep 5\ndone\nbash /entrypoint.sh\n"
+                ],
                 "image": dkubeUIImage, 
                 "imagePullPolicy": "IfNotPresent", 
                 "name": "ui", 

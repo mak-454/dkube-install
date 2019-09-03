@@ -1,17 +1,111 @@
 {
     all(params):: [
-	$.parts(params.namespace, params.nodebind).logstash(params.tag, params.logstashImage, params.dkubeDockerSecret, params.nfsServer),
+	$.parts(params.namespace, params.nodebind).logstash(params.tag, params.nfsServer),
 	$.parts(params.namespace, params.nodebind).dkubeEtcd(params.tag, params.etcdPVC),
 	$.parts(params.namespace, params.nodebind).dfabProxy(params.tag,params.dfabProxyImage, params.dkubeDockerSecret),
 	$.parts(params.namespace, params.nodebind).dkubeWatcher(params.tag, params.dkubeWatcherImage, params.dkubeDockerSecret),
 	$.parts(params.namespace, params.nodebind).dkubeAuth(params.tag, params.dkubeAuthImage, params.dkubeDockerSecret, params.nfsServer),
 	$.parts(params.namespace, params.nodebind).ambassdor(params.tag),
 	$.parts(params.namespace, params.nodebind).dkubeDownloader(params.tag, params.dkubeDownloaderImage, params.dkubeDockerSecret, params.nfsServer),
+	$.parts(params.namespace, params.nodebind).dkubeServing(params.tag, params.dkubeInferenceImage, params.dkubeDockerSecret),
+	$.parts(params.namespace, params.nodebind).dkubeDocs(params.tag, params.dkubeDocsImage, params.dkubeDockerSecret),
     ],
 
     parts(namespace, nodebind):: {
         local ambassadorImage = "quay.io/datawire/ambassador:0.53.1",
-	logstash(tag,logstashImage, dkubeDockerSecret, nfsServer):: {
+    dkubeServing(tag, dkubeInferenceImage, dkubeDockerSecret):: {
+        "apiVersion": "extensions/v1beta1",
+        "kind": "Deployment",
+        "metadata": {
+            "labels": {
+                "app": "inference",
+            },
+            "name": "dkube-serving-" + tag,
+            "namespace": namespace
+        },
+        "spec": {
+            "replicas": 1,
+            "selector": {
+                "matchLabels": {
+                    "app": "inference",
+                }
+            },
+            "template": {
+                "metadata": {
+                    "labels": {
+                        "app": "inference",
+                    }
+                },
+                "spec": {
+                    "nodeSelector": if nodebind == "yes" then {"d3.nodetype": "dkube"} else {},
+                    "containers": [
+                        {
+                            "image": dkubeInferenceImage,
+                            "imagePullPolicy": "IfNotPresent",
+                            "name": "inference",
+                            "ports": [
+                                {
+                                    "containerPort": 8000,
+                                    "protocol": "TCP"
+                                }
+                            ],
+                            "resources": {}
+                        }
+                    ],
+                    "dnsPolicy": "ClusterFirst",
+                    "imagePullSecrets": [
+                        {
+                            "name": dkubeDockerSecret,
+                        }
+                    ],
+                }
+            }
+        }
+    },
+    dkubeDocs(tag, dkubeDocsImage, dkubeDockerSecret):: {
+        "apiVersion": "extensions/v1beta1",
+        "kind": "Deployment",
+        "metadata": {
+            "labels": {
+                "app": "docs",
+            },
+            "name": "dkube-docs-" + tag,
+            "namespace": namespace
+        },
+        "spec": {
+            "replicas": 1,
+            "selector": {
+                "matchLabels": {
+                    "app": "docs",
+                }
+            },
+            "template": {
+                "metadata": {
+                    "labels": {
+                        "app": "docs",
+                    }
+                },
+                "spec": {
+                    "nodeSelector": if nodebind == "yes" then {"d3.nodetype": "dkube"} else {},
+                    "containers": [
+                        {
+                            "image": dkubeDocsImage,
+                            "imagePullPolicy": "IfNotPresent",
+                            "name": "docs",
+                            "resources": {}
+                        }
+                    ],
+                    "dnsPolicy": "ClusterFirst",
+                    "imagePullSecrets": [
+                        {
+                            "name": dkubeDockerSecret,
+                        }
+                    ],
+                }
+            }
+        }
+    },
+	logstash(tag, nfsServer):: {
 	    "apiVersion": "apps/v1", 
 	    "kind": "Deployment", 
 	    "metadata": {
@@ -32,29 +126,31 @@
 			}
 		    }, 
 		    "spec": {
-			"imagePullSecrets": [
-			{
-			    "name": dkubeDockerSecret
-			}
-			],
             "nodeSelector": if nodebind == "yes" then {"d3.nodetype": "dkube"} else {},
 			"containers": [
 			{
 			    "command": [
-				"logstash",
-			    "-f",
-			    "config/logstash-sample.conf"
-			    ], 
-			    "image": logstashImage, 
+                    "bash",
+                    "-c",
+                    "\u003e config/logstash.yml;\n\u003e pipeline/logstash.conf;\ncat /tmp/config_data/logstash.conf \u003e\u003e pipeline/logstash.conf;\nlogstash -f pipeline/logstash.conf\n"
+                ],
+			    "image": "docker.elastic.co/logstash/logstash:7.3.0",  
 			    "imagePullPolicy": "IfNotPresent", 
 			    "name": "logstash",
 			    "resources": {},
-                            "volumeMounts": [
-                               {
-                                  "mountPath": "/var/log/dkube",
-                                  "name": "logs"
-                                }
-                             ]
+			    "securityContext": {
+                    "runAsUser": 0
+                },
+                "volumeMounts": [
+                   {
+                      "mountPath": "/var/log/dkube",
+                      "name": "logs"
+                    },
+                    {
+                        "mountPath": "/tmp/config_data",
+                        "name": "logstash-config",
+                    }
+                 ]
 			}
 			],
             "dnsConfig": {
@@ -75,7 +171,14 @@
 	                   "server": nfsServer
 	                 },
 	                  "name": "logs"
-	                }
+	                },
+	                {
+                    "configMap": {
+                        "defaultMode": 384,
+                        "name": "logstash-config"
+                    },
+                    "name": "logstash-config"
+                    },
 	              ]
 		    }
 		}
@@ -545,10 +648,6 @@
                    {
                       "mountPath": "/var/log/containerlogs",
                       "name": "logs"
-                    },
-                    {
-                      "mountPath": "/tmp/dkube/store",
-                      "name": "user-data"
                     }
                  ]
 			}
@@ -560,14 +659,6 @@
 	                   "server": nfsServer
 	                 },
 	                  "name": "logs"
-	                },
-	                {
-	                   "nfs": {
-                            "path": "/dkube/users",
-                            "server": nfsServer
-                       },
-                      "name": "user-data"     
-	                
 	                }
 	              ]
 		    }
