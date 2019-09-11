@@ -17,8 +17,6 @@
 // @optionalParam dkubeInferenceImage string ocdr/dkube-d3inf:alpha3 dkube-d3inf image
 // @optionalParam dkubeDocsImage string ocdr/dkube-docs:alpha3 dkube-docs image
 // @optionalParam dkubeWatcherImage string ocdr/dkube-d3watcher:1.1.2 dkube-d3watcher image
-// @optionalParam dkubeInferenceImage string ocdr/dkube-d3inf:1.1.2 inference image
-// @optionalParam dkubeDocsImage string ocdr/dkube-docs:1.1.2 docs image
 // @optionalParam dkubeAuthImage string ocdr/dkube-d3auth:1.2.2 dkube-d3auth image
 // @optionalParam tag string v1 tag for component
 // @optionalParam dkubeApiServerAddr string 0.0.0.0:5000 The address of dkube api server

@@ -42,12 +42,6 @@
                             "image": dkubeInferenceImage,
                             "imagePullPolicy": "IfNotPresent",
                             "name": "inference",
-                            "ports": [
-                                {
-                                    "containerPort": 8000,
-                                    "protocol": "TCP"
-                                }
-                            ],
                             "resources": {}
                         }
                     ],
