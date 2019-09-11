@@ -7,8 +7,6 @@
 	$.parts(params.namespace, params.nodebind).dkubeServing(params.tag, params.dkubeInferenceImage, params.dkubeDockerSecret),
 	$.parts(params.namespace, params.nodebind).dkubeDocs(params.tag, params.dkubeDocsImage, params.dkubeDockerSecret),
 	$.parts(params.namespace, params.nodebind).dkubeLogger(params.tag, params.dkubeDownloaderImage, params.dkubeDockerSecret, params.nfsServer),
-	$.parts(params.namespace, params.nodebind).dkubeServing(params.tag, params.dkubeInferenceImage, params.dkubeDockerSecret),
-	$.parts(params.namespace, params.nodebind).dkubeDocs(params.tag, params.dkubeDocsImage, params.dkubeDockerSecret),
     ],
 
     parts(namespace, nodebind):: {
@@ -194,7 +192,7 @@
 	                 },
 	                  "name": "logs"
 	                },
-	              {
+	                {
                     "configMap": {
                         "defaultMode": 384,
                         "name": "logstash-config"
