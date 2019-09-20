@@ -1,12 +1,12 @@
 {
     all(params):: [
-	$.parts(params.namespace, params.nodebind).logstash(params.tag, params.nfsServer),
+	$.parts(params.namespace, params.nodebind).logstash(params.tag, params.nfsServer, params.nfsBasePath),
 	$.parts(params.namespace, params.nodebind).dkubeEtcd(params.tag, params.etcdPVC),
 	$.parts(params.namespace, params.nodebind).dfabProxy(params.tag,params.dfabProxyImage, params.dkubeDockerSecret),
 	$.parts(params.namespace, params.nodebind).dkubeWatcher(params.tag, params.dkubeWatcherImage, params.dkubeDockerSecret),
-	$.parts(params.namespace, params.nodebind).dkubeAuth(params.tag, params.dkubeAuthImage, params.dkubeDockerSecret, params.nfsServer),
+	$.parts(params.namespace, params.nodebind).dkubeAuth(params.tag, params.dkubeAuthImage, params.dkubeDockerSecret, params.nfsServer, params.nfsBasePath),
 	$.parts(params.namespace, params.nodebind).ambassdor(params.tag),
-	$.parts(params.namespace, params.nodebind).dkubeDownloader(params.tag, params.dkubeDownloaderImage, params.dkubeDockerSecret, params.nfsServer),
+	$.parts(params.namespace, params.nodebind).dkubeDownloader(params.tag, params.dkubeDownloaderImage, params.dkubeDockerSecret, params.nfsServer, params.nfsBasePath),
 	$.parts(params.namespace, params.nodebind).dkubeServing(params.tag, params.dkubeInferenceImage, params.dkubeDockerSecret),
 	$.parts(params.namespace, params.nodebind).dkubeDocs(params.tag, params.dkubeDocsImage, params.dkubeDockerSecret),
     ],
@@ -105,7 +105,7 @@
             }
         }
     },
-	logstash(tag, nfsServer):: {
+	logstash(tag, nfsServer, nfsBasePath):: {
 	    "apiVersion": "apps/v1", 
 	    "kind": "Deployment", 
 	    "metadata": {
@@ -167,7 +167,7 @@
             "volumes": [
 	              {
 	                "nfs": {
-	                   "path": "/dkube/system/logs",
+	                   "path": nfsBasePath + "/dkube/system/logs",
 	                   "server": nfsServer
 	                 },
 	                  "name": "logs"
@@ -317,7 +317,7 @@
 		}
 	    },
 	},
-    dkubeAuth(tag, dkubeAuthImage, dkubeDockerSecret, nfsServer):: {
+    dkubeAuth(tag, dkubeAuthImage, dkubeDockerSecret, nfsServer, nfsBasePath):: {
         "apiVersion": "extensions/v1beta1",
         "kind": "Deployment",
         "metadata": {
@@ -411,7 +411,7 @@
                     },
                     {
                         "nfs": {
-                            "path": "/dkube/system/logs/dkube",
+                            "path": nfsBasePath + "/dkube/system/logs/dkube",
                             "server": nfsServer
                         },
                         "name": "dkube-logs"
@@ -592,7 +592,7 @@
             },
           },
         },
-    dkubeDownloader(tag,dkubeDownloaderImage, dkubeDockerSecret, nfsServer):: {
+    dkubeDownloader(tag,dkubeDownloaderImage, dkubeDockerSecret, nfsServer, nfsBasePath):: {
 	    "apiVersion": "apps/v1",
 	    "kind": "Deployment",
 	    "metadata": {
@@ -654,7 +654,7 @@
             "volumes": [
 	              {
 	                "nfs": {
-	                   "path": "/dkube/system/logs",
+	                   "path": nfsBasePath + "/dkube/system/logs",
 	                   "server": nfsServer
 	                 },
 	                  "name": "logs"
