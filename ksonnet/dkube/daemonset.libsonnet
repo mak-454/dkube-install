@@ -1,38 +1,37 @@
 {
     all(params):: [
-	$.parts(params.namespace).dkubeExt(params.tag, params.dkubeExtImage, params.dkubeDockerSecret, params.minioSecretKey, params.nfsServer),
 	$.parts(params.namespace).filebeat(params.tag),
+	$.parts(params.namespace).dkubeWorker(params.tag, params.dkubeApiServerImage, params.dkubeApiServerAddr, params.dkubeMountPath, params.dkubeApiServerAddr, params.rdmaEnabled, params.dkubeDockerSecret, params.minioSecretKey, params.nfsServer, params.dkubeRegistry, params.dkubeRegistryUname, params.dkubeRegistryPasswd, params.dkubeExtImage)
     ],
     parts(namespace):: {
-	dkubeExt(tag, dkubeExtImage,dkubeDockerSecret, minioSecretKey, nfsServer):: {
-	    "apiVersion": "extensions/v1beta1", 
-	    "kind": "DaemonSet", 
-	    "metadata": {
-		"labels": {
-		    "app": "dkube-ext"
-		}, 
-		"name": "dkube-ext-" + tag, 
-		"namespace": "dkube"
-	    }, 
-	    "spec": {
-		"imagePullSecrets": [
-		{
-		    "name": dkubeDockerSecret
-		}
-		],
-		"selector": {
-		    "matchLabels": {
-			"app": "dkube-ext"
-		    }
-		}, 
-		"template": {
-		    "metadata": {
-			"labels": {
-			    "app": "dkube-ext"
-			}
-		    }, 
-		    "spec": {
-                "affinity": {
+    dkubeWorker(tag, apiServerImage, apiServerAddr, mountPath, dkubeApiServerAddr, isRdmaEnabled, dkubeDockerSecret, minioSecretKey, nfsServer, dkubeRegistry, dkubeRegistryUname, dkubeRegistryPasswd, dkubeExtImage):: {
+	    local dkubeApiServerAddrArray = std.split(dkubeApiServerAddr, ":"),
+	    local dkubeApiServerPort = std.parseInt(dkubeApiServerAddrArray[std.length(dkubeApiServerAddrArray)-1]),
+
+    "apiVersion": "extensions/v1beta1",
+    "kind": "DaemonSet",
+    "metadata": {
+        "labels": {
+            "app": "dkube-worker"
+        },
+        "name": "dkube-d3api-worker-" + tag,
+        "namespace": namespace,
+    },
+    "spec": {
+        "selector": {
+            "matchLabels": {
+                "app": "dkube-worker"
+            }
+        },
+        "template": {
+            "metadata": {
+                "creationTimestamp": null,
+                "labels": {
+                    "app": "dkube-worker"
+                }
+            },
+            "spec": {
+                 "affinity": {
                     "nodeAffinity": {
                         "requiredDuringSchedulingIgnoredDuringExecution": {
                             "nodeSelectorTerms": [
@@ -48,67 +47,157 @@
                         }
                     }
                 },
-			"containers": [
-			{
-			    "env": [
-			    {
-				"name": "MYNODENAME", 
-				"valueFrom": {
-				    "fieldRef": {
-					"apiVersion": "v1", 
-					"fieldPath": "spec.nodeName"
-				    }
-				}
-			    }
-			    ], 
-			    "image": dkubeExtImage, 
-			    "imagePullPolicy": "IfNotPresent", 
-			    "name": "dkube-ext",
-			    "securityContext": {
-			        "privileged": true
-			    },
-			    "ports": [
-			    {
-				"containerPort": 9401, 
-				"name": "http-metrics", 
-				"protocol": "TCP"
-			    }
-			    ], 
-			    "volumeMounts": [
-			    {
-			    "mountPath": "/usr/local/nvidia/lib64",
-			    "name": "nvidia-lib"
-                }
-			    ]
-			}
-			], 
-            "dnsConfig": {
-                "options": [
+                "containers": [
                     {
-                        "name": "single-request-reopen"
+                        "env": [
+                            {
+                                "name": "DKUBE_MOUNT_PATH",
+                                "value": mountPath
+                            },
+                            {
+                                "name": "DKUBE_REGISTRY",
+                                "value": dkubeRegistry
+                            },
+                            {
+                                "name": "DKUBE_REGISTRY_UNAME",
+                                "value": dkubeRegistryUname
+                            },
+                            {
+                                "name": "DKUBE_REGISTRY_PASSWD",
+                                "value": dkubeRegistryPasswd
+                            },
+                            {
+                                "name": "DKUBE_SERVICE_ACCOUNT",
+                                "value": "dkube"
+                            },
+                            {
+                                "name": "RDMA_ENABLED",
+                                "value": std.toString(isRdmaEnabled)
+                            },
+                            {
+                                "name": "NFS_SERVER",
+                                "value": nfsServer
+                            },
+                            {
+                                "name": "DKUBE_APISERVER_ROLE",
+                                "value": "worker"
+                            },
+                        ],
+                        "image": apiServerImage,
+                        "imagePullPolicy": "IfNotPresent",
+                        "name": "dkube-d3api",
+                        "ports": [
+                            {
+                                "containerPort": dkubeApiServerPort,
+                                "name": "dkube-d3api",
+                                "protocol": "TCP"
+                            }
+                        ],
+                        "resources": {},
+                        "securityContext": {
+                            "procMount": "Default",
+                            "runAsUser": 0
+                        },
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File",
+                        "volumeMounts": [
+                            {
+                                "mountPath": mountPath,
+                                "name": "store"
+                            },
+                            {
+                                "mountPath": "/var/run/docker.sock",
+                                "name": "docker"
+                            },
+                            {
+                                "mountPath": "/var/log/dkube",
+                                "name": "dkube-logs"
+                            }
+                        ]
                     },
                     {
-                        "name": "timeout",
-                        "value": "30"
+                    "env": [
+                        {
+                        "name": "MYNODENAME",
+                        "valueFrom": {
+                            "fieldRef": {
+                            "fieldPath": "spec.nodeName"
+                            }
+                        }
+                        }
+                    ],
+                    "image": dkubeExtImage,
+                    "imagePullPolicy": "IfNotPresent",
+                    "name": "dkube-ext",
+                    "securityContext": {
+                        "privileged": true
+                    },
+                    "ports": [
+                    {
+                        "containerPort": 9401,
+                        "name": "http-metrics",
+                        "protocol": "TCP"
+                    }
+                    ],
+                    "volumeMounts": [
+                        {
+                        "mountPath": "/usr/local/nvidia/lib64",
+                        "name": "nvidia-lib"
+                    }
+                    ]
+                    }
+                ],
+                "dnsConfig": {
+                    "options": [
+                        {
+                            "name": "single-request-reopen"
+                        },
+                        {
+                            "name": "timeout",
+                            "value": "30"
+                        }
+                    ]
+                },
+                "dnsPolicy": "ClusterFirst",
+                "imagePullSecrets": [
+                    {
+                        "name": dkubeDockerSecret
+                    }
+                ],
+                "restartPolicy": "Always",
+                "serviceAccount": "dkube",
+                "serviceAccountName": "dkube",
+                "volumes": [
+                    {
+                        "nfs": {
+                            "server": nfsServer,
+                            "path": "/dkube"
+                        },
+                        "name": "store"
+                    },
+                    {
+                        "nfs": {
+                            "path": "/dkube/system/logs/dkube",
+                            "server": nfsServer
+                        },
+                        "name": "dkube-logs"
+                    },
+                    {
+                        "hostPath": {
+                            "path": "/var/run/docker.sock",
+                        },
+                        "name": "docker"
+                    },
+                    {
+                        "hostPath": {
+                            "path": "/usr/lib64/nvidia"
+                        },
+                        "name": "nvidia-lib"
                     }
                 ]
-            },
-			"imagePullSecrets": [
-			{
-			    "name": dkubeDockerSecret
-			}
-			], 
-			"volumes": [
-			{
-			    "hostPath": {
-			        "path": "/usr/lib64/nvidia"
-			    },
-			    "name": "nvidia-lib"
-			}
-			]
-		    }
-		}
-	    }
+            }
+        },
+    },
 	},
 	filebeat(tag):: {
 	    "apiVersion": "extensions/v1beta1",
@@ -165,8 +254,6 @@
 			    "securityContext": {
                     "runAsUser": 0
                 },
-			    "terminationMessagePath": "/dev/termination-log",
-			    "terminationMessagePolicy": "File",
 			    "volumeMounts": [
 			    {
 				"mountPath": "/mnt/root",

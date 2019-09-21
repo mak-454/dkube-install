@@ -1,10 +1,10 @@
 {
     all(params):: [
-	$.parts(params.namespace, params.nodebind).dkubeD3api(params.tag, params.dkubeApiServerImage, params.dkubeApiServerAddr, params.dkubeMountPath, params.dkubeApiServerAddr, params.rdmaEnabled, params.dkubeDockerSecret, params.minioSecretKey, params.nfsServer, params.dkubeRegistry, params.dkubeRegistryUname, params.dkubeRegistryPasswd),
+	$.parts(params.namespace, params.nodebind).dkubeMaster(params.tag, params.dkubeApiServerImage, params.dkubeApiServerAddr, params.dkubeMountPath, params.dkubeApiServerAddr, params.rdmaEnabled, params.dkubeDockerSecret, params.minioSecretKey, params.nfsServer, params.dkubeRegistry, params.dkubeRegistryUname, params.dkubeRegistryPasswd, params.dkubeWatcherImage)
     ],
 
     parts(namespace, nodebind):: {
-	dkubeD3api(tag, apiServerImage, apiServerAddr, mountPath, dkubeApiServerAddr, isRdmaEnabled, dkubeDockerSecret, minioSecretKey, nfsServer, dkubeRegistry, dkubeRegistryUname, dkubeRegistryPasswd):: {
+	dkubeMaster(tag, apiServerImage, apiServerAddr, mountPath, dkubeApiServerAddr, isRdmaEnabled, dkubeDockerSecret, minioSecretKey, nfsServer, dkubeRegistry, dkubeRegistryUname, dkubeRegistryPasswd, dkubeWatcherImage):: {
 	    local dkubeApiServerAddrArray = std.split(dkubeApiServerAddr, ":"),
 	    local dkubeApiServerPort = std.parseInt(dkubeApiServerAddrArray[std.length(dkubeApiServerAddrArray)-1]),
 
@@ -12,24 +12,23 @@
     "kind": "StatefulSet",
     "metadata": {
         "labels": {
-            "app": "dkube-d3api"
+            "app": "dkube-master"
         },
-        "name": "dkube-d3api-" + tag,
+        "name": "dkube-d3api-master-" + tag,
         "namespace": namespace,
     },
     "spec": {
         "replicas": 1,
         "selector": {
             "matchLabels": {
-                "app": "dkube-d3api"
+                "app": "dkube-master"
             }
         },
         "serviceName": "dkube-d3api-headless",
         "template": {
             "metadata": {
-                "creationTimestamp": null,
                 "labels": {
-                    "app": "dkube-d3api"
+                    "app": "dkube-master"
                 }
             },
             "spec": {
@@ -63,7 +62,11 @@
                             {
                                 "name": "NFS_SERVER",
                                 "value": nfsServer
-                            }
+                            },
+                            {
+                                "name": "DKUBE_APISERVER_ROLE",
+                                "value": "master"
+                            },
                         ],
                         "image": apiServerImage,
                         "imagePullPolicy": "IfNotPresent",
@@ -94,6 +97,30 @@
                             {
                                 "mountPath": "/var/log/dkube",
                                 "name": "dkube-logs"
+                            }
+                        ]
+                    },
+                    {
+                        "env": [
+                            {
+                                "name": "DKUBE_SERVICE_ACCOUNT",
+                                "value": "dkube"
+                            }
+                        ],
+                        "image": dkubeWatcherImage,
+                        "imagePullPolicy": "IfNotPresent",
+                        "name": "dkube-d3watcher",
+                        "resources": {},
+                        "securityContext": {
+                            "procMount": "Default",
+                            "runAsUser": 0
+                        },
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File",
+                        "volumeMounts": [
+                            {
+                                "mountPath": "/var/log/dkube",
+                                "name": "dkube-logs-host"
                             }
                         ]
                     }
@@ -139,11 +166,18 @@
                             "path": "/var/run/docker.sock",
                         },
                         "name": "docker"
+                    },
+                    {
+                        "hostPath": {
+                            "path": "/var/log/dkube",
+                            "type": "DirectoryOrCreate"
+                        },
+                        "name": "dkube-logs-host"
                     }
                 ]
             }
         },
     },
-	}, 
+	},
     },
 }

@@ -7,8 +7,9 @@
     $.parts(params.namespace).kubeflowArgoUIServiceMapping(),
     $.parts(params.namespace).dkubeServiceAccount(),
     $.parts(params.namespace).dkubeClusterRoleBinding(params.dkubeClusterRole),
-    $.parts(params.namespace).dkubeService(params.dkubeApiServerAddr),
-    $.parts(params.namespace).dkubeHeadlessService(params.dkubeApiServerAddr),
+    $.parts(params.namespace).dkubeServiceMaster(params.dkubeApiServerAddr),
+    $.parts(params.namespace).dkubeServiceWorker(params.dkubeApiServerAddr),
+    $.parts(params.namespace).dkubeHeadlessServiceMaster(params.dkubeApiServerAddr),
     $.parts(params.namespace).dkubeAuthService(),
     $.parts(params.namespace).dkubeDexCM(),
     $.parts(params.namespace).filebeatCM(),
@@ -142,7 +143,7 @@
         }
       ]
     },  // cluster role binding
-    dkubeService(dkubeApiServerAddr):: {
+    dkubeServiceMaster(dkubeApiServerAddr):: {
       local dkubeApiServerAddrArray = std.split(dkubeApiServerAddr, ":"),
       local dkubeApiServerPort = std.parseInt(dkubeApiServerAddrArray[std.length(dkubeApiServerAddrArray)-1]),
 
@@ -150,30 +151,61 @@
       "kind": "Service", 
       "metadata": {
         "annotations": {
-          "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_d3api\nprefix: /dkube/v2\nrewrite: /dkube/v2\ntimeout_ms: 600000\nservice: dkube-d3api:5000"
+          "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_d3api\nprefix: /dkube/v2\nrewrite: /dkube/v2\nmethod_regex: true\nmethod: 'POST|PUT|DELETE|OPTIONS'\ntimeout_ms: 600000\nservice: dkube-d3api-master:5000"
         }, 
         "labels": {
-          "app": "dkube-d3api"
+          "app": "dkube-d3api-master"
         }, 
-        "name": "dkube-d3api", 
+        "name": "dkube-d3api-master", 
         "namespace": namespace
       }, 
       "spec": {
         "ports": [
           {
-            "name": "dkube-d3api", 
+            "name": "dkube-d3api-master", 
             "port": dkubeApiServerPort, 
             "protocol": "TCP", 
             "targetPort": dkubeApiServerPort
           }
         ], 
         "selector": {
-          "app": "dkube-d3api"
+          "app": "dkube-master"
         }, 
         "type": "ClusterIP"
       }
-    }, //service
-    dkubeHeadlessService(dkubeApiServerAddr):: {
+    }, //service master
+    dkubeServiceWorker(dkubeApiServerAddr):: {
+      local dkubeApiServerAddrArray = std.split(dkubeApiServerAddr, ":"),
+      local dkubeApiServerPort = std.parseInt(dkubeApiServerAddrArray[std.length(dkubeApiServerAddrArray)-1]),
+
+      "apiVersion": "v1",
+      "kind": "Service",
+      "metadata": {
+        "annotations": {
+          "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_d3api_worker\nprefix: /dkube/v2\nrewrite: /dkube/v2\nmethod: GET\ntimeout_ms: 600000\nservice: dkube-d3api-worker:5000"
+        },
+        "labels": {
+          "app": "dkube-d3api-worker"
+        },
+        "name": "dkube-d3api-worker",
+        "namespace": namespace
+      },
+      "spec": {
+        "ports": [
+          {
+            "name": "dkube-d3api-worker",
+            "port": dkubeApiServerPort,
+            "protocol": "TCP",
+            "targetPort": dkubeApiServerPort
+          }
+        ],
+        "selector": {
+          "app": "dkube-worker"
+        },
+        "type": "ClusterIP"
+      }
+    }, //service worker
+    dkubeHeadlessServiceMaster(dkubeApiServerAddr):: {
       local dkubeApiServerAddrArray = std.split(dkubeApiServerAddr, ":"),
       local dkubeApiServerPort = std.parseInt(dkubeApiServerAddrArray[std.length(dkubeApiServerAddrArray)-1]),
 
@@ -181,27 +213,27 @@
       "kind": "Service", 
       "metadata": {
         "labels": {
-          "app": "dkube-d3api"
+          "app": "dkube-d3api-master"
         }, 
-        "name": "dkube-d3api-headless", 
+        "name": "dkube-d3api-headless-master", 
         "namespace": namespace
       }, 
       "spec": {
         "clusterIP": "None",
         "ports": [
           {
-            "name": "dkube-d3api", 
+            "name": "dkube-d3api-master", 
             "port": dkubeApiServerPort, 
             "protocol": "TCP", 
             "targetPort": dkubeApiServerPort
           }
         ], 
         "selector": {
-          "app": "dkube-d3api"
+          "app": "dkube-master"
         }, 
         "type": "ClusterIP"
       }
-    }, //service
+    }, //d3api master headless service
     dkubeAuthService():: {
         "apiVersion": "v1",
         "kind": "Service",
