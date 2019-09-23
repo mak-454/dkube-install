@@ -25,7 +25,7 @@
                     }
                 ],
                 "selector": {
-                    "app": "docs"
+                    "app": "dkube-tools"
                 },
                 "type": "ClusterIP"
             }
@@ -50,7 +50,7 @@
                     }
                 ],
                 "selector": {
-                    "app": "inference"
+                    "app": "dkube-tools"
                 },
                 "type": "ClusterIP"
             }

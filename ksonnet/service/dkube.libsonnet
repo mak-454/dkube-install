@@ -7,8 +7,9 @@
     $.parts(params.namespace).kubeflowArgoUIServiceMapping(),
     $.parts(params.namespace).dkubeServiceAccount(),
     $.parts(params.namespace).dkubeClusterRoleBinding(params.dkubeClusterRole),
-    $.parts(params.namespace).dkubeService(params.dkubeApiServerAddr),
-    $.parts(params.namespace).dkubeHeadlessService(params.dkubeApiServerAddr),
+    $.parts(params.namespace).dkubeServiceMaster(params.dkubeApiServerAddr),
+    $.parts(params.namespace).dkubeServiceWorker(params.dkubeApiServerAddr),
+    $.parts(params.namespace).dkubeHeadlessServiceMaster(params.dkubeApiServerAddr),
     $.parts(params.namespace).dkubeAuthService(),
     $.parts(params.namespace).dkubeDexCM(),
     $.parts(params.namespace).filebeatCM(),
@@ -142,7 +143,7 @@
         }
       ]
     },  // cluster role binding
-    dkubeService(dkubeApiServerAddr):: {
+    dkubeServiceMaster(dkubeApiServerAddr):: {
       local dkubeApiServerAddrArray = std.split(dkubeApiServerAddr, ":"),
       local dkubeApiServerPort = std.parseInt(dkubeApiServerAddrArray[std.length(dkubeApiServerAddrArray)-1]),
 
@@ -153,27 +154,26 @@
           "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_d3api\nprefix: /dkube/v2\nrewrite: /dkube/v2\ntimeout_ms: 600000\nservice: dkube-d3api:5000"
         }, 
         "labels": {
-          "app": "dkube-d3api"
+          "app": "dkube-controller-master"
         }, 
-        "name": "dkube-d3api", 
+        "name": "dkube-controller-master", 
         "namespace": namespace
       }, 
       "spec": {
         "ports": [
           {
-            "name": "dkube-d3api", 
             "port": dkubeApiServerPort, 
             "protocol": "TCP", 
             "targetPort": dkubeApiServerPort
           }
         ], 
         "selector": {
-          "app": "dkube-d3api"
+          "app": "dkube-controller-master"
         }, 
         "type": "ClusterIP"
       }
-    }, //service
-    dkubeHeadlessService(dkubeApiServerAddr):: {
+    }, //service master
+    dkubeHeadlessServiceMaster(dkubeApiServerAddr):: {
       local dkubeApiServerAddrArray = std.split(dkubeApiServerAddr, ":"),
       local dkubeApiServerPort = std.parseInt(dkubeApiServerAddrArray[std.length(dkubeApiServerAddrArray)-1]),
 
@@ -181,27 +181,56 @@
       "kind": "Service", 
       "metadata": {
         "labels": {
-          "app": "dkube-d3api"
+          "app": "dkube-controller-master"
         }, 
-        "name": "dkube-d3api-headless", 
+        "name": "dkube-controller-master-headless", 
         "namespace": namespace
       }, 
       "spec": {
         "clusterIP": "None",
         "ports": [
           {
-            "name": "dkube-d3api", 
             "port": dkubeApiServerPort, 
             "protocol": "TCP", 
             "targetPort": dkubeApiServerPort
           }
         ], 
         "selector": {
-          "app": "dkube-d3api"
+          "app": "dkube-controller-master"
         }, 
         "type": "ClusterIP"
       }
     }, //service
+    dkubeServiceWorker(dkubeApiServerAddr):: {
+      local dkubeApiServerAddrArray = std.split(dkubeApiServerAddr, ":"),
+      local dkubeApiServerPort = std.parseInt(dkubeApiServerAddrArray[std.length(dkubeApiServerAddrArray)-1]),
+
+      "apiVersion": "v1",
+      "kind": "Service",
+      "metadata": {
+        "annotations": {
+          "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_d3api_worker\nprefix: /dkube/v2\nrewrite: /dkube/v2\nmethod: GET\ntimeout_ms: 600000\nservice: dkube-d3api-worker:5000"
+        },
+        "labels": {
+          "app": "dkube-controller-worker"
+        },
+        "name": "dkube-controller-worker",
+        "namespace": namespace
+      },
+      "spec": {
+        "ports": [
+          {
+            "port": dkubeApiServerPort,
+            "protocol": "TCP",
+            "targetPort": dkubeApiServerPort
+          }
+        ],
+        "selector": {
+          "app": "dkube-controller-worker"
+        },
+        "type": "ClusterIP"
+      }
+    }, //service worker
     dkubeAuthService():: {
         "apiVersion": "v1",
         "kind": "Service",
@@ -212,7 +241,7 @@
             "labels": {
                 "app": "d3auth"
             },
-            "name": "dkube-d3auth",
+            "name": "dkube-auth",
             "namespace": "dkube",
         },
         "spec": {
@@ -231,7 +260,7 @@
             }
             ],
             "selector": {
-                "app": "d3auth"
+                "app": "dkube-auth"
             },
             "type": "ClusterIP"
         },
@@ -243,7 +272,7 @@
         },
         "kind": "ConfigMap",
         "metadata": {
-            "name": "dex",
+            "name": "dkube-auth-config",
             "namespace": "dkube",
         }
     },
@@ -254,10 +283,7 @@
         },
         "kind": "ConfigMap",
         "metadata": {
-            "labels": {
-                "k8s-app": "filebeat"
-            },
-            "name": "filebeat-config",
+            "name": "dkube-log-collector-config",
             "namespace": "dkube"
         }
     },
@@ -268,10 +294,7 @@
         },
         "kind": "ConfigMap",
         "metadata": {
-            "labels": {
-                "app": "logstash"
-            },
-            "name": "logstash-config",
+            "name": "dkube-log-miner-config",
             "namespace": "dkube"
         }
     },
@@ -312,7 +335,7 @@
         "metadata": {
             "name": "dex",
         },
-        "roleRef": {
+        "noleRef": {
             "apiGroup": "rbac.authorization.k8s.io",
             "kind": "ClusterRole",
             "name": "dex"

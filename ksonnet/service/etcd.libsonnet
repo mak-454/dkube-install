@@ -4,7 +4,7 @@
       "kind": "PersistentVolumeClaim",
       "apiVersion": "v1",
       "metadata": {
-        "name": "etcd-pvc",
+        "name": "dkube-db-pvc",
         "namespace": "dkube",
         },
       "spec": {
@@ -27,7 +27,7 @@
             "annotations": {
                 "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_etcd\nprefix: /dkube/v2/etcd/\nrewrite: /\ntimeout_ms: 600000\nservice: dkube-etcd-server:2379"
             },
-            "name": "dkube-etcd-server",
+            "name": "dkube-db-server",
             "namespace": "dkube"
 	    },
 	    "spec": {
@@ -39,7 +39,7 @@
 		}
 		],
 		"selector": {
-		    "app": "dkube-etcd-server"
+		    "app": "dkube-db-server"
 		},
 		"type": "ClusterIP"
 	    }

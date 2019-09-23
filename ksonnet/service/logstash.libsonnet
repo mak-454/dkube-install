@@ -8,20 +8,19 @@
       "apiVersion": "v1", 
       "kind": "Service", 
       "metadata": {
-        "name": "logstash", 
+        "name": "dkube-log-miner", 
         "namespace": "dkube"
       }, 
       "spec": {
         "ports": [
           {
-            "name": "logstash", 
             "port": 5044, 
             "protocol": "TCP", 
             "targetPort": 5044
           }
         ], 
         "selector": {
-          "app": "logstash"
+          "app": "dkube-log-miner"
         }, 
         "type": "ClusterIP"
       }

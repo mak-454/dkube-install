@@ -1,10 +1,10 @@
 {
     all(params):: [
-	$.parts(params.namespace, params.nodebind).dkubeD3api(params.tag, params.dkubeApiServerImage, params.dkubeApiServerAddr, params.dkubeMountPath, params.dkubeApiServerAddr, params.rdmaEnabled, params.dkubeDockerSecret, params.minioSecretKey, params.nfsServer, params.nfsBasePath, params.dkubeRegistry, params.dkubeRegistryUname, params.dkubeRegistryPasswd),
+	$.parts(params.namespace, params.nodebind).dkubeD3apiMaster(params.tag, params.dkubeApiServerImage, params.dkubeApiServerAddr, params.dkubeMountPath, params.dkubeApiServerAddr, params.rdmaEnabled, params.dkubeDockerSecret, params.minioSecretKey, params.nfsServer, params.nfsBasePath, params.dkubeRegistry, params.dkubeRegistryUname, params.dkubeRegistryPasswd),
     ],
 
     parts(namespace, nodebind):: {
-	dkubeD3api(tag, apiServerImage, apiServerAddr, mountPath, dkubeApiServerAddr, isRdmaEnabled, dkubeDockerSecret, minioSecretKey, nfsServer, nfsBasePath, dkubeRegistry, dkubeRegistryUname, dkubeRegistryPasswd):: {
+	dkubeD3apiMaster(tag, apiServerImage, apiServerAddr, mountPath, dkubeApiServerAddr, isRdmaEnabled, dkubeDockerSecret, minioSecretKey, nfsServer, nfsBasePath, dkubeRegistry, dkubeRegistryUname, dkubeRegistryPasswd):: {
 	    local dkubeApiServerAddrArray = std.split(dkubeApiServerAddr, ":"),
 	    local dkubeApiServerPort = std.parseInt(dkubeApiServerAddrArray[std.length(dkubeApiServerAddrArray)-1]),
 
@@ -12,24 +12,24 @@
     "kind": "StatefulSet",
     "metadata": {
         "labels": {
-            "app": "dkube-d3api"
+            "app": "dkube-controller-master"
         },
-        "name": "dkube-d3api-" + tag,
+        "name": "dkube-controller-master" + tag,
         "namespace": namespace,
     },
     "spec": {
         "replicas": 1,
         "selector": {
             "matchLabels": {
-                "app": "dkube-d3api"
+                "app": "dkube-controller-master"
             }
         },
-        "serviceName": "dkube-d3api-headless",
+        "serviceName": "dkube-controller-master-headless",
         "template": {
             "metadata": {
                 "creationTimestamp": null,
                 "labels": {
-                    "app": "dkube-d3api"
+                    "app": "dkube-controller-master"
                 }
             },
             "spec": {
@@ -67,7 +67,11 @@
                             {
                                 "name": "NFS_BASE_PATH",
                                 "value": nfsBasePath
-                            }
+                            },
+                            {
+                                "name": "DKUBE_APISERVER_ROLE",
+                                "value": "master"
+                            },
                         ],
                         "image": apiServerImage,
                         "imagePullPolicy": "IfNotPresent",
