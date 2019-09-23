@@ -245,7 +245,7 @@
 			{
                 "configMap": {
                     "defaultMode": 384,
-                    "name": "log-collector-config"
+                    "name": "dkube-log-collector-config"
                 },
                 "name": "log-collector-config"
             },
