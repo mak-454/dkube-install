@@ -183,7 +183,7 @@
         "labels": {
           "app": "dkube-controller-master"
         }, 
-        "name": "dkube-controller-master-headless", 
+        "name": "dkube-controller-headless-master", 
         "namespace": namespace
       }, 
       "spec": {

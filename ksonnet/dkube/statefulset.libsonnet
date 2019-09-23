@@ -14,7 +14,7 @@
         "labels": {
             "app": "dkube-controller-master"
         },
-        "name": "dkube-controller-master" + tag,
+        "name": "dkube-controller-master-" + tag,
         "namespace": namespace,
     },
     "spec": {
