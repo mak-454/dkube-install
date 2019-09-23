@@ -53,7 +53,7 @@
         "labels": {
           "app": "minio"
         }, 
-        "name": "dkube-storage-", 
+        "name": "dkube-storage", 
         "namespace": "dkube"
       }, 
       "spec": {
