@@ -4,7 +4,7 @@
       "kind": "PersistentVolumeClaim",
       "apiVersion": "v1",
       "metadata": {
-        "name": "dkube-db-pvc",
+        "name": "dkube-db-server-pvc",
         "namespace": "dkube",
         },
       "spec": {
