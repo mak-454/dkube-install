@@ -64,20 +64,20 @@
 	    "apiVersion": "apps/v1", 
 	    "kind": "Deployment", 
 	    "metadata": {
-		    "name": "dkube-log-miner-" + tag, 
+		    "name": "dkube-log-mixer-" + tag, 
 		    "namespace": "dkube"
 	    }, 
 	    "spec": {
 		"replicas": 1, 
 		"selector": {
 		    "matchLabels": {
-			"app": "dkube-log-miner"
+			"app": "dkube-log-mixer"
 		    }
 		}, 
 		"template": {
 		    "metadata": {
 			"labels": {
-			    "app": "dkube-log-miner"
+			    "app": "dkube-log-mixer"
 			}
 		    }, 
 		    "spec": {
@@ -103,7 +103,7 @@
                     },
                     {
                         "mountPath": "/tmp/config_data",
-                        "name": "dkube-log-miner-config",
+                        "name": "dkube-log-mixer-config",
                     }
                  ]
 			}
@@ -130,9 +130,9 @@
 	                {
                     "configMap": {
                         "defaultMode": 384,
-                        "name": "dkube-log-miner-config"
+                        "name": "dkube-log-mixer-config"
                     },
-                    "name": "dkube-log-miner-config"
+                    "name": "dkube-log-mixer-config"
                     },
 	              ]
 		    }
@@ -359,7 +359,7 @@
                     {
                         "configMap": {
                             "defaultMode": 420,
-                            "name": "dkube-auth"
+                            "name": "dkube-auth-config"
                         },
                         "name": "dex-cm"
                     },

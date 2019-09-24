@@ -8,7 +8,7 @@
       "apiVersion": "v1", 
       "kind": "Service", 
       "metadata": {
-        "name": "dkube-log-miner", 
+        "name": "dkube-log-mixer", 
         "namespace": "dkube"
       }, 
       "spec": {
