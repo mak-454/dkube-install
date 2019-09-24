@@ -20,7 +20,7 @@
           }
         ], 
         "selector": {
-          "app": "dkube-log-miner"
+          "app": "dkube-log-mixer"
         }, 
         "type": "ClusterIP"
       }

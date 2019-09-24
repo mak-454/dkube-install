@@ -9,7 +9,7 @@
             "kind": "Service",
             "metadata": {
                 "annotations": {
-                    "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dfabproxy\nuse_websocket: true\ntimeout_ms: 600000\nprefix: /dkube/v2/operator\nrewrite: /dkube/v2/operator\nservice: dfabproxy:8000"
+                    "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dfabproxy\nuse_websocket: true\ntimeout_ms: 600000\nprefix: /dkube/v2/operator\nrewrite: /dkube/v2/operator\nservice: dkube-operator-api-proxy:8000"
                 },
                 "name": "dkube-operator-api-proxy",
                 "namespace": "dkube",
