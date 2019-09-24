@@ -541,7 +541,7 @@
                 ]
             },
               restartPolicy: "Always",
-              serviceAccountName: "ambassador",
+              serviceAccountName: "dkube-proxy",
              },
             },
           },
