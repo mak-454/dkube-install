@@ -383,7 +383,7 @@
                         "volumeMounts": [
                            {
                               "mountPath": "/var/log/containerlogs",
-                              "name": "dkube-logs"
+                              "name": "jobs-logs"
                             }
                          ]
                     }
@@ -422,6 +422,13 @@
                             "server": nfsServer
                         },
                         "name": "dkube-logs"
+                    },
+                    {
+                        "nfs": {
+                            "path": "/dkube/system/logs",
+                            "server": nfsServer
+                        },
+                        "name": "jobs-logs"
                     },
                     {
                         "hostPath": {
