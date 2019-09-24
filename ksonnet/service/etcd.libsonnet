@@ -17,7 +17,7 @@
             "storage": "50Gi"
           }
         },
-        "volumeName": "d3etcd"
+        "volumeName": "dkube-db-server"
       }
     },
     {
