@@ -29,7 +29,7 @@
       "kind": "PersistentVolumeClaim",
       "apiVersion": "v1",
       "metadata": {
-        "name": "dkube-pvc",
+        "name": "dkube-s3-storage-pvc",
         "namespace": "dkube",
         },
       "spec": {
@@ -123,7 +123,7 @@
             "volumes": [
               {
                 "persistentVolumeClaim": {
-                  "claimName": "dkube-pvc",
+                  "claimName": "dkube-s3-storage-pvc",
                 }, 
                 "name": "storage"
               }
