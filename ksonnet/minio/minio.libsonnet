@@ -5,7 +5,7 @@
       "kind": "Service", 
       "metadata": {
         "annotations": {
-            "getambassador.io/config": "---\n  apiVersion: ambassador/v0\n  kind: Mapping\n  name: dkube_minio\n  prefix: /minio/\n  rewrite: /\n  timeout_ms: 600000\n  service: minio-service:9000\n"},
+            "getambassador.io/config": "---\n  apiVersion: ambassador/v0\n  kind: Mapping\n  name: dkube_minio\n  prefix: /minio/\n  rewrite: /\n  timeout_ms: 600000\n  service: dkube-storage:9000\n"},
         "name": "dkube-storage",
         "namespace": "dkube"
       }, 
