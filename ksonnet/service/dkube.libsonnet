@@ -221,19 +221,21 @@
                 "name": "dex-s",
                 "port": 5556,
                 "protocol": "TCP",
-                "targetPort": 5556
+                "targetPort": 5556,
+                "nodePort": 31534,
             },
             {
                 "name": "authn",
                 "port": 3001,
                 "protocol": "TCP",
-                "targetPort": 3001
+                "targetPort": 3001,
+                "nodePort": 30049,
             }
             ],
             "selector": {
                 "app": "d3auth"
             },
-            "type": "ClusterIP"
+            "type": "NodePort"
         },
     },
     dkubeDexCM():: {
