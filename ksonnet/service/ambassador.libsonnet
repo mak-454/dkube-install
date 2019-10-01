@@ -13,7 +13,7 @@
           "kind": "Service",
           "metadata": {
               "annotations": {
-                  "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind: Module\nname: tls\nconfig:\n  server:\n    enabled: True\n    secret: dkube-certificate-secret\n    alpn_protocols: h2\n---\napiVersion: ambassador/v1\nkind:  AuthService\nname:  d3-auth\nauth_service: dkube-d3auth:3001\nallowed_request_headers:\n- \"mode\"\nallowed_authorization_headers:\n- \"d3-uname\"\n- \"d3-role\"\n",
+                  "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind: Module\nname: tls\nconfig:\n  server:\n    enabled: True\n    secret: dkube-certificate-secret\n    alpn_protocols: h2\n---\napiVersion: ambassador/v1\nkind:  AuthService\nname:  d3-auth\nauth_service: dkube-d3auth:3001\nallowed_request_headers:\n- \"mode\"\n- \"d3-license\"\nallowed_authorization_headers:\n- \"d3-uname\"\n- \"d3-role\"\n",
               },
               "labels": {
                   "service": "ambassador"
