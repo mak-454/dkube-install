@@ -344,6 +344,12 @@
                 },
                 "spec": {
                     "containers": [
+                    env: [
+                            {
+                                "name": "PUBLIC_IP",
+                                "value": dkubePubIP
+                            }
+                    ],
                     {
                         "image": dkubeAuthImage,
                         "imagePullPolicy": "IfNotPresent",

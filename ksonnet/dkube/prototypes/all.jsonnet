@@ -27,6 +27,7 @@
 // @optionalParam dkubeRegistryUname string  Dkube container registry username
 // @optionalParam dkubeRegistryPasswd string  Dkube container registry password
 // @optionalParam nodebind string no Node selector flag
+// @optionalParam dkubePubIP string someIP Dkube Node's Public IP
 
 local k = import "k.libsonnet";
 local all = import "dkube/dkube/all.libsonnet";
