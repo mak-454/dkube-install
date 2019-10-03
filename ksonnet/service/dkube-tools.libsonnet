@@ -61,7 +61,7 @@
         "kind": "Service",
         "metadata": {
             "annotations": {
-                "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_installer\nprefix: /installer\nrewrite: /ui\ntimeout_ms: 600000\nservice: dkube-installer-service.kube-system:8888\ncors:\n origins: \"*\"\n methods: \"*\"\n headers: \"*\"\n---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_installer_report\nprefix: /report\nrewrite: /report\ntimeout_ms: 600000\nservice: dkube-installer-service.kube-system:8888\ncors:\n origins: \"*\"\n methods: \"*\"\n headers: \"*\""
+                "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_installer\nprefix: /installer\nrewrite: /ui\ntimeout_ms: 600000\nservice: dkube-installer-service.dkube:8888\ncors:\n origins: \"*\"\n methods: \"*\"\n headers: \"*\"\n---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_installer_report\nprefix: /report\nrewrite: /report\ntimeout_ms: 600000\nservice: dkube-installer-service.dkube:8888\ncors:\n origins: \"*\"\n methods: \"*\"\n headers: \"*\""
             },
             "name": "installer-mapping-service",
             "namespace": namespace

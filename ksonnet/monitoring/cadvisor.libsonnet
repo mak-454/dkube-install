@@ -9,7 +9,7 @@
           "prometheus": "kube-prometheus"
         },
         "name": "dkube-prometheus-exporter-pod",
-        "namespace": "monitoring"
+        "namespace": "dkube"
       },
       "spec": {
         "endpoints": [
@@ -21,7 +21,7 @@
         "jobLabel": "k8s-app",
         "namespaceSelector": {
           "matchNames": [
-            "monitoring"
+            "dkube"
           ]
         },
         "selector": {
@@ -43,7 +43,7 @@
           "app": "dkube-pod-exporter"
         },
         "name": "pod-exporter",
-        "namespace": "monitoring"
+        "namespace": "dkube"
       },
       "spec": {
         "ports": [
@@ -66,7 +66,7 @@
       "kind": "DaemonSet",
       "metadata": {
         "name": "cadvisor",
-        "namespace": "monitoring"
+        "namespace": "dkube"
       },
       "spec": {
         "selector": {

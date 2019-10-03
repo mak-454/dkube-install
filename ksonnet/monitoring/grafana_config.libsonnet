@@ -12,7 +12,7 @@
                     "ksonnet.io/component": "monitoring"
                 },
                 "name": "dkube-grafana-init",
-                "namespace": "monitoring",
+                "namespace": "dkube",
             }
     },
    {
@@ -32,7 +32,7 @@
             "app.kubernetes.io/deploy-manager": "ksonnet"
         },
         "name": "dkube-grafana-dashboard",
-        "namespace": "monitoring",
+        "namespace": "dkube",
     }
   }
     ]
