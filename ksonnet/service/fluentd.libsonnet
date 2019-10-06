@@ -17,7 +17,7 @@
             "labels": {
                 "app": "dkube-metric-collector"
             },
-            "name": "dkube-metric-collector",
+            "name": "dkube-log-processor",
             "namespace": "dkube"
         },
         "spec": {
