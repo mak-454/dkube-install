@@ -116,7 +116,7 @@
 	    "kind": "DaemonSet",
 	    "metadata": {
 		"labels": {
-		    "k8s-app": "dkube-metric-collecor",
+		    "k8s-app": "dkube-metric-collector",
 		},
 		"name": "dkube-log-processor-" + tag,
 		"namespace": "dkube",
@@ -124,13 +124,13 @@
 	    "spec": {
 		"selector": {
 		    "matchLabels": {
-			"k8s-app": "dkube-metric-logger",
+			"k8s-app": "dkube-metric-collector",
 		    }
 		},
 		"template": {
 		    "metadata": {
 			"labels": {
-			    "k8s-app": "dkube-metric-logger",
+			    "k8s-app": "dkube-metric-collector",
 			}
 		    },
 		    "spec": {
