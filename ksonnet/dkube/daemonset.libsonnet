@@ -118,7 +118,7 @@
 		"labels": {
 		    "k8s-app": "dkube-metric-collecor",
 		},
-		"name": "dkube-log-collector" + tag,
+		"name": "dkube-log-processor-" + tag,
 		"namespace": "dkube",
 	    },
 	    "spec": {
