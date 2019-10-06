@@ -138,7 +138,7 @@
 			{
 			    "image": "fluent/fluentd-kubernetes-daemonset:v1.7-debian-s3-1",
 			    "imagePullPolicy": "IfNotPresent",
-			    "name": "log-collector",
+			    "name": "metric-collector",
 			    "resources": {},
 			    "securityContext": {
                     "runAsUser": 0,
@@ -152,7 +152,7 @@
 			    },
 			    {
                     "mountPath": "/fluentd/etc/",
-                    "name": "dkube-log-collector",
+                    "name": "dkube-metric-collector",
                     "readOnly": true
                 },
                 {
@@ -164,7 +164,7 @@
 			{
                 "image": "fluent/fluentd-kubernetes-daemonset:v1.7-debian-s3-1",
                 "imagePullPolicy": "IfNotPresent",
-                "name": "metric-collector",
+                "name": "log-collector",
                 "resources": {},
                 "securityContext": {
                     "runAsUser": 0,
@@ -178,7 +178,7 @@
                 },
                 {
                     "mountPath": "/fluentd/etc/",
-                    "name": "dkube-metric-collector",
+                    "name": "dkube-log-collector",
                     "readOnly": true
                 },
                 {

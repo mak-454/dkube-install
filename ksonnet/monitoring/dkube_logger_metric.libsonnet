@@ -10,7 +10,7 @@
                 "ksonnet.io/component": "monitoring",
                 "prometheus": "kube-prometheus"
             },
-            "name": "dkube-log-metric-collector",
+            "name": "dkube-log-metric-processor",
             "namespace": "monitoring"
         },
         "spec": {
@@ -28,7 +28,7 @@
             },
             "selector": {
                 "matchLabels": {
-                    "app": "dkube-metric-collector"
+                    "app": "dkube-log-processor"
                 }
             }
         }

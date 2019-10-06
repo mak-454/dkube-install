@@ -15,7 +15,7 @@
                 "prometheus.io/scrape": "true"
             },
             "labels": {
-                "app": "dkube-metric-collector"
+                "app": "dkube-log-processor"
             },
             "name": "dkube-log-processor",
             "namespace": "dkube"
