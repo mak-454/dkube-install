@@ -10,14 +10,14 @@
                 "ksonnet.io/component": "monitoring",
                 "prometheus": "kube-prometheus"
             },
-            "name": "dkube-logger-metrics",
+            "name": "dkube-log-metric-collector",
             "namespace": "monitoring"
         },
         "spec": {
             "endpoints": [
                 {
                     "interval": "15s",
-                    "port": "dkube-logger-metrics"
+                    "port": "dkube-log-metrics"
                 }
             ],
             "jobLabel": "k8s-app",
@@ -28,7 +28,7 @@
             },
             "selector": {
                 "matchLabels": {
-                    "app": "dkube-logger"
+                    "app": "dkube-metric-collector"
                 }
             }
         }

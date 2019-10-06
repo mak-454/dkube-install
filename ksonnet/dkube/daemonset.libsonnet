@@ -116,21 +116,21 @@
 	    "kind": "DaemonSet",
 	    "metadata": {
 		"labels": {
-		    "k8s-app": "dkube-logger",
+		    "k8s-app": "dkube-metric-collecor",
 		},
-		"name": "dkube-logger-" + tag,
+		"name": "dkube-log-collector" + tag,
 		"namespace": "dkube",
 	    },
 	    "spec": {
 		"selector": {
 		    "matchLabels": {
-			"k8s-app": "dkube-logger",
+			"k8s-app": "dkube-metric-logger",
 		    }
 		},
 		"template": {
 		    "metadata": {
 			"labels": {
-			    "k8s-app": "dkube-logger",
+			    "k8s-app": "dkube-metric-logger",
 			}
 		    },
 		    "spec": {
@@ -138,17 +138,8 @@
 			{
 			    "image": "fluent/fluentd-kubernetes-daemonset:v1.7-debian-s3-1",
 			    "imagePullPolicy": "IfNotPresent",
-			    "name": "fluentd",
-			    "resources": {
-                    "limits": {
-                        "memory": "300Mi"
-                    },
-                    "requests": {
-                        "cpu": "150m",
-                        "memory": "300Mi"
-                    }
-                },
-
+			    "name": "log-collector",
+			    "resources": {},
 			    "securityContext": {
                     "runAsUser": 0,
                     "procMount": "Default"
@@ -161,7 +152,7 @@
 			    },
 			    {
                     "mountPath": "/fluentd/etc/",
-                    "name": "dkube-logger",
+                    "name": "dkube-log-collector",
                     "readOnly": true
                 },
                 {
@@ -169,7 +160,33 @@
                     "name": "varlog"
                 }
 			    ]
-			}
+			},
+			{
+                "image": "fluent/fluentd-kubernetes-daemonset:v1.7-debian-s3-1",
+                "imagePullPolicy": "IfNotPresent",
+                "name": "metric-collector",
+                "resources": {},
+                "securityContext": {
+                    "runAsUser": 0,
+                    "procMount": "Default"
+                },
+                "volumeMounts": [
+                {
+                    "mountPath": "/var/lib/docker/containers",
+                    "name": "varlibdockercontainers",
+                    "readOnly": true
+                },
+                {
+                    "mountPath": "/fluentd/etc/",
+                    "name": "dkube-metric-collector",
+                    "readOnly": true
+                },
+                {
+                    "mountPath": "/var/log",
+                    "name": "varlog"
+                }
+                ]
+            }
 			],
             "dnsConfig": {
                 "options": [
@@ -196,9 +213,9 @@
 			{
                 "configMap": {
                     "defaultMode": 420,
-                    "name": "dkube-logger"
+                    "name": "dkube-log-collector"
                 },
-                "name": "dkube-logger"
+                "name": "dkube-log-collector"
             },
             {
                 "hostPath": {
@@ -206,6 +223,14 @@
                 },
                 "name": "varlibdockercontainers"
             },
+            {
+                 "configMap": {
+                    "defaultMode": 420,
+                    "name": "dkube-metric-collector"
+                },
+                "name": "dkube-metric-collector"
+            
+            }
 			]
 		    }
 		},
@@ -329,13 +354,7 @@
                         "securityContext": {
                             "procMount": "Default",
                             "runAsUser": 0
-                        },
-                        "volumeMounts": [
-                           {
-                              "mountPath": "/var/log/containerlogs",
-                              "name": "jobs-logs"
-                            }
-                         ]
+                        }
                     }
                 ],
                 "dnsConfig": {
@@ -372,13 +391,6 @@
                             "server": nfsServer
                         },
                         "name": "dkube-logs"
-                    },
-                    {
-                        "nfs": {
-                            "path": "/dkube/system/logs",
-                            "server": nfsServer
-                        },
-                        "name": "jobs-logs"
                     },
                     {
                         "hostPath": {

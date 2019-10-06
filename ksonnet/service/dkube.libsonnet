@@ -160,6 +160,7 @@
       "spec": {
         "ports": [
           {
+            "name": "dkube-d3api",
             "port": dkubeApiServerPort, 
             "protocol": "TCP", 
             "targetPort": dkubeApiServerPort
@@ -188,6 +189,7 @@
         "clusterIP": "None",
         "ports": [
           {
+            "name": "dkube-d3api",
             "port": dkubeApiServerPort, 
             "protocol": "TCP", 
             "targetPort": dkubeApiServerPort
