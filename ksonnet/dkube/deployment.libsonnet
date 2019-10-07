@@ -18,7 +18,7 @@
             "labels": {
                 "app": "dkube-tools",
             },
-            "name": "dkube-serving-docs-" + tag,
+            "name": "dkube-inf-doc-server-" + tag,
             "namespace": namespace
         },
         "spec": {
@@ -278,7 +278,7 @@
             "labels": {
                 "app": "dkube-auth"
             },
-            "name": "dkube-auth-" + tag,
+            "name": "dkube-auth-server-" + tag,
             "namespace": "dkube",
         },
         "spec": {
