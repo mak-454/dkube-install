@@ -7,10 +7,6 @@
             "apiVersion": "v1",
             "kind": "Service",
             "metadata": {
-                "annotations": {
-                    "prometheus.io/port": "9401",
-                    "prometheus.io/scrape": "true"
-                },
                 "labels": {
                     "app": "dkube-storage-exporter"
                 },
