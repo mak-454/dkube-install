@@ -35,10 +35,6 @@
       "apiVersion": "v1",
       "kind": "Service",
       "metadata": {
-        "annotations": {
-          "prometheus.io/port": "8080",
-          "prometheus.io/scrape": "true"
-        },
         "labels": {
           "app": "dkube-pod-exporter"
         },
