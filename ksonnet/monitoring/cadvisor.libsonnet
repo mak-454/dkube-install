@@ -42,7 +42,7 @@
         "labels": {
           "app": "dkube-pod-exporter"
         },
-        "name": "pod-exporter",
+        "name": "dkube-cpu-exporter-service",
         "namespace": "dkube"
       },
       "spec": {
@@ -65,7 +65,7 @@
       "apiVersion": "extensions/v1beta1",
       "kind": "DaemonSet",
       "metadata": {
-        "name": "cadvisor",
+        "name": "dkube-cpu-exporter",
         "namespace": "dkube"
       },
       "spec": {
