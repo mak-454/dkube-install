@@ -1,7 +1,8 @@
 {
     all(params):: [
 	$.parts(params.namespace).dkubeExt(params.tag, params.dkubeExtImage, params.dkubeDockerSecret, params.minioSecretKey, params.nfsServer),
-	$.parts(params.namespace).filebeat(params.tag),
+	$.parts(params.namespace).fluentd(params.tag),
+	$.parts(params.namespace).dkubeD3apiWorker(params.tag, params.dkubeApiServerImage, params.dkubeApiServerAddr, params.dkubeMountPath, params.dkubeApiServerAddr, params.rdmaEnabled, params.dkubeDockerSecret, params.minioSecretKey, params.nfsServer, params.dkubeRegistry, params.dkubeRegistryUname, params.dkubeRegistryPasswd, params.dkubeDownloaderImage)
     ],
     parts(namespace):: {
 	dkubeExt(tag, dkubeExtImage,dkubeDockerSecret, minioSecretKey, nfsServer):: {
@@ -11,7 +12,7 @@
 		"labels": {
 		    "app": "dkube-ext"
 		}, 
-		"name": "dkube-ext-" + tag, 
+		"name": "dkube-exporter-" + tag, 
 		"namespace": "dkube"
 	    }, 
 	    "spec": {
@@ -110,84 +111,82 @@
 		}
 	    }
 	},
-	filebeat(tag):: {
+	fluentd(tag):: {
 	    "apiVersion": "extensions/v1beta1",
 	    "kind": "DaemonSet",
 	    "metadata": {
 		"labels": {
-		    "k8s-app": "filebeat-logging",
-		    "kubernetes.io/cluster-service": "true",
-		    "version": "v1"
+		    "k8s-app": "dkube-metric-collector",
 		},
-		"name": "filebeat-" + tag,
+		"name": "dkube-log-processor-" + tag,
 		"namespace": "dkube",
 	    },
 	    "spec": {
-		"revisionHistoryLimit": 10,
 		"selector": {
 		    "matchLabels": {
-			"k8s-app": "filebeat-logging",
-			"kubernetes.io/cluster-service": "true",
-			"version": "v1"
+			"k8s-app": "dkube-metric-collector",
 		    }
 		},
 		"template": {
 		    "metadata": {
-			"creationTimestamp": null,
 			"labels": {
-			    "k8s-app": "filebeat-logging",
-			    "kubernetes.io/cluster-service": "true",
-			    "version": "v1"
+			    "k8s-app": "dkube-metric-collector",
 			}
 		    },
 		    "spec": {
 			"containers": [
 			{
-			    "command": [
-				"bash",
-			    "-c",
-			    " \u003e filebeat.yml;\n  cat /etc/config_data/filebeat.yml \u003e\u003e /usr/share/filebeat/filebeat.yml;\n  while IFS='' read -r line || [[ -n \"$line\" ]]; \ndo\n  IFS='//' read -r -a array1 \u003c\u003c\u003c \"$line\";\n  a=\"/mnt/root\";\n  for i in ${!array1[@]};\n  do\n      if [ $i -ne 0 ];\n      then\n          a=\"$a/${array1[$i]}\";\n      fi;\n  done;\n  a=\"$a/containers\";\n  export DOCKERPATH=$a;\n  sed -i -e 's@DOCKERPATH@'\"$DOCKERPATH\"'@' filebeat.yml;\n  done \u003c \"/tmp/dockerstorage/dockerpath.txt\";\nchown root:filebeat /usr/share/filebeat/filebeat.yml\n./filebeat -e;\n"
-			    ],
-			    "env": [
-			    {
-				"name": "NODENAME",
-				"valueFrom": {
-				    "fieldRef": {
-					"fieldPath": "spec.nodeName"
-				    }
-				}
-			    }
-			    ],
-			    "image": "docker.elastic.co/beats/filebeat:7.3.0",
+			    "image": "fluent/fluentd-kubernetes-daemonset:v1.7-debian-s3-1",
 			    "imagePullPolicy": "IfNotPresent",
-			    "name": "filebeat",
+			    "name": "metric-collector",
 			    "resources": {},
 			    "securityContext": {
-                    "runAsUser": 0
+                    "runAsUser": 0,
+                    "procMount": "Default"
                 },
-			    "terminationMessagePath": "/dev/termination-log",
-			    "terminationMessagePolicy": "File",
 			    "volumeMounts": [
 			    {
-				"mountPath": "/mnt/root",
-				"name": "varlibdockercontainers",
-				"readOnly": true
+				    "mountPath": "/var/lib/docker/containers",
+				    "name": "varlibdockercontainers",
+				    "readOnly": true
 			    },
 			    {
-				"mountPath": "/tmp/dockerstorage",
-				"name": "tmp"
-			    },
-			    {
-                    "mountPath": "/etc/config_data",
-                    "name": "filebeat-config",
+                    "mountPath": "/fluentd/etc/",
+                    "name": "dkube-metric-collector",
                     "readOnly": true
                 },
                 {
-                    "mountPath": "/usr/share/filebeat/data",
-                    "name": "data"
+                    "mountPath": "/var/log",
+                    "name": "varlog"
                 }
 			    ]
-			}
+			},
+			{
+                "image": "fluent/fluentd-kubernetes-daemonset:v1.7-debian-s3-1",
+                "imagePullPolicy": "IfNotPresent",
+                "name": "log-collector",
+                "resources": {},
+                "securityContext": {
+                    "runAsUser": 0,
+                    "procMount": "Default"
+                },
+                "volumeMounts": [
+                {
+                    "mountPath": "/var/lib/docker/containers",
+                    "name": "varlibdockercontainers",
+                    "readOnly": true
+                },
+                {
+                    "mountPath": "/fluentd/etc/",
+                    "name": "dkube-log-collector",
+                    "readOnly": true
+                },
+                {
+                    "mountPath": "/var/log",
+                    "name": "varlog"
+                }
+                ]
+            }
 			],
             "dnsConfig": {
                 "options": [
@@ -201,72 +200,209 @@
                 ]
             },
 			"dnsPolicy": "ClusterFirst",
-			"initContainers": [
-			{
-			    "command": [
-				"sh",
-			    "-c",
-			    "dockvol=$(docker info | grep Docker);\necho $dockvol \u003e /tmp/dockerstorage/dockerpath.txt;\n"
-			    ],
-			    "image": "docker:18.09",
-			    "imagePullPolicy": "IfNotPresent",
-			    "name": "logpath",
-			    "resources": {},
-			    "terminationMessagePath": "/dev/termination-log",
-			    "terminationMessagePolicy": "File",
-			    "volumeMounts": [
-			    {
-				"mountPath": "/tmp/dockerstorage",
-				"name": "tmp"
-			    },
-			    {
-				"mountPath": "/var/run/docker.sock",
-				"name": "dockersock"
-			    }
-			    ]
-			}
-			],
 			"restartPolicy": "Always",
 			"schedulerName": "default-scheduler",
 			"serviceAccount": "dkube",
 			"volumes": [
 			{
 			    "hostPath": {
-				"path": "/",
-				"type": ""
+				"path": "/var/log",
 			    },
-			    "name": "varlibdockercontainers"
-			},
-			{
-			    "emptyDir": {},
-			    "name": "tmp"
-			},
-			{
-			    "hostPath": {
-				"path": "/var/run/docker.sock",
-				"type": ""
-			    },
-			    "name": "dockersock"
+			    "name": "varlog"
 			},
 			{
                 "configMap": {
-                    "defaultMode": 384,
-                    "name": "filebeat-config"
+                    "defaultMode": 420,
+                    "name": "dkube-log-collector"
                 },
-                "name": "filebeat-config"
+                "name": "dkube-log-collector"
             },
             {
                 "hostPath": {
-                    "path": "/var/lib/filebeat-data",
-                    "type": "DirectoryOrCreate"
+                    "path": "/var/lib/docker/containers",
                 },
-                "name": "data"
+                "name": "varlibdockercontainers"
             },
+            {
+                 "configMap": {
+                    "defaultMode": 420,
+                    "name": "dkube-metric-collector"
+                },
+                "name": "dkube-metric-collector"
+            
+            }
 			]
 		    }
 		},
 	    },
-	}
+	},
+	 dkubeD3apiWorker(tag, apiServerImage, apiServerAddr, mountPath, dkubeApiServerAddr, isRdmaEnabled, dkubeDockerSecret, minioSecretKey, nfsServer, dkubeRegistry, dkubeRegistryUname, dkubeRegistryPasswd,dkubeDownloaderImage):: {
+	    local dkubeApiServerAddrArray = std.split(dkubeApiServerAddr, ":"),
+	    local dkubeApiServerPort = std.parseInt(dkubeApiServerAddrArray[std.length(dkubeApiServerAddrArray)-1]),
+
+    "apiVersion": "extensions/v1beta1",
+    "kind": "DaemonSet",
+    "metadata": {
+        "labels": {
+            "app": "dkube-controller-worker"
+        },
+        "name": "dkube-controller-worker-" + tag,
+        "namespace": namespace,
+    },
+    "spec": {
+        "selector": {
+            "matchLabels": {
+                "app": "dkube-controller-worker"
+            }
+        },
+        "template": {
+            "metadata": {
+                "labels": {
+                    "app": "dkube-controller-worker"
+                }
+            },
+            "spec": {
+                 "affinity": {
+                    "nodeAffinity": {
+                        "requiredDuringSchedulingIgnoredDuringExecution": {
+                            "nodeSelectorTerms": [
+                            {
+                                "matchExpressions": [
+                                {
+                                    "key": "Accelerator",
+                                    "operator": "Exists"
+                                }
+                                ]
+                            }
+                            ]
+                        }
+                    }
+                },
+                "containers": [
+                    {
+                        "env": [
+                            {
+                                "name": "DKUBE_MOUNT_PATH",
+                                "value": mountPath
+                            },
+                            {
+                                "name": "DKUBE_REGISTRY",
+                                "value": dkubeRegistry
+                            },
+                            {
+                                "name": "DKUBE_REGISTRY_UNAME",
+                                "value": dkubeRegistryUname
+                            },
+                            {
+                                "name": "DKUBE_REGISTRY_PASSWD",
+                                "value": dkubeRegistryPasswd
+                            },
+                            {
+                                "name": "DKUBE_SERVICE_ACCOUNT",
+                                "value": "dkube"
+                            },
+                            {
+                                "name": "RDMA_ENABLED",
+                                "value": std.toString(isRdmaEnabled)
+                            },
+                            {
+                                "name": "NFS_SERVER",
+                                "value": nfsServer
+                            },
+                            {
+                                "name": "DKUBE_APISERVER_ROLE",
+                                "value": "worker"
+                            },
+                        ],
+                        "image": apiServerImage,
+                        "imagePullPolicy": "IfNotPresent",
+                        "name": "dkube-d3api",
+                        "ports": [
+                            {
+                                "containerPort": dkubeApiServerPort,
+                                "name": "dkube-d3api",
+                                "protocol": "TCP"
+                            }
+                        ],
+                        "resources": {},
+                        "securityContext": {
+                            "procMount": "Default",
+                            "runAsUser": 0
+                        },
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File",
+                        "volumeMounts": [
+                            {
+                                "mountPath": mountPath,
+                                "name": "store"
+                            },
+                            {
+                                "mountPath": "/var/run/docker.sock",
+                                "name": "docker"
+                            },
+                            {
+                                "mountPath": "/var/log/dkube",
+                                "name": "dkube-logs"
+                            }
+                        ]
+                    },
+                    {
+                        "image": dkubeDownloaderImage,
+                        "imagePullPolicy": "IfNotPresent",
+                        "name": "downloader",
+                        "resources": {},
+                        "securityContext": {
+                            "procMount": "Default",
+                            "runAsUser": 0
+                        }
+                    }
+                ],
+                "dnsConfig": {
+                    "options": [
+                        {
+                            "name": "single-request-reopen"
+                        },
+                        {
+                            "name": "timeout",
+                            "value": "30"
+                        }
+                    ]
+                },
+                "dnsPolicy": "ClusterFirst",
+                "imagePullSecrets": [
+                    {
+                        "name": dkubeDockerSecret
+                    }
+                ],
+                "restartPolicy": "Always",
+                "serviceAccount": "dkube",
+                "serviceAccountName": "dkube",
+                "volumes": [
+                    {
+                        "nfs": {
+                            "server": nfsServer,
+                            "path": "/dkube"
+                        },
+                        "name": "store"
+                    },
+                    {
+                        "nfs": {
+                            "path": "/dkube/system/logs/dkube",
+                            "server": nfsServer
+                        },
+                        "name": "dkube-logs"
+                    },
+                    {
+                        "hostPath": {
+                            "path": "/var/run/docker.sock",
+                        },
+                        "name": "docker"
+                    },
+                ]
+            }
+        },
+    },
+	},
 
     },
 }

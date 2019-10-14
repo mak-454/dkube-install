@@ -13,7 +13,7 @@
           "release": "kube-prometheus"
         }, 
         "name": "dkube-grafana", 
-        "namespace": "monitoring"
+        "namespace": "dkube"
       }, 
       "spec": {
         "progressDeadlineSeconds": 600, 
@@ -197,7 +197,7 @@
           "app": "dkube-prometheus-grafana"
         }, 
         "name": "dkube-grafana", 
-        "namespace": "monitoring"
+        "namespace": "dkube"
       }, 
       "spec": {
         "ports": [
@@ -224,7 +224,7 @@
           "prometheus": "kube-prometheus"
         }, 
         "name": "dkube-prometheus-exporter-gpu", 
-        "namespace": "monitoring"
+        "namespace": "dkube"
       }, 
       "spec": {
         "endpoints": [
