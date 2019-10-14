@@ -11,7 +11,7 @@
                 "prometheus": "kube-prometheus"
             },
             "name": "dkube-log-metric-processor",
-            "namespace": "monitoring"
+            "namespace": "dkube"
         },
         "spec": {
             "endpoints": [
