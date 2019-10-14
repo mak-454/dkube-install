@@ -18,7 +18,7 @@
             "labels": {
                 "app": "dkube-tools",
             },
-            "name": "dkube-serving-docs-" + tag,
+            "name": "dkube-inf-doc-server-" + tag,
             "namespace": namespace
         },
         "spec": {
@@ -166,7 +166,8 @@
 				"etcd",
 			    "--listen-client-urls=http://0.0.0.0:2379",
 			    "--advertise-client-urls=http://0.0.0.0:2379",
-			    "--data-dir=/var/lib/etcd"
+			    "--data-dir=/var/lib/etcd",
+                "--force-new-cluster"
 			    ],
 			    "image": "k8s.gcr.io/etcd-amd64:3.1.12",
 			    "imagePullPolicy": "IfNotPresent",
@@ -278,7 +279,7 @@
             "labels": {
                 "app": "dkube-auth"
             },
-            "name": "dkube-auth-" + tag,
+            "name": "dkube-auth-server-" + tag,
             "namespace": "dkube",
         },
         "spec": {
