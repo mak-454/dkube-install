@@ -1,6 +1,5 @@
 {
     all(params):: [
-	$.parts(params.namespace, params.nodebind).logstash(params.tag, params.nfsServer, params.nfsBasePath),
 	$.parts(params.namespace, params.nodebind).dkubeEtcd(params.tag, params.etcdPVC),
 	$.parts(params.namespace, params.nodebind).dfabProxy(params.tag,params.dfabProxyImage, params.dkubeDockerSecret),
 	$.parts(params.namespace, params.nodebind).dkubeWatcher(params.tag, params.dkubeWatcherImage, params.dkubeDockerSecret),
@@ -60,85 +59,6 @@
             }
         }
     },
-	logstash(tag, nfsServer, nfsBasePath):: {
-	    "apiVersion": "apps/v1", 
-	    "kind": "Deployment", 
-	    "metadata": {
-		    "name": "dkube-log-mixer-" + tag, 
-		    "namespace": "dkube"
-	    }, 
-	    "spec": {
-		"replicas": 1, 
-		"selector": {
-		    "matchLabels": {
-			"app": "dkube-log-mixer"
-		    }
-		}, 
-		"template": {
-		    "metadata": {
-			"labels": {
-			    "app": "dkube-log-mixer"
-			}
-		    }, 
-		    "spec": {
-            "nodeSelector": if nodebind == "yes" then {"d3.nodetype": "dkube"} else {},
-			"containers": [
-			{
-			    "command": [
-                    "bash",
-                    "-c",
-                    "\u003e config/logstash.yml;\n\u003e pipeline/logstash.conf;\ncat /tmp/config_data/logstash.conf \u003e\u003e pipeline/logstash.conf;\nlogstash -f pipeline/logstash.conf\n"
-                ],
-			    "image": "docker.elastic.co/logstash/logstash:7.3.0",  
-			    "imagePullPolicy": "IfNotPresent", 
-			    "name": "logstash",
-			    "resources": {},
-			    "securityContext": {
-                    "runAsUser": 0
-                },
-                "volumeMounts": [
-                   {
-                      "mountPath": "/var/log/dkube",
-                      "name": "logs"
-                    },
-                    {
-                        "mountPath": "/tmp/config_data",
-                        "name": "dkube-log-mixer-config",
-                    }
-                 ]
-			}
-			],
-            "dnsConfig": {
-                "options": [
-                    {
-                        "name": "single-request-reopen"
-                    },
-                    {
-                        "name": "timeout",
-                        "value": "30"
-                    }
-                ]
-            },
-            "volumes": [
-	              {
-	                "nfs": {
-	                   "path": nfsBasePath + "/dkube/system/logs",
-	                   "server": nfsServer
-	                 },
-	                  "name": "logs"
-	                },
-	                {
-                    "configMap": {
-                        "defaultMode": 384,
-                        "name": "dkube-log-mixer-config"
-                    },
-                    "name": "dkube-log-mixer-config"
-                    },
-	              ]
-		    }
-		}
-	    }
-	},
 	dkubeEtcd(tag, etcdPVC):: {
 	    "apiVersion": "extensions/v1beta1",
 	    "kind": "Deployment",
