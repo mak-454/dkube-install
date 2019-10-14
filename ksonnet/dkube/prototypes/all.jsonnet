@@ -7,11 +7,9 @@
 // @optionalParam minioSecretKey string Minio Secret Key
 // @optionalParam dkubeApiServerImage string ocdr/dkube-d3api:alpha3.1 The image for dkube api server.
 // @optionalParam dkubeMountPath string /home/dkube/d3s Mount path to mount artifacts in dkube
-// @optionalParam logstashImage string ocdr/dkube-logstash:v2 Logstash image
 // @optionalParam dfabProxyImage string ocdr/dkube-dfabproxy:alpha3 Dfabproxy image
 // @optionalParam rdmaEnabled string false RDMA enable flag
 // @optionalParam dkubeDockerSecret string  Docker secret for dkube images
-// @optionalParam filebeatImage string ocdr/dkube-filebeat:v2 Filebeat image
 // @optionalParam dkubeExtImage string ocdr/dkube-ext:alpha3 dkube-ext image
 // @optionalParam dkubeDownloaderImage string ocdr/dkube-d3downloader:alpha3 dkube-d3downloader image
 // @optionalParam dkubeInferenceImage string ocdr/dkube-d3inf:alpha3 dkube-d3inf image
@@ -20,7 +18,7 @@
 // @optionalParam dkubeAuthImage string ocdr/dkube-d3auth:1.2.2 dkube-d3auth image
 // @optionalParam tag string v1 tag for component
 // @optionalParam dkubeApiServerAddr string 0.0.0.0:5000 The address of dkube api server
-// @optionalParam etcdPVC string etcd-pvc The PVC for dkube etcd server
+// @optionalParam etcdPVC string dkube-db-pvc The PVC for dkube etcd server
 // @optionalParam nfsServer string 1.2.3.4 The ip of nfs server
 // @optionalParam nfsBasePath string  NFS server base path
 // @optionalParam dkubeRegistry string docker.io Dkube container registry

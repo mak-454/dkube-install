@@ -13,12 +13,12 @@
           "kind": "Service",
           "metadata": {
               "annotations": {
-                  "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind: Module\nname: tls\nconfig:\n  server:\n    enabled: True\n    secret: dkube-certificate-secret\n    alpn_protocols: h2\n---\napiVersion: ambassador/v1\nkind:  AuthService\nname:  d3-auth\nauth_service: dkube-d3auth:3001\nallowed_request_headers:\n- \"mode\"\n- \"d3-license\"\nallowed_authorization_headers:\n- \"d3-uname\"\n- \"d3-role\"\n",
+                  "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind: Module\nname: tls\nconfig:\n  server:\n    enabled: True\n    secret: dkube-certificate-secret\n    alpn_protocols: h2\n---\napiVersion: ambassador/v1\nkind:  AuthService\nname:  d3-auth\nauth_service: dkube-auth-server:3001\nallowed_request_headers:\n- \"mode\"\nallowed_authorization_headers:\n- \"d3-privilege\"\n- \"d3-uname\"\n- \"d3-role\"\n",
               },
               "labels": {
-                  "service": "ambassador"
+                  "service": "dkube-proxy"
               },
-              "name": "ambassador",
+              "name": "dkube-proxy",
               "namespace": "dkube",
           },
           "spec": {
@@ -33,7 +33,7 @@
               }
               ],
               "selector": {
-                  "service": "ambassador"
+                  "service": "dkube-proxy"
               },
               "type": "NodePort"
           },
@@ -44,9 +44,9 @@
       kind: "Service",
       metadata: {
         labels: {
-          service: "ambassador-admin",
+          service: "dkube-proxy-admin",
         },
-        name: "ambassador-admin",
+        name: "dkube-proxy-admin",
         namespace: namespace,
       },
       spec: {
@@ -58,7 +58,7 @@
           },
         ],
         selector: {
-          service: "ambassador",
+          service: "dkube-proxy",
         },
         type: "NodePort",
       },
@@ -68,7 +68,7 @@
       apiVersion: "rbac.authorization.k8s.io/v1beta1",
       kind: "Role",
       metadata: {
-        name: "ambassador",
+        name: "dkube-proxy",
         namespace: namespace,
       },
       rules: [
@@ -121,7 +121,7 @@
       apiVersion: "v1",
       kind: "ServiceAccount",
       metadata: {
-        name: "ambassador",
+        name: "dkube-proxy",
         namespace: namespace,
       },
     },  // serviceAccount
@@ -130,18 +130,18 @@
       apiVersion: "rbac.authorization.k8s.io/v1beta1",
       kind: "RoleBinding",
       metadata: {
-        name: "ambassador",
+        name: "dkube-proxy",
         namespace: namespace,
       },
       roleRef: {
         apiGroup: "rbac.authorization.k8s.io",
         kind: "Role",
-        name: "ambassador",
+        name: "dkube-proxy",
       },
       subjects: [
         {
           kind: "ServiceAccount",
-          name: "ambassador",
+          name: "dkube-proxy",
           namespace: namespace,
         },
       ],

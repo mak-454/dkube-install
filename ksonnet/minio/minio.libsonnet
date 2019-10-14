@@ -5,8 +5,8 @@
       "kind": "Service", 
       "metadata": {
         "annotations": {
-            "getambassador.io/config": "---\n  apiVersion: ambassador/v0\n  kind: Mapping\n  name: dkube_minio\n  prefix: /minio/\n  rewrite: /\n  timeout_ms: 600000\n  service: minio-service:9000\n"},
-        "name": "minio-service",
+            "getambassador.io/config": "---\n  apiVersion: ambassador/v0\n  kind: Mapping\n  name: dkube_minio\n  prefix: /minio/\n  rewrite: /\n  timeout_ms: 600000\n  service: dkube-minio-server:9000\n"},
+        "name": "dkube-minio-server",
         "namespace": "dkube"
       }, 
       "spec": {
@@ -29,7 +29,7 @@
       "kind": "PersistentVolumeClaim",
       "apiVersion": "v1",
       "metadata": {
-        "name": "dkube-pvc",
+        "name": "dkube-minio-pvc",
         "namespace": "dkube",
         },
       "spec": {
@@ -53,7 +53,7 @@
         "labels": {
           "app": "minio"
         }, 
-        "name": "minio-deployment", 
+        "name": "dkube-minio-server", 
         "namespace": "dkube"
       }, 
       "spec": {
@@ -123,7 +123,7 @@
             "volumes": [
               {
                 "persistentVolumeClaim": {
-                  "claimName": "dkube-pvc",
+                  "claimName": "dkube-minio-pvc",
                 }, 
                 "name": "storage"
               }

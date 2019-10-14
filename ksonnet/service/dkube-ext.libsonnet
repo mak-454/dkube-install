@@ -14,7 +14,7 @@
                 "labels": {
                     "app": "dkube-gpu-exporter"
                 },
-                "name": "dkube-ext",
+                "name": "dkube-exporter",
                 "namespace": "dkube"
             },
             "spec": {
