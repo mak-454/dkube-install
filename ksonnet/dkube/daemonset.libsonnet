@@ -1,7 +1,7 @@
 {
     all(params):: [
 	$.parts(params.namespace).dkubeExt(params.tag, params.dkubeExtImage, params.dkubeDockerSecret, params.minioSecretKey, params.nfsServer),
-	$.parts(params.namespace).fluentd(params.tag),
+	$.parts(params.namespace).fluentd(params.tag, params.hecToken),
 	$.parts(params.namespace).dkubeD3apiWorker(params.tag, params.dkubeApiServerImage, params.dkubeApiServerAddr, params.dkubeMountPath, params.dkubeApiServerAddr, params.rdmaEnabled, params.dkubeDockerSecret, params.minioSecretKey, params.nfsServer, params.dkubeRegistry, params.dkubeRegistryUname, params.dkubeRegistryPasswd, params.dkubeDownloaderImage)
     ],
     parts(namespace):: {
@@ -111,7 +111,7 @@
 		}
 	    }
 	},
-	fluentd(tag):: {
+	fluentd(tag, hecToken):: {
 	    "apiVersion": "extensions/v1beta1",
 	    "kind": "DaemonSet",
 	    "metadata": {
@@ -170,6 +170,12 @@
                     "runAsUser": 0,
                     "procMount": "Default"
                 },
+                "env": [
+                    {
+                        "name": "HECTOKEN",
+                        "value": hecToken
+                    }
+                ],
                 "volumeMounts": [
                 {
                     "mountPath": "/var/lib/docker/containers",
