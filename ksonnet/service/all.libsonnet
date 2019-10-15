@@ -10,6 +10,7 @@
     local dfabproxy = import "dkube/service/dfabproxy.libsonnet",
     local d3downloader = import "dkube/service/dkube-d3downloader.libsonnet",
     local dkubetools = import "dkube/service/dkube-tools.libsonnet",
+    local dkubestoragexporter = import "dkube-storage-exporter.libsonnet",
 
     all:: dkubeUiService.all(params)
           + ambassador.all(params)
@@ -21,5 +22,6 @@
           + dfabproxy.all(params)
           + d3downloader.all(params)
           + dkubetools.all(params)
+          + dkubestoragexporter.all(params)
   },
 }

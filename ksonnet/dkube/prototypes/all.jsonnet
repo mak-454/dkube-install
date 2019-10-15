@@ -18,7 +18,7 @@
 // @optionalParam dkubeAuthImage string ocdr/dkube-d3auth:1.2.2 dkube-d3auth image
 // @optionalParam tag string v1 tag for component
 // @optionalParam dkubeApiServerAddr string 0.0.0.0:5000 The address of dkube api server
-// @optionalParam etcdPVC string dkube-db-server-pvc The PVC for dkube etcd server
+// @optionalParam etcdPVC string dkube-db-pvc The PVC for dkube etcd server
 // @optionalParam nfsServer string 1.2.3.4 The ip of nfs server
 // @optionalParam nfsBasePath string  NFS server base path
 // @optionalParam dkubeRegistry string docker.io Dkube container registry
@@ -26,6 +26,7 @@
 // @optionalParam dkubeRegistryPasswd string  Dkube container registry password
 // @optionalParam nodebind string no Node selector flag
 // @optionalParam hecToken string hectoken HEC Token from Splunk
+// @optionalParam storageExporterImage string ocdr/dkube-d3storagexporter:1.4.0 Dkube storage exporter image
 
 local k = import "k.libsonnet";
 local all = import "dkube/dkube/all.libsonnet";

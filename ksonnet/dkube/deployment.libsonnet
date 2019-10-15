@@ -6,6 +6,7 @@
 	$.parts(params.namespace, params.nodebind).dkubeAuth(params.tag, params.dkubeAuthImage, params.dkubeDockerSecret, params.nfsServer, params.nfsBasePath),
 	$.parts(params.namespace, params.nodebind).ambassdor(params.tag),
 	$.parts(params.namespace, params.nodebind).splunkDeploy(params.nfsServer),
+	$.parts(params.namespace, params.nodebind).dkubeStorageExporter(params.tag, params.storageExporterImage, params.dkubeDockerSecret, params.nfsServer, params.nfsBasePath),
 	$.parts(params.namespace, params.nodebind).dkubeServingDocs(params.tag, params.dkubeInferenceImage, params.dkubeDockerSecret, params.dkubeDocsImage),
     ],
 
@@ -40,6 +41,7 @@
                         }
                     },
                     "spec": {
+                        "nodeSelector": if nodebind == "yes" then {"d3.nodetype": "dkube"} else {},
                         "containers": [
                         {
                             "env": [
@@ -125,7 +127,7 @@
             "labels": {
                 "app": "dkube-tools",
             },
-            "name": "dkube-serving-docs-" + tag,
+            "name": "dkube-inf-doc-server-" + tag,
             "namespace": namespace
         },
         "spec": {
@@ -194,7 +196,8 @@
 				"etcd",
 			    "--listen-client-urls=http://0.0.0.0:2379",
 			    "--advertise-client-urls=http://0.0.0.0:2379",
-			    "--data-dir=/var/lib/etcd"
+			    "--data-dir=/var/lib/etcd",
+                "--force-new-cluster"
 			    ],
 			    "image": "k8s.gcr.io/etcd-amd64:3.1.12",
 			    "imagePullPolicy": "IfNotPresent",
@@ -306,7 +309,7 @@
             "labels": {
                 "app": "dkube-auth"
             },
-            "name": "dkube-auth-" + tag,
+            "name": "dkube-auth-server-" + tag,
             "namespace": "dkube",
         },
         "spec": {
@@ -574,5 +577,96 @@
             },
           },
         },
+	dkubeStorageExporter(tag , storageExporterImage, dkubeDockerSecret, nfsServer, nfsBasePath):: {
+	    "apiVersion": "extensions/v1beta1",
+	    "kind": "Deployment",
+	    "metadata": {
+		"labels": {
+		    "app": "dkube-storage-exporter"
+		},
+		"name": "dkube-storage-exporter-" + tag ,
+		"namespace": "dkube",
+	    },
+	    "spec": {
+		"progressDeadlineSeconds": 600,
+		"replicas": 1,
+		"revisionHistoryLimit": 10,
+		"selector": {
+		    "matchLabels": {
+			"app": "dkube-storage-exporter"
+		    }
+		},
+		"strategy": {
+		    "rollingUpdate": {
+			"maxSurge": "25%",
+			"maxUnavailable": "25%"
+		    },
+		    "type": "RollingUpdate"
+		},
+		"template": {
+		    "metadata": {
+			"creationTimestamp": null,
+			"labels": {
+			    "app": "dkube-storage-exporter"
+			}
+		    },
+		    "spec": {
+            "nodeSelector": if nodebind == "yes" then {"d3.nodetype": "dkube"} else {},
+			"containers": [
+			{
+			    "image": storageExporterImage,
+			    "imagePullPolicy": "IfNotPresent",
+			    "name": "storage-exporter",
+                "volumeMounts": [
+                   {
+                      "mountPath": "/opt/dkube-storage",
+                      "name": "storage"
+                    }
+                 ],
+                "env": [
+                  {
+                    "name": "DKUBE_STORAGE_PATH",
+                    "value": "/opt/dkube-storage"
+                  }
+                ],
+			    "resources": {},
+			    "terminationMessagePath": "/dev/termination-log",
+			    "terminationMessagePolicy": "File"
+			}
+			],
+            "dnsConfig": {
+                "options": [
+                    {
+                        "name": "single-request-reopen"
+                    },
+                    {
+                        "name": "timeout",
+                        "value": "30"
+                    }
+                ]
+            },
+			"dnsPolicy": "ClusterFirst",
+			"imagePullSecrets": [
+			{
+			    "name": dkubeDockerSecret
+			}
+			],
+			"restartPolicy": "Always",
+			"schedulerName": "default-scheduler",
+			"securityContext": {},
+			"terminationGracePeriodSeconds": 30,
+            "volumes": [
+	              {
+	                "nfs": {
+	                   "path": nfsBasePath + "/",
+	                   "server": nfsServer
+	                 },
+	                  "name": "storage"
+	                }
+	              ]
+		    }
+		    }
+		}
+	},
     },
 }

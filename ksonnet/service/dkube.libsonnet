@@ -25,7 +25,7 @@
         "annotations": {
           "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  \"katib\"\ntimeout_ms: 600000\nuse_websocket: true\nprefix: \"/katib\"\nrewrite: \"/katib\"\nservice: \"katib-ui.kubeflow:80\""
         },
-        "name": "katib-maping-service",
+        "name": "kf-katib-mapping-service",
         "namespace": "dkube"
       },
       "spec": {
@@ -44,7 +44,7 @@
             "labels": {
                 "app": "ml-pipeline-ui"
             },
-            "name": "ml-pipeline-ui-mapping-service",
+            "name": "kf-pipeline-ui-mapping-service",
             "namespace": "dkube",
         },
         "spec": {
@@ -57,7 +57,7 @@
       "kind": "Service", 
       "metadata": {
         "annotations": {
-          "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_monitoring\nprefix: /dkube/grafana/\nrewrite: /\nservice: dkube-grafana.monitoring:80\ntimeout_ms: 600000\nuse_websocket: true"
+          "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_monitoring\nprefix: /dkube/grafana/\nrewrite: /\nservice: dkube-grafana.dkube:80\ntimeout_ms: 600000\nuse_websocket: true"
         }, 
         "labels": {
           "app": "dkube-prometheus-grafana"
@@ -87,9 +87,9 @@
 	  "kind": "Service", 
 	  "metadata": {
 		"annotations": {
-		  "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  \"prometheus\"\ntimeout_ms: 600000\nuse_websocket: true\nprefix: \"/dkube/v2/prometheus/api/v1\"\nrewrite: \"/api/v1\"\nservice: \"kube-prometheus.monitoring:9090\"\ncors:\n origins: \"*\"\n methods: \"*\"\n headers: \"*\"\n---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  \"prometheus-alert-manager\"\ntimeout_ms: 600000\nuse_websocket: true\nprefix: \"/dkube/v2/prometheus/alertmanager/api/v1\"\nrewrite: \"/api/v1\"\nservice: \"kube-prometheus-alertmanager.monitoring:9093\"\ncors:\n origins: \"*\"\n methods: \"*\"\n headers: \"*\""
+		  "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  \"prometheus\"\ntimeout_ms: 600000\nuse_websocket: true\nprefix: \"/dkube/v2/prometheus/api/v1\"\nrewrite: \"/api/v1\"\nservice: \"kube-prometheus.dkube:9090\"\ncors:\n origins: \"*\"\n methods: \"*\"\n headers: \"*\"\n---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  \"prometheus-alert-manager\"\ntimeout_ms: 600000\nuse_websocket: true\nprefix: \"/dkube/v2/prometheus/alertmanager/api/v1\"\nrewrite: \"/api/v1\"\nservice: \"kube-prometheus-alertmanager.dkube:9093\"\ncors:\n origins: \"*\"\n methods: \"*\"\n headers: \"*\""
 		}, 
-		"name": "prometheus-maping-service", 
+		"name": "dkube-prometheus-mapping-service",
 		"namespace": "dkube"
 	  }, 
 	  "spec": {
@@ -105,7 +105,7 @@
 	  	"annotations": {
 	  		"getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname: argoui-mapping\nprefix: \"/argo/logs/\"\nrewrite: \"/api/logs/\"\ntimeout_ms: 300000\nservice: \"dkube-downloader.dkube:9401\"\nuse_websocket: true"
 	  	},
-	  	"name": "argo-ui-mapping-service",
+	  	"name": "kf-argo-ui-mapping-service",
 	  	"namespace": "dkube"
 	  },
 	  "spec": {
@@ -236,12 +236,12 @@
         "kind": "Service",
         "metadata": {
             "annotations": {
-                "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  d3auth-login\nprefix: /dkube/v2/login\nrewrite: /login\ntimeout_ms: 600000\nservice: dkube-auth:3001\n---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  d3auth-logout\nprefix: /dkube/v2/logout\nrewrite: /logout\ntimeout_ms: 600000\nservice: dkube-auth:3001"
+                "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  d3auth-login\nprefix: /dkube/v2/login\nrewrite: /login\ntimeout_ms: 600000\nservice: dkube-auth-server:3001\n---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  d3auth-logout\nprefix: /dkube/v2/logout\nrewrite: /logout\ntimeout_ms: 600000\nservice: dkube-auth-server:3001"
             },
             "labels": {
                 "app": "d3auth"
             },
-            "name": "dkube-auth",
+            "name": "dkube-auth-server",
             "namespace": "dkube",
         },
         "spec": {
