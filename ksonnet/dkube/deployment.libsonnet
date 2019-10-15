@@ -5,121 +5,12 @@
 	$.parts(params.namespace, params.nodebind).dkubeWatcher(params.tag, params.dkubeWatcherImage, params.dkubeDockerSecret),
 	$.parts(params.namespace, params.nodebind).dkubeAuth(params.tag, params.dkubeAuthImage, params.dkubeDockerSecret, params.nfsServer, params.nfsBasePath),
 	$.parts(params.namespace, params.nodebind).ambassdor(params.tag),
-	$.parts(params.namespace, params.nodebind).splunkDeploy(params.nfsServer),
 	$.parts(params.namespace, params.nodebind).dkubeStorageExporter(params.tag, params.storageExporterImage, params.dkubeDockerSecret, params.nfsServer, params.nfsBasePath),
 	$.parts(params.namespace, params.nodebind).dkubeServingDocs(params.tag, params.dkubeInferenceImage, params.dkubeDockerSecret, params.dkubeDocsImage),
     ],
 
     parts(namespace, nodebind):: {
         local ambassadorImage = "quay.io/datawire/ambassador:0.53.1",
-        splunkDeploy(nfsServer):: {
-            "apiVersion": "extensions/v1beta1",
-            "kind": "Deployment",
-            "metadata": {
-                "labels": {
-                    "app": "splunk",
-                    "role": "splunk_cluster_master",
-                    "tier": "management"
-                },
-                "name": "splunk-7.3.2",
-                "namespace": "dkube",
-            },
-            "spec": {
-                "selector": {
-                    "matchLabels": {
-                        "app": "splunk",
-                        "role": "splunk_cluster_master",
-                        "tier": "management"
-                    }
-                },
-                "template": {
-                    "metadata": {
-                        "labels": {
-                            "app": "splunk",
-                            "role": "splunk_cluster_master",
-                            "tier": "management"
-                        }
-                    },
-                    "spec": {
-                        "nodeSelector": if nodebind == "yes" then {"d3.nodetype": "dkube"} else {},
-                        "containers": [
-                        {
-                            "env": [
-                            {
-                                "name": "SPLUNK_PASSWORD",
-                                "value": "thunberg007"
-                            },
-                            {
-                                "name": "SPLUNK_START_ARGS",
-                                "value": "--accept-license"
-                            },
-                            {
-                                "name": "DEBUG",
-                                "value": "true"
-                            }
-                            ],
-                            "image": "splunk/splunk:7.3.2",
-                            "imagePullPolicy": "IfNotPresent",
-                            "name": "splunk",
-                            "ports": [
-                            {
-                                "containerPort": 8088,
-                                "name": "hec",
-                                "protocol": "TCP"
-                            },
-                            {
-                                "containerPort": 8000,
-                                "name": "web",
-                                "protocol": "TCP"
-                            },
-                            {
-                                "containerPort": 8089,
-                                "name": "mgmt",
-                                "protocol": "TCP"
-                            },
-                            {
-                                "containerPort": 8191,
-                                "name": "kv",
-                                "protocol": "TCP"
-                            }
-                            ],
-                            "resources": {},
-                            "volumeMounts": [
-                            {
-                                "mountPath": "/opt/splunk/var",
-                                "name": "splunk-data"
-                            },
-                            {
-                                "mountPath": "/opt/splunk/etc",
-                                "name": "splunk-config"
-                            }
-                            ]
-                        }
-                        ],
-                        "dnsPolicy": "ClusterFirst",
-                        "restartPolicy": "Always",
-                        "schedulerName": "default-scheduler",
-                        "securityContext": {},
-                        "volumes": [
-                        {
-                            "name": "splunk-master-config",
-                            "nfs": {
-                                "path": "/dkube/system/splunk/splunk-etc",
-                                "server": nfsServer
-                            }
-                        },
-                        {
-                            "name": "splunk-master-data",
-                            "nfs": {
-                                "path": "/dkube/system/splunk/splunk-var",
-                                "server": nfsServer
-                            }
-                        }
-                        ]
-                    }
-                }
-            }
-        },
     dkubeServingDocs(tag, dkubeInferenceImage, dkubeDockerSecret, dkubeDocsImage):: {
         "apiVersion": "extensions/v1beta1",
         "kind": "Deployment",
