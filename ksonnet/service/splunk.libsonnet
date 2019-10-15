@@ -95,14 +95,14 @@
                         "securityContext": {},
                         "volumes": [
                         {
-                            "name": "splunk-master-config",
+                            "name": "splunk-config",
                             "nfs": {
                                 "path": "/dkube/system/splunk/splunk-etc",
                                 "server": nfsServer
                             }
                         },
                         {
-                            "name": "splunk-master-data",
+                            "name": "splunk-data",
                             "nfs": {
                                 "path": "/dkube/system/splunk/splunk-var",
                                 "server": nfsServer
