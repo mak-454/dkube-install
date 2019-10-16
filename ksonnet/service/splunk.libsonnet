@@ -118,7 +118,7 @@
             "kind": "Service",
             "metadata": {
                 "annotations": {
-                    "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube-splunk\nprefix: /splunk\nrewrite: /\ntimeout_ms: 600000\nservice: dkube-splunk.dkube:8000"
+                    "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube-splunk\nprefix: /splunk\nrewrite: /\ntimeout_ms: 600000\nservice: dkube-splunk.dkube:8000",
                 },
                 "labels": {
                     "app": "splunk",
@@ -126,7 +126,7 @@
                     "tier": "management"
                 },
                 "name": "dkube-splunk",
-                "namespace": "dkube",
+                "namespace": namespace,
             },
             "spec": {
                 "ports": [
@@ -138,6 +138,7 @@
                 },
                 {
                     "name": "splunkweb",
+                    "nodePort": 31113,
                     "port": 8000,
                     "protocol": "TCP",
                     "targetPort": 8000
@@ -154,7 +155,7 @@
                     "role": "splunk_cluster_master",
                     "tier": "management"
                 },
-                "type": "ClusterIP"
+                "type": "NodePort"
             }
         }
     }
