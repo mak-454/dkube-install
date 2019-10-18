@@ -7,12 +7,11 @@
     $.parts(params.namespace).kubeflowArgoUIServiceMapping(),
     $.parts(params.namespace).dkubeServiceAccount(),
     $.parts(params.namespace).dkubeClusterRoleBinding(params.dkubeClusterRole),
-    $.parts(params.namespace).dkubeService(params.dkubeApiServerAddr),
-    $.parts(params.namespace).dkubeHeadlessService(params.dkubeApiServerAddr),
+    $.parts(params.namespace).dkubeServiceMaster(params.dkubeApiServerAddr),
+    $.parts(params.namespace).dkubeServiceWorker(params.dkubeApiServerAddr),
+    $.parts(params.namespace).dkubeHeadlessServiceMaster(params.dkubeApiServerAddr),
     $.parts(params.namespace).dkubeAuthService(),
     $.parts(params.namespace).dkubeDexCM(),
-    $.parts(params.namespace).filebeatCM(),
-    $.parts(params.namespace).logstashCM(),
     $.parts(params.namespace).dkubeDexClusterRole(),
     $.parts(params.namespace).dkubeDexClusterRoleBinding()
   ],
@@ -26,7 +25,7 @@
         "annotations": {
           "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  \"katib\"\ntimeout_ms: 600000\nuse_websocket: true\nprefix: \"/katib\"\nrewrite: \"/katib\"\nservice: \"katib-ui.kubeflow:80\""
         },
-        "name": "katib-maping-service",
+        "name": "kf-katib-mapping-service",
         "namespace": "dkube"
       },
       "spec": {
@@ -45,7 +44,7 @@
             "labels": {
                 "app": "ml-pipeline-ui"
             },
-            "name": "ml-pipeline-ui-mapping-service",
+            "name": "kf-pipeline-ui-mapping-service",
             "namespace": "dkube",
         },
         "spec": {
@@ -58,7 +57,7 @@
       "kind": "Service", 
       "metadata": {
         "annotations": {
-          "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_monitoring\nprefix: /dkube/grafana/\nrewrite: /\nservice: dkube-grafana.monitoring:80\ntimeout_ms: 600000\nuse_websocket: true"
+          "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_monitoring\nprefix: /dkube/grafana/\nrewrite: /\nservice: dkube-grafana.dkube:80\ntimeout_ms: 600000\nuse_websocket: true"
         }, 
         "labels": {
           "app": "dkube-prometheus-grafana"
@@ -88,9 +87,9 @@
 	  "kind": "Service", 
 	  "metadata": {
 		"annotations": {
-		  "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  \"prometheus\"\ntimeout_ms: 600000\nuse_websocket: true\nprefix: \"/dkube/v2/prometheus/api/v1\"\nrewrite: \"/api/v1\"\nservice: \"kube-prometheus.monitoring:9090\"\ncors:\n origins: \"*\"\n methods: \"*\"\n headers: \"*\"\n---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  \"prometheus-alert-manager\"\ntimeout_ms: 600000\nuse_websocket: true\nprefix: \"/dkube/v2/prometheus/alertmanager/api/v1\"\nrewrite: \"/api/v1\"\nservice: \"kube-prometheus-alertmanager.monitoring:9093\"\ncors:\n origins: \"*\"\n methods: \"*\"\n headers: \"*\""
+		  "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  \"prometheus\"\ntimeout_ms: 600000\nuse_websocket: true\nprefix: \"/dkube/v2/prometheus/api/v1\"\nrewrite: \"/api/v1\"\nservice: \"kube-prometheus.dkube:9090\"\ncors:\n origins: \"*\"\n methods: \"*\"\n headers: \"*\"\n---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  \"prometheus-alert-manager\"\ntimeout_ms: 600000\nuse_websocket: true\nprefix: \"/dkube/v2/prometheus/alertmanager/api/v1\"\nrewrite: \"/api/v1\"\nservice: \"kube-prometheus-alertmanager.dkube:9093\"\ncors:\n origins: \"*\"\n methods: \"*\"\n headers: \"*\""
 		}, 
-		"name": "prometheus-maping-service", 
+		"name": "dkube-prometheus-mapping-service",
 		"namespace": "dkube"
 	  }, 
 	  "spec": {
@@ -104,9 +103,9 @@
 	  "kind": "Service",
 	  "metadata": {
 	  	"annotations": {
-	  		"getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname: argoui-mapping\nprefix: \"/argo/logs/\"\nrewrite: \"/api/logs/\"\ntimeout_ms: 300000\nservice: \"argo-ui.kubeflow:80\"\nuse_websocket: true"
+	  		"getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname: argoui-mapping\nprefix: \"/argo/logs/\"\nrewrite: \"/dkube/v2/\"\ntimeout_ms: 300000\nservice: \"dkube-downloader.dkube:9401\"\nuse_websocket: true"
 	  	},
-	  	"name": "argo-ui-mapping-service",
+	  	"name": "kf-argo-ui-mapping-service",
 	  	"namespace": "dkube"
 	  },
 	  "spec": {
@@ -142,7 +141,7 @@
         }
       ]
     },  // cluster role binding
-    dkubeService(dkubeApiServerAddr):: {
+    dkubeServiceMaster(dkubeApiServerAddr):: {
       local dkubeApiServerAddrArray = std.split(dkubeApiServerAddr, ":"),
       local dkubeApiServerPort = std.parseInt(dkubeApiServerAddrArray[std.length(dkubeApiServerAddrArray)-1]),
 
@@ -150,30 +149,30 @@
       "kind": "Service", 
       "metadata": {
         "annotations": {
-          "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_d3api\nprefix: /dkube/v2\nrewrite: /dkube/v2\ntimeout_ms: 600000\nservice: dkube-d3api:5000"
+            "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_d3api\nprefix: /dkube/v2\nrewrite: /dkube/v2\nmethod_regex: true\nmethod: 'POST|PUT|DELETE|OPTIONS'\ntimeout_ms: 600000\nservice: dkube-controller-master:5000"
         }, 
         "labels": {
-          "app": "dkube-d3api"
+          "app": "dkube-controller-master"
         }, 
-        "name": "dkube-d3api", 
+        "name": "dkube-controller-master", 
         "namespace": namespace
       }, 
       "spec": {
         "ports": [
           {
-            "name": "dkube-d3api", 
+            "name": "dkube-d3api",
             "port": dkubeApiServerPort, 
             "protocol": "TCP", 
             "targetPort": dkubeApiServerPort
           }
         ], 
         "selector": {
-          "app": "dkube-d3api"
+          "app": "dkube-controller-master"
         }, 
         "type": "ClusterIP"
       }
-    }, //service
-    dkubeHeadlessService(dkubeApiServerAddr):: {
+    }, //service master
+    dkubeHeadlessServiceMaster(dkubeApiServerAddr):: {
       local dkubeApiServerAddrArray = std.split(dkubeApiServerAddr, ":"),
       local dkubeApiServerPort = std.parseInt(dkubeApiServerAddrArray[std.length(dkubeApiServerAddrArray)-1]),
 
@@ -181,38 +180,68 @@
       "kind": "Service", 
       "metadata": {
         "labels": {
-          "app": "dkube-d3api"
+          "app": "dkube-controller-master"
         }, 
-        "name": "dkube-d3api-headless", 
+        "name": "dkube-controller-headless-master", 
         "namespace": namespace
       }, 
       "spec": {
         "clusterIP": "None",
         "ports": [
           {
-            "name": "dkube-d3api", 
+            "name": "dkube-d3api",
             "port": dkubeApiServerPort, 
             "protocol": "TCP", 
             "targetPort": dkubeApiServerPort
           }
         ], 
         "selector": {
-          "app": "dkube-d3api"
+          "app": "dkube-controller-master"
         }, 
         "type": "ClusterIP"
       }
     }, //service
+    dkubeServiceWorker(dkubeApiServerAddr):: {
+      local dkubeApiServerAddrArray = std.split(dkubeApiServerAddr, ":"),
+      local dkubeApiServerPort = std.parseInt(dkubeApiServerAddrArray[std.length(dkubeApiServerAddrArray)-1]),
+
+      "apiVersion": "v1",
+      "kind": "Service",
+      "metadata": {
+        "annotations": {
+          "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_d3api_worker\nprefix: /dkube/v2\nrewrite: /dkube/v2\nmethod: GET\ntimeout_ms: 600000\nservice: dkube-controller-worker:5000"
+        },
+        "labels": {
+          "app": "dkube-controller-worker"
+        },
+        "name": "dkube-controller-worker",
+        "namespace": namespace
+      },
+      "spec": {
+        "ports": [
+          {
+            "port": dkubeApiServerPort,
+            "protocol": "TCP",
+            "targetPort": dkubeApiServerPort
+          }
+        ],
+        "selector": {
+          "app": "dkube-controller-worker"
+        },
+        "type": "ClusterIP"
+      }
+    }, //service worker
     dkubeAuthService():: {
         "apiVersion": "v1",
         "kind": "Service",
         "metadata": {
             "annotations": {
-                "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  d3auth-dex\nprefix: /dex\nrewrite: /dex\ntimeout_ms: 600000\nservice: dkube-d3auth:5556\n---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  d3auth-login\nprefix: /dkube/v2/login\nrewrite: /login\ntimeout_ms: 600000\nservice: dkube-d3auth:3001\n---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  d3auth-logout\nprefix: /dkube/v2/logout\nrewrite: /logout\ntimeout_ms: 600000\nservice: dkube-d3auth:3001"
+                "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  d3auth-dex\nprefix: /dex\nrewrite: /dex\ntimeout_ms: 600000\nservice: dkube-auth-server:5556\n---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  d3auth-login\nprefix: /dkube/v2/login\nrewrite: /login\ntimeout_ms: 600000\nservice: dkube-auth-server:3001\n---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  d3auth-logout\nprefix: /dkube/v2/logout\nrewrite: /logout\ntimeout_ms: 600000\nservice: dkube-auth-server:3001"
             },
             "labels": {
                 "app": "d3auth"
             },
-            "name": "dkube-d3auth",
+            "name": "dkube-auth-server",
             "namespace": "dkube",
         },
         "spec": {
@@ -233,7 +262,7 @@
             }
             ],
             "selector": {
-                "app": "d3auth"
+                "app": "dkube-auth"
             },
             "type": "NodePort"
         },
@@ -245,36 +274,8 @@
         },
         "kind": "ConfigMap",
         "metadata": {
-            "name": "dex",
+            "name": "dkube-auth-config",
             "namespace": "dkube",
-        }
-    },
-    filebeatCM()::  {
-        "apiVersion": "v1",
-        "data": {
-            "filebeat.yml": "# To enable hints based autodiscover, remove `filebeat.config.inputs` configuration and uncomment this:\nfilebeat.autodiscover:\n  providers:\n    - type: kubernetes\n      templates:\n        - condition:\n           and:\n             - or:\n                 - equals:\n                      kubernetes.container.name: tensorflow\n                 - equals:\n                      kubernetes.container.name: datajob\n             - and:\n                 - equals:\n                     kubernetes.labels.logger: filebeat\n                 - equals:\n                     kubernetes.node.name: ${NODENAME}\n          config:\n            - type: docker\n              containers:\n                  path: \"DOCKERPATH\"\n                  ids:\n                   - \"${data.kubernetes.container.id}\"\n              fields:\n                 jobname: ${data.kubernetes.labels.jobname}\n                 tfrole: ${data.kubernetes.labels.tf-replica-type:SINGLETON}\n                 username: ${data.kubernetes.labels.username}\n                 tfindex: ${data.kubernetes.labels.tf-replica-index:0}\n              fields_under_root: true\n\nprocessors:\n  - drop_fields:\n       fields: [\"beat\", \"input\", \"prospector\", \"offset\", \"source\", \"labels\", \"host\", \"kubernetes\", \"pod\", \"container\", \"node\", \"tags\", \"@version\",\"log\",\"ecs\",\"agent\"]\n        \noutput.logstash:\n  hosts: [\"logstash.dkube:5044\"]"
-        },
-        "kind": "ConfigMap",
-        "metadata": {
-            "labels": {
-                "k8s-app": "filebeat"
-            },
-            "name": "filebeat-config",
-            "namespace": "dkube"
-        }
-    },
-   logstashCM():: {
-        "apiVersion": "v1",
-        "data": {
-            "logstash.conf": "input{\n  beats {\n   port =\u003e 5044\n  }\n}\n\nfilter {\n   mutate {\n     add_field =\u003e {\n        \"[@metadata][jobname]\"=\u003e \"%{[jobname]}\"\n        \"[@metadata][role]\"=\u003e \"%{[tfrole]}\"\n        \"[@metadata][index]\" =\u003e \"%{[tfindex]}\"\n        \"[@metadata][username]\" =\u003e \"%{[username]}\"\n      }\n   }\n}\n\noutput {\n    file{\n       path =\u003e \"/var/log/dkube/%{[@metadata][username]}/%{[@metadata][jobname]}/logs.txt\"\n       codec =\u003e line{format =\u003e \"%{@timestamp}  %{[@metadata][role]}-%{[@metadata][index]}  %{message}\"}\n     }\n}"
-        },
-        "kind": "ConfigMap",
-        "metadata": {
-            "labels": {
-                "app": "logstash"
-            },
-            "name": "logstash-config",
-            "namespace": "dkube"
         }
     },
     dkubeDexClusterRole():: {

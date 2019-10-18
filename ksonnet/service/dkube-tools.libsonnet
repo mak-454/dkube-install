@@ -2,7 +2,6 @@
     all(params):: [
         $.parts(params.namespace).dkubeInferenceService(),
         $.parts(params.namespace).dkubeDocsService(),
-        $.parts(params.namespace).dkubeInstallerService(),
     ],
     parts(namespace):: {
         dkubeDocsService():: {
@@ -25,7 +24,7 @@
                     }
                 ],
                 "selector": {
-                    "app": "docs"
+                    "app": "dkube-tools"
                 },
                 "type": "ClusterIP"
             }
@@ -50,36 +49,11 @@
                     }
                 ],
                 "selector": {
-                    "app": "inference"
+                    "app": "dkube-tools"
                 },
                 "type": "ClusterIP"
             }
 
-        },
-    dkubeInstallerService()::{
-        "apiVersion": "v1",
-        "kind": "Service",
-        "metadata": {
-            "annotations": {
-                "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_installer\nprefix: /installer\nrewrite: /ui\ntimeout_ms: 600000\nservice: dkube-installer-service.kube-system:8888\ncors:\n origins: \"*\"\n methods: \"*\"\n headers: \"*\"\n---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_installer_report\nprefix: /report\nrewrite: /report\ntimeout_ms: 600000\nservice: dkube-installer-service.kube-system:8888\ncors:\n origins: \"*\"\n methods: \"*\"\n headers: \"*\""
-            },
-            "name": "installer-mapping-service",
-            "namespace": namespace
-        },
-        "spec": {
-            "ports": [
-                {
-                    "name": "serve",
-                    "port": 8888,
-                    "protocol": "TCP",
-                    "targetPort": 8888
-                }
-            ],
-            "selector": {
-                "role": "dkube-installer"
-            },
-            "type": "ClusterIP"
-        }
         }
     }
 }

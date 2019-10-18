@@ -24,7 +24,7 @@
       "apiVersion": "v1",
       "kind": "ConfigMap",
       "metadata": {
-        "name": "workflow-controller-configmap",
+        "name": "dkube-workflow-controller-configmap",
         "namespace": "dkube"
       },
       "data": {
@@ -135,7 +135,7 @@
       "apiVersion": "apps/v1beta2",
       "kind": "Deployment",
       "metadata": {
-        "name": "workflow-controller",
+        "name": "dkube-workflow-controller",
         "namespace": "dkube"
       },
       "spec": {
@@ -156,7 +156,7 @@
               {
                 "args": [
                   "--configmap",
-                  "workflow-controller-configmap",
+                  "dkube-workflow-controller-configmap",
                   "--executor-image",
                   "argoproj/argoexec:v2.3.0"
                 ],

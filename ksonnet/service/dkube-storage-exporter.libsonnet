@@ -12,9 +12,9 @@
                     "prometheus.io/scrape": "true"
                 },
                 "labels": {
-                    "app": "dkube-gpu-exporter"
+                    "app": "dkube-storage-exporter"
                 },
-                "name": "dkube-exporter",
+                "name": "dkube-storage-exporter",
                 "namespace": "dkube"
             },
             "spec": {
@@ -27,7 +27,7 @@
                 }
                 ],
                 "selector": {
-                    "app": "dkube-ext"
+                    "app": "dkube-storage-exporter"
                 },
                 "type": "ClusterIP"
             }
