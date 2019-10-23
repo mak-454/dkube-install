@@ -2,7 +2,7 @@
     all(params):: [
 	$.parts(params.namespace).dkubeExt(params.tag, params.dkubeExtImage, params.dkubeDockerSecret, params.minioSecretKey, params.nfsServer),
 	$.parts(params.namespace).fluentd(params.tag),
-	$.parts(params.namespace).dkubeD3apiWorker(params.tag, params.dkubeApiServerImage, params.dkubeApiServerAddr, params.dkubeMountPath, params.dkubeApiServerAddr, params.rdmaEnabled, params.dkubeDockerSecret, params.minioSecretKey, params.nfsServer, params.dkubeRegistry, params.dkubeRegistryUname, params.dkubeRegistryPasswd, params.dkubeDownloaderImage)
+	$.parts(params.namespace).dkubeD3apiWorker(params.tag, params.dkubeApiServerImage, params.dkubeApiServerAddr, params.dkubeMountPath, params.dkubeApiServerAddr, params.rdmaEnabled, params.dkubeDockerSecret, params.minioSecretKey, params.nfsServer, params.nfsBasePath, params.dkubeRegistry, params.dkubeRegistryUname, params.dkubeRegistryPasswd, params.dkubeDownloaderImage)
     ],
     parts(namespace):: {
 	dkubeExt(tag, dkubeExtImage,dkubeDockerSecret, minioSecretKey, nfsServer):: {
@@ -236,7 +236,7 @@
 		},
 	    },
 	},
-	 dkubeD3apiWorker(tag, apiServerImage, apiServerAddr, mountPath, dkubeApiServerAddr, isRdmaEnabled, dkubeDockerSecret, minioSecretKey, nfsServer, dkubeRegistry, dkubeRegistryUname, dkubeRegistryPasswd,dkubeDownloaderImage):: {
+	 dkubeD3apiWorker(tag, apiServerImage, apiServerAddr, mountPath, dkubeApiServerAddr, isRdmaEnabled, dkubeDockerSecret, minioSecretKey, nfsServer, nfsBasePath, dkubeRegistry, dkubeRegistryUname, dkubeRegistryPasswd,dkubeDownloaderImage):: {
 	    local dkubeApiServerAddrArray = std.split(dkubeApiServerAddr, ":"),
 	    local dkubeApiServerPort = std.parseInt(dkubeApiServerAddrArray[std.length(dkubeApiServerAddrArray)-1]),
 
@@ -310,6 +310,10 @@
                                 "value": nfsServer
                             },
                             {
+                                "name": "NFS_BASE_PATH",
+                                "value": nfsBasePath
+                            },
+                            {
                                 "name": "DKUBE_APISERVER_ROLE",
                                 "value": "worker"
                             },
@@ -381,13 +385,13 @@
                     {
                         "nfs": {
                             "server": nfsServer,
-                            "path": "/dkube"
+                            "path": nfsBasePath + "/dkube"
                         },
                         "name": "store"
                     },
                     {
                         "nfs": {
-                            "path": "/dkube/system/logs/dkube",
+                            "path": nfsBasePath + "/dkube/system/logs/dkube",
                             "server": nfsServer
                         },
                         "name": "dkube-logs"
