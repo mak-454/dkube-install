@@ -1,7 +1,7 @@
 {
     all(params):: [
 	$.parts(params.namespace).dkubeExt(params.tag, params.dkubeExtImage, params.dkubeDockerSecret, params.minioSecretKey, params.nfsServer),
-	$.parts(params.namespace).fluentd(params.tag),
+	$.parts(params.namespace).fluentd(params.tag, params.fluentdImage),
 	$.parts(params.namespace).dkubeD3apiWorker(params.tag, params.dkubeApiServerImage, params.dkubeApiServerAddr, params.dkubeMountPath, params.dkubeApiServerAddr, params.rdmaEnabled, params.dkubeDockerSecret, params.minioSecretKey, params.nfsServer, params.nfsBasePath, params.dkubeRegistry, params.dkubeRegistryUname, params.dkubeRegistryPasswd, params.dkubeDownloaderImage)
     ],
     parts(namespace):: {
@@ -111,7 +111,7 @@
 		}
 	    }
 	},
-	fluentd(tag):: {
+	fluentd(tag, fluentdImage):: {
 	    "apiVersion": "extensions/v1beta1",
 	    "kind": "DaemonSet",
 	    "metadata": {
@@ -136,7 +136,7 @@
 		    "spec": {
 			"containers": [
 			{
-			    "image": "fluent/fluentd-kubernetes-daemonset:v1.7-debian-s3-1",
+			    "image": fluentdImage,
 			    "imagePullPolicy": "IfNotPresent",
 			    "name": "metric-collector",
 			    "resources": {},
@@ -162,7 +162,7 @@
 			    ]
 			},
 			{
-                "image": "fluent/fluentd-kubernetes-daemonset:v1.7-debian-s3-1",
+                "image": fluentdImage,
                 "imagePullPolicy": "IfNotPresent",
                 "name": "log-collector",
                 "resources": {},
