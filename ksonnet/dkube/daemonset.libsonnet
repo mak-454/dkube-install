@@ -64,7 +64,7 @@
 			    ], 
 			    "image": dkubeExtImage, 
 			    "imagePullPolicy": "IfNotPresent", 
-			    "name": "dkube-ext",
+			    "name": "main",
 			    "securityContext": {
 			        "privileged": true
 			    },
@@ -117,6 +117,8 @@
 	    "metadata": {
 		"labels": {
 		    "k8s-app": "dkube-metric-collector",
+		    "main": "metric",
+		    "sidecar": "logs"
 		},
 		"name": "dkube-log-processor-" + tag,
 		"namespace": "dkube",
@@ -138,7 +140,7 @@
 			{
 			    "image": fluentdImage,
 			    "imagePullPolicy": "IfNotPresent",
-			    "name": "metric-collector",
+			    "name": "main",
 			    "resources": {},
 			    "securityContext": {
                     "runAsUser": 0,
@@ -164,7 +166,7 @@
 			{
                 "image": fluentdImage,
                 "imagePullPolicy": "IfNotPresent",
-                "name": "log-collector",
+                "name": "sidecar",
                 "resources": {},
                 "securityContext": {
                     "runAsUser": 0,
@@ -244,7 +246,9 @@
     "kind": "DaemonSet",
     "metadata": {
         "labels": {
-            "app": "dkube-controller-worker"
+            "app": "dkube-worker",
+            "main": "get-d3api",
+            "sidecar": "downloader"
         },
         "name": "dkube-controller-worker-" + tag,
         "namespace": namespace,
@@ -252,13 +256,13 @@
     "spec": {
         "selector": {
             "matchLabels": {
-                "app": "dkube-controller-worker"
+                "app": "dkube-worker"
             }
         },
         "template": {
             "metadata": {
                 "labels": {
-                    "app": "dkube-controller-worker"
+                    "app": "dkube-worker"
                 }
             },
             "spec": {
@@ -320,7 +324,7 @@
                         ],
                         "image": apiServerImage,
                         "imagePullPolicy": "IfNotPresent",
-                        "name": "dkube-d3api",
+                        "name": "main",
                         "ports": [
                             {
                                 "containerPort": dkubeApiServerPort,
@@ -353,7 +357,7 @@
                     {
                         "image": dkubeDownloaderImage,
                         "imagePullPolicy": "IfNotPresent",
-                        "name": "downloader",
+                        "name": "sidecar",
                         "resources": {},
                         "securityContext": {
                             "procMount": "Default",

@@ -12,7 +12,7 @@
     "kind": "StatefulSet",
     "metadata": {
         "labels": {
-            "app": "dkube-controller-master"
+            "app": "dkube-master"
         },
         "name": "dkube-controller-master-" + tag,
         "namespace": namespace,
@@ -21,7 +21,7 @@
         "replicas": 1,
         "selector": {
             "matchLabels": {
-                "app": "dkube-controller-master"
+                "app": "dkube-master"
             }
         },
         "serviceName": "dkube-controller-master-headless",
@@ -29,7 +29,7 @@
             "metadata": {
                 "creationTimestamp": null,
                 "labels": {
-                    "app": "dkube-controller-master"
+                    "app": "dkube-master"
                 }
             },
             "spec": {
@@ -75,7 +75,7 @@
                         ],
                         "image": apiServerImage,
                         "imagePullPolicy": "IfNotPresent",
-                        "name": "dkube-d3api",
+                        "name": "main",
                         "ports": [
                             {
                                 "containerPort": dkubeApiServerPort,
