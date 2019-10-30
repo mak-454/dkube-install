@@ -152,7 +152,7 @@
             "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_d3api\nprefix: /dkube/v2\nrewrite: /dkube/v2\nmethod_regex: true\nmethod: 'POST|PUT|DELETE|OPTIONS'\ntimeout_ms: 600000\nservice: dkube-controller-master:5000"
         }, 
         "labels": {
-          "app": "dkube-master"
+          "app": "dkube-controller-master"
         }, 
         "name": "dkube-controller-master", 
         "namespace": namespace
@@ -167,7 +167,7 @@
           }
         ], 
         "selector": {
-          "app": "dkube-master"
+          "app": "dkube-controller-master"
         }, 
         "type": "ClusterIP"
       }
@@ -196,7 +196,7 @@
           }
         ], 
         "selector": {
-          "app": "dkube-master"
+          "app": "dkube-controller-master"
         }, 
         "type": "ClusterIP"
       }
@@ -212,7 +212,7 @@
           "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  dkube_d3api_worker\nprefix: /dkube/v2\nrewrite: /dkube/v2\nmethod: GET\ntimeout_ms: 600000\nservice: dkube-controller-worker:5000"
         },
         "labels": {
-          "app": "dkube-worker"
+          "app": "dkube-controller-worker"
         },
         "name": "dkube-controller-worker",
         "namespace": namespace
@@ -226,7 +226,7 @@
           }
         ],
         "selector": {
-          "app": "dkube-worker"
+          "app": "dkube-controller-worker"
         },
         "type": "ClusterIP"
       }

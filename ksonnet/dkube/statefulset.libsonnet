@@ -12,7 +12,7 @@
     "kind": "StatefulSet",
     "metadata": {
         "labels": {
-            "app": "dkube-master"
+            "app": "dkube-controller-master"
         },
         "name": "dkube-controller-master-" + tag,
         "namespace": namespace,
@@ -21,7 +21,7 @@
         "replicas": 1,
         "selector": {
             "matchLabels": {
-                "app": "dkube-master"
+                "app": "dkube-controller-master"
             }
         },
         "serviceName": "dkube-controller-master-headless",
@@ -29,7 +29,7 @@
             "metadata": {
                 "creationTimestamp": null,
                 "labels": {
-                    "app": "dkube-master"
+                    "app": "dkube-controller-master"
                 }
             },
             "spec": {

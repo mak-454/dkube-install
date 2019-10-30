@@ -17,8 +17,6 @@
         "metadata": {
             "labels": {
                 "app": "dkube-tools",
-                "main": "inference",
-                "sidecar": "docs"
             },
             "name": "dkube-inf-doc-server-" + tag,
             "namespace": namespace
@@ -201,8 +199,6 @@
         "metadata": {
             "labels": {
                 "app": "dkube-auth",
-                "main": "dex-server",
-                "sidecar": "authn"
             },
             "name": "dkube-auth-server-" + tag,
             "namespace": "dkube",

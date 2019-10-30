@@ -117,8 +117,6 @@
 	    "metadata": {
 		"labels": {
 		    "k8s-app": "dkube-metric-collector",
-		    "main": "metric",
-		    "sidecar": "logs"
 		},
 		"name": "dkube-log-processor-" + tag,
 		"namespace": "dkube",
@@ -246,9 +244,7 @@
     "kind": "DaemonSet",
     "metadata": {
         "labels": {
-            "app": "dkube-worker",
-            "main": "get-d3api",
-            "sidecar": "downloader"
+            "app": "dkube-controller-worker",
         },
         "name": "dkube-controller-worker-" + tag,
         "namespace": namespace,
@@ -256,13 +252,13 @@
     "spec": {
         "selector": {
             "matchLabels": {
-                "app": "dkube-worker"
+                "app": "dkube-controller-worker"
             }
         },
         "template": {
             "metadata": {
                 "labels": {
-                    "app": "dkube-worker"
+                    "app": "dkube-controller-worker"
                 }
             },
             "spec": {

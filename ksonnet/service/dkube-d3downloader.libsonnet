@@ -22,7 +22,7 @@
                 }
                 ],
                 "selector": {
-                    "app": "dkube-worker"
+                    "app": "dkube-controller-worker"
                 },
                 "type": "ClusterIP"
             }
