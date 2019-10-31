@@ -103,7 +103,7 @@
 	  "kind": "Service",
 	  "metadata": {
 	  	"annotations": {
-	  		"getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname: argoui-mapping\nprefix: \"/argo/logs/\"\nrewrite: \"/dkube/v2/\"\ntimeout_ms: 300000\nservice: \"dkube-downloader.dkube:9401\"\nuse_websocket: true"
+	  		"getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname: argoui-mapping\nprefix: \"/argo/logs/\"\nrewrite: \"/api/logs/\"\ntimeout_ms: 300000\nservice: \"argo-ui.kubeflow:80\"\nuse_websocket: true"
 	  	},
 	  	"name": "kf-argo-ui-mapping-service",
 	  	"namespace": "dkube"
