@@ -88,9 +88,10 @@
 			    "--listen-client-urls=http://0.0.0.0:2379",
 			    "--advertise-client-urls=http://0.0.0.0:2379",
 			    "--data-dir=/var/lib/etcd",
-                "--force-new-cluster"
+                "--force-new-cluster",
+                "--enable-v2"
 			    ],
-			    "image": "k8s.gcr.io/etcd-amd64:3.1.12",
+			    "image": "gcr.io/etcd-development/etcd:v3.4.3",
 			    "imagePullPolicy": "IfNotPresent",
 			    "name": "etcd",
 			    "volumeMounts": [
