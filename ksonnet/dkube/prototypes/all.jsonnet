@@ -27,6 +27,7 @@
 // @optionalParam nodebind string no Node selector flag
 // @optionalParam hecToken string hectoken HEC Token from Splunk
 // @optionalParam storageExporterImage string ocdr/dkube-d3storagexporter:1.4.0 Dkube storage exporter image
+// @optionalParam fluentdImage string ocdr/fluentd-kubernetes-daemonset:v1.7-debian-s3-1 Fluentd image
 
 local k = import "k.libsonnet";
 local all = import "dkube/dkube/all.libsonnet";

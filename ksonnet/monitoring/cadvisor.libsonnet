@@ -89,7 +89,6 @@
                 "ports": [
                   {
                     "containerPort": 8080,
-                    "hostPort": 8080,
                     "name": "http-metrics",
                     "protocol": "TCP"
                   }
