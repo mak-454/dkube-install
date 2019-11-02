@@ -3,7 +3,7 @@
 	$.parts(params.namespace, params.nodebind).dkubeEtcd(params.tag, params.etcdPVC),
 	$.parts(params.namespace, params.nodebind).dfabProxy(params.tag,params.dfabProxyImage, params.dkubeDockerSecret),
 	$.parts(params.namespace, params.nodebind).dkubeWatcher(params.tag, params.dkubeWatcherImage, params.dkubeDockerSecret),
-	$.parts(params.namespace, params.nodebind).dkubeAuth(params.tag, params.dkubeAuthImage, params.dkubeDockerSecret, params.nfsServer, params.nfsBasePath),
+	$.parts(params.namespace, params.nodebind).dkubeAuth(params.tag, params.dkubeAuthImage, params.dkubeDockerSecret, params.nfsServer, params.nfsBasePath, params.dkubePubIP),
 	$.parts(params.namespace, params.nodebind).ambassdor(params.tag),
 	$.parts(params.namespace, params.nodebind).dkubeStorageExporter(params.tag, params.storageExporterImage, params.dkubeDockerSecret, params.nfsServer, params.nfsBasePath),
 	$.parts(params.namespace, params.nodebind).dkubeServingDocs(params.tag, params.dkubeInferenceImage, params.dkubeDockerSecret, params.dkubeDocsImage),
@@ -193,7 +193,7 @@
 		}
 	    },
 	},
-    dkubeAuth(tag, dkubeAuthImage, dkubeDockerSecret, nfsServer, nfsBasePath):: {
+    dkubeAuth(tag, dkubeAuthImage, dkubeDockerSecret, nfsServer, nfsBasePath, dkubePubIP):: {
         "apiVersion": "extensions/v1beta1",
         "kind": "Deployment",
         "metadata": {
@@ -246,7 +246,13 @@
                             "mountPath": "/etc/dex/cfg",
                             "name": "dex-cm"
                         }
-                        ]
+                        ],
+                    env: [
+                            {
+                                "name": "PUBLIC_IP",
+                                "value": dkubePubIP,
+                            },
+                    ]
                     },
                     {
                         "image": dkubeAuthImage,
@@ -264,7 +270,13 @@
                             "mountPath": "/var/log/dkube",
                             "name": "dkube-logs"
                         }
-                        ]
+                        ],
+                    env: [
+                            {
+                                "name": "PUBLIC_IP",
+                                "value": dkubePubIP,
+                            },
+                    ]
                     }
                     ],
                     "dnsPolicy": "ClusterFirst",

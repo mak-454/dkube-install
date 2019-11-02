@@ -236,7 +236,7 @@
         "kind": "Service",
         "metadata": {
             "annotations": {
-                "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  d3auth-login\nprefix: /dkube/v2/login\nrewrite: /login\ntimeout_ms: 600000\nservice: dkube-auth-server:3001\n---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  d3auth-logout\nprefix: /dkube/v2/logout\nrewrite: /logout\ntimeout_ms: 600000\nservice: dkube-auth-server:3001"
+                "getambassador.io/config": "---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  d3auth-dex\nprefix: /dex\nrewrite: /dex\ntimeout_ms: 600000\nservice: dkube-auth-server:5556\n---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  d3auth-login\nprefix: /dkube/v2/login\nrewrite: /login\ntimeout_ms: 600000\nservice: dkube-auth-server:3001\n---\napiVersion: ambassador/v0\nkind:  Mapping\nname:  d3auth-logout\nprefix: /dkube/v2/logout\nrewrite: /logout\ntimeout_ms: 600000\nservice: dkube-auth-server:3001"
             },
             "labels": {
                 "app": "d3auth"
@@ -250,25 +250,27 @@
                 "name": "dex-s",
                 "port": 5556,
                 "protocol": "TCP",
-                "targetPort": 5556
+                "targetPort": 5556,
+                "nodePort": 31534,
             },
             {
                 "name": "authn",
                 "port": 3001,
                 "protocol": "TCP",
-                "targetPort": 3001
+                "targetPort": 3001,
+                "nodePort": 30049,
             }
             ],
             "selector": {
                 "app": "dkube-auth"
             },
-            "type": "ClusterIP"
+            "type": "NodePort"
         },
     },
     dkubeDexCM():: {
         "apiVersion": "v1",
         "data": {
-            "config.yaml": "issuer: http://127.0.0.1:5556/dex\nstorage:\n  type: kubernetes\n  config:\n    inCluster: true\nweb:\n  http: 0.0.0.0:5556\ntelemetry:\n  http: 0.0.0.0:5558\nexpiry:\n  idTokens: \"72h\"\nstaticClients:\n- id: dkube-app\n  redirectURIs:\n  - 'http://127.0.0.1:3001/cb'\n  name: 'Dkube App'\n  secret: ZXhhbXBsZS1hcHAtc2VjcmV0\nconnectors:\n- type: dkube\n  id: dkube\n  name: Dkube\n  config:\n    username: fake\n    password: fakeAgain\nenablePasswordDB: true\nstaticPasswords:\n- email: \"admin@example.com\"\n  # bcrypt hash of the string \"password\"\n  hash: \"$2a$10$2b2cU8CPhOTaGrs1HRQuAueS7JTT5ZHsHSzYiFPm1leZck7Mc8T4W\"\n  username: \"admin\"\n  userID: \"08a8684b-db88-4b73-90a9-3cd1661f5466\"\n"
+            "config.yaml": "{\r\n   \"issuer\": \"http:\/\/PUB-IP:31534\/dex\",\r\n   \"storage\": {\r\n      \"type\": \"kubernetes\",\r\n      \"config\": {\r\n         \"inCluster\": true\r\n      }\r\n   },\r\n   \"frontend\": {\r\n      \"logoURL\": \"https:\/\/PUB-IP:32222\/dex\/\",\r\n      \"extra\": {\r\n         \"dkubeUrl\": \"https:\/\/PUB-IP:32222\/dex\/theme\/logo.png\",\r\n         \"favUrl\": \"https:\/\/PUB-IP:32222\/dex\/theme\/favicon.png\",\r\n         \"mainCss\": \"https:\/\/PUB-IP:32222\/dex\/static\/main.css\",\r\n         \"styleCss\": \"https:\/\/PUB-IP:32222\/dex\/theme\/styles.css\"\r\n      }\r\n   },\r\n   \"web\": {\r\n      \"http\": \"0.0.0.0:5556\"\r\n   },\r\n   \"telemetry\": {\r\n      \"http\": \"0.0.0.0:5558\"\r\n   },\r\n   \"expiry\": {\r\n      \"idTokens\": \"72h\"\r\n   },\r\n   \"staticClients\": [\r\n      {\r\n         \"id\": \"dkube\",\r\n         \"redirectURIs\": [\r\n            \"https:\/\/PUB-IP:32222\/callback\"\r\n         ],\r\n         \"name\": \"Dkube App\",\r\n         \"secret\": \"dkube-secret\"\r\n      },\r\n      {\r\n         \"id\": \"kubeflow-authservice-oidc\",\r\n         \"redirectURIs\": [\r\n            \"https:\/\/PUB-IP:31390\/login\/oidc\"\r\n         ],\r\n         \"name\": \"Kubeflow App\",\r\n         \"secret\": \"QKQ2ZN6SDavgTBR8JnVpy2a1beiWnLiO\"\r\n      }\r\n   ],\r\n   \"oauth2\": {\r\n      \"skipApprovalScreen\": true,\r\n      \"alwaysShowLoginScreen\": true\r\n   },\r\n   \"enablePasswordDB\": true,\r\n   \"staticPasswords\": [\r\n      {\r\n         \"email\": \"L-UNAME\",\r\n         \"hash\": \"L-PASSWD\",\r\n         \"username\": \"L-UNAME\",\r\n         \"userID\": \"L-UNAME\"\r\n      }\r\n   ]\r\n}"
         },
         "kind": "ConfigMap",
         "metadata": {
