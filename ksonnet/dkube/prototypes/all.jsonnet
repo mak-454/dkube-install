@@ -25,8 +25,9 @@
 // @optionalParam dkubeRegistryUname string  Dkube container registry username
 // @optionalParam dkubeRegistryPasswd string  Dkube container registry password
 // @optionalParam nodebind string no Node selector flag
-// @optionalParam dkubePubIP string someIP Dkube Node's Public IP
+// @optionalParam hecToken string hectoken HEC Token from Splunk
 // @optionalParam storageExporterImage string ocdr/dkube-d3storagexporter:1.4.0 Dkube storage exporter image
+// @optionalParam fluentdImage string ocdr/fluentd-kubernetes-daemonset:v1.7-debian-s3-1 Fluentd image
 
 local k = import "k.libsonnet";
 local all = import "dkube/dkube/all.libsonnet";

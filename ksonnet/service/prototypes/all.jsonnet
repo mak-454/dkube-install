@@ -7,6 +7,8 @@
 // @optionalParam ambassadorNodeport number 32222 Ambassador nodeport
 // @optionalParam dkubeClusterRole string  Cluster role for dkube
 // @optionalParam dkubeApiServerAddr string 0.0.0.0:5000 The address of dkube api server
+// @optionalParam nfsServer string 1.2.3.4 The ip of nfs server
+// @optionalParam nodebind string no Node selector flag
 
 local k = import "k.libsonnet";
 local all = import "dkube/service/all.libsonnet";
