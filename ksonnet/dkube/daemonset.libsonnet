@@ -317,6 +317,15 @@
                                 "name": "DKUBE_APISERVER_ROLE",
                                 "value": "worker"
                             },
+                            {
+                                "name": "NODENAME",
+                                "valueFrom": {
+                                    "fieldRef": {
+                                    "apiVersion": "v1",
+                                    "fieldPath": "spec.nodeName"
+                                    }
+                                }
+                            },
                         ],
                         "image": apiServerImage,
                         "imagePullPolicy": "IfNotPresent",
