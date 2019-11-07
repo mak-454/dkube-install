@@ -4,7 +4,7 @@
     local ambassador = import "dkube/service/ambassador.libsonnet",
     local dkube = import "dkube/service/dkube.libsonnet",
     local fluentd = import "dkube/service/fluentd.libsonnet",
-    local splunk = import "dkube/service/splunk.libsonnet",
+    //local splunk = import "dkube/service/splunk.libsonnet",
     local etcd = import "dkube/service/etcd.libsonnet",
     local d3ext = import "dkube/service/dkube-ext.libsonnet",
     local dfabproxy = import "dkube/service/dfabproxy.libsonnet",
