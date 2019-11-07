@@ -16,7 +16,6 @@
           + ambassador.all(params)
           + dkube.all(params)
           + fluentd.all(params)
-          + splunk.all(params)
           + etcd.all(params)
           + d3ext.all(params)
           + dfabproxy.all(params)
