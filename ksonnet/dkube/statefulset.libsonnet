@@ -75,7 +75,7 @@
                         ],
                         "image": apiServerImage,
                         "imagePullPolicy": "IfNotPresent",
-                        "name": "dkube-d3api",
+                        "name": "main",
                         "ports": [
                             {
                                 "containerPort": dkubeApiServerPort,

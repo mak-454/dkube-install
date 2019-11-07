@@ -89,7 +89,7 @@
                 ], 
                 "image": "minio/minio:RELEASE.2018-12-13T02-04-19Z",
                 "imagePullPolicy": "IfNotPresent", 
-                "name": "minio", 
+                "name": "main", 
                 "ports": [
                   {
                     "containerPort": 9000, 
