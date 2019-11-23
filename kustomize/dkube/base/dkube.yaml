@@ -1,0 +1,651 @@
+---
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  labels:
+    app: dkube-controller-worker
+    ksonnet.io/component: dkube
+  name: dkube-controller-worker-verTag
+  namespace: dkube
+spec:
+  selector:
+    matchLabels:
+      app: dkube-controller-worker
+  template:
+    metadata:
+      labels:
+        app: dkube-controller-worker
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: Accelerator
+                operator: Exists
+      containers:
+      - env:
+        - name: DKUBE_MOUNT_PATH
+          value: /home/dkube/d3s
+        - name: DKUBE_REGISTRY
+          value: dkubeRegistryPath
+        - name: DKUBE_REGISTRY_UNAME
+          value: dkubeRegistryUname
+        - name: DKUBE_REGISTRY_PASSWD
+          value: dkubeRegistryPasswd
+        - name: DKUBE_SERVICE_ACCOUNT
+          value: dkube
+        - name: RDMA_ENABLED
+          value: "false"
+        - name: NFS_SERVER
+          value: nfsServer
+        - name: NFS_BASE_PATH
+          value: nfsBasePath
+        - name: DKUBE_APISERVER_ROLE
+          value: worker
+        image: dkubeApiServerImage
+        imagePullPolicy: IfNotPresent
+        name: main
+        ports:
+        - containerPort: 5000
+          name: dkube-d3api
+          protocol: TCP
+        securityContext:
+          procMount: Default
+          runAsUser: 0
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /home/dkube/d3s
+          name: store
+        - mountPath: /var/run/docker.sock
+          name: docker
+        - mountPath: /var/log/dkube
+          name: dkube-logs
+      - image: dkubeDownloaderImage
+        imagePullPolicy: IfNotPresent
+        name: sidecar
+        securityContext:
+          procMount: Default
+          runAsUser: 0
+      dnsConfig:
+        options:
+        - name: single-request-reopen
+        - name: timeout
+          value: "30"
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+      - name: dkubeDockerSecret
+      restartPolicy: Always
+      serviceAccount: dkube
+      serviceAccountName: dkube
+      volumes:
+      - name: store
+        nfs:
+          path: nfsBasePath/dkube
+          server: nfsServer
+      - name: dkube-logs
+        nfs:
+          path: nfsBasePath/dkube/system/logs/dkube
+          server: nfsServer
+      - hostPath:
+          path: /var/run/docker.sock
+        name: docker
+---
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  labels:
+    app: dkube-ext
+    ksonnet.io/component: dkube
+  name: dkube-exporter-verTag
+  namespace: dkube
+spec:
+  selector:
+    matchLabels:
+      app: dkube-ext
+  template:
+    metadata:
+      labels:
+        app: dkube-ext
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: Accelerator
+                operator: Exists
+      containers:
+      - env:
+        - name: MYNODENAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: spec.nodeName
+        image: dkubeExtImage
+        imagePullPolicy: IfNotPresent
+        name: main
+        ports:
+        - containerPort: 9401
+          name: http-metrics
+          protocol: TCP
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - mountPath: /usr/local/nvidia/lib64
+          name: nvidia-lib
+      dnsConfig:
+        options:
+        - name: single-request-reopen
+        - name: timeout
+          value: "30"
+      imagePullSecrets:
+      - name: dkubeDockerSecret
+      volumes:
+      - hostPath:
+          path: /usr/lib64/nvidia
+        name: nvidia-lib
+---
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  labels:
+    k8s-app: dkube-metric-collector
+    ksonnet.io/component: dkube
+  name: dkube-log-processor-verTag
+  namespace: dkube
+spec:
+  selector:
+    matchLabels:
+      k8s-app: dkube-metric-collector
+  template:
+    metadata:
+      labels:
+        k8s-app: dkube-metric-collector
+    spec:
+      containers:
+      - image: fluentdImage
+        imagePullPolicy: IfNotPresent
+        name: main
+        securityContext:
+          procMount: Default
+          runAsUser: 0
+        volumeMounts:
+        - mountPath: /var/lib/docker/containers
+          name: varlibdockercontainers
+          readOnly: true
+        - mountPath: /fluentd/etc/
+          name: dkube-metric-collector
+          readOnly: true
+        - mountPath: /var/log
+          name: varlog
+      - image: fluentdImage
+        imagePullPolicy: IfNotPresent
+        name: sidecar
+        securityContext:
+          procMount: Default
+          runAsUser: 0
+        volumeMounts:
+        - mountPath: /var/lib/docker/containers
+          name: varlibdockercontainers
+          readOnly: true
+        - mountPath: /fluentd/etc/
+          name: dkube-log-collector
+          readOnly: true
+        - mountPath: /var/log
+          name: varlog
+      dnsConfig:
+        options:
+        - name: single-request-reopen
+        - name: timeout
+          value: "30"
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      serviceAccount: dkube
+      volumes:
+      - hostPath:
+          path: /var/log
+        name: varlog
+      - configMap:
+          defaultMode: 420
+          name: dkube-log-collector
+        name: dkube-log-collector
+      - hostPath:
+          path: /var/lib/docker/containers
+        name: varlibdockercontainers
+      - configMap:
+          defaultMode: 420
+          name: dkube-metric-collector
+        name: dkube-metric-collector
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: dkube-auth
+    ksonnet.io/component: dkube
+  name: dkube-auth-server-verTag
+  namespace: dkube
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dkube-auth
+  template:
+    metadata:
+      labels:
+        app: dkube-auth
+      name: d3auth
+      namespace: dkube
+    spec:
+      containers:
+      - command:
+        - /opt/dkube/dex
+        - serve
+        - /etc/dex/cfg/config.yaml
+        image: dkubeAuthImage
+        imagePullPolicy: IfNotPresent
+        name: main
+        ports:
+        - containerPort: 5556
+          name: dex-s
+          protocol: TCP
+        env:
+        - name: PUBLIC_IP
+          value: dkubePubIP
+        securityContext:
+          procMount: Default
+          runAsUser: 0
+        volumeMounts:
+        - mountPath: /etc/dex/cfg
+          name: auth-cm
+      - image: dkubeAuthImage
+        imagePullPolicy: IfNotPresent
+        name: sidecar
+        ports:
+        - containerPort: 3001
+          name: authn
+          protocol: TCP
+        env:
+        - name: PUBLIC_IP
+          value: dkubePubIP
+        volumeMounts:
+        - mountPath: /var/log/dkube
+          name: dkube-logs
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+      - name: dkubeDockerSecret
+      nodeSelector: NODE_SELECTOR
+      restartPolicy: Always
+      serviceAccount: dkube
+      serviceAccountName: dkube
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: dkube-auth-config
+        name: auth-cm
+      - name: dkube-logs
+        nfs:
+          path: nfsBasePath/dkube/system/logs/dkube
+          server: nfsServer
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    ksonnet.io/component: dkube
+  name: dkube-db-server-verTag
+  namespace: dkube
+spec:
+  selector:
+    matchLabels:
+      app: dkube-db-server
+  template:
+    metadata:
+      labels:
+        app: dkube-db-server
+    spec:
+      containers:
+      - command:
+        - etcd
+        - --listen-client-urls=http://0.0.0.0:2379
+        - --advertise-client-urls=http://0.0.0.0:2379
+        - --data-dir=/var/lib/etcd
+        - --force-new-cluster
+        image: k8s.gcr.io/etcd-amd64:3.1.12
+        imagePullPolicy: IfNotPresent
+        name: main
+        volumeMounts:
+        - mountPath: /var/lib/etcd
+          name: etcd-data
+      dnsConfig:
+        options:
+        - name: single-request-reopen
+        - name: timeout
+          value: "30"
+      nodeSelector: NODE_SELECTOR
+      volumes:
+      - name: etcd-data
+        persistentVolumeClaim:
+          claimName: dkube-db-pvc
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: dkube-tools
+    ksonnet.io/component: dkube
+  name: dkube-inf-doc-server-verTag
+  namespace: dkube
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dkube-tools
+  template:
+    metadata:
+      labels:
+        app: dkube-tools
+    spec:
+      containers:
+      - image: dkubeInferenceImage
+        imagePullPolicy: IfNotPresent
+        name: main
+      - image: dkubeDocsImage
+        imagePullPolicy: IfNotPresent
+        name: sidecar
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+      - name: dkubeDockerSecret
+      nodeSelector: NODE_SELECTOR
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: dkube-operator-proxy
+    ksonnet.io/component: dkube
+  name: dkube-operator-api-proxy-verTag
+  namespace: dkube
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: dkube-operator-proxy
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: dkube-operator-proxy
+    spec:
+      containers:
+      - image: dfabProxyImage
+        imagePullPolicy: IfNotPresent
+        name: main
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsConfig:
+        options:
+        - name: single-request-reopen
+        - name: timeout
+          value: "30"
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+      - name: dkubeDockerSecret
+      nodeSelector: NODE_SELECTOR
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      terminationGracePeriodSeconds: 30
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    ksonnet.io/component: dkube
+  name: dkube-proxy-verTag
+  namespace: dkube
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        service: dkube-proxy
+      namespace: dkube
+    spec:
+      containers:
+      - env:
+        - name: AMBASSADOR_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: AMBASSADOR_SINGLE_NAMESPACE
+          value: "false"
+        image: quay.io/datawire/ambassador:0.53.1
+        livenessProbe:
+          httpGet:
+            path: /ambassador/v0/check_alive
+            port: 8877
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        name: main
+        readinessProbe:
+          httpGet:
+            path: /ambassador/v0/check_ready
+            port: 8877
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        resources:
+          limits:
+            cpu: 1
+            memory: 400Mi
+          requests:
+            cpu: 200m
+            memory: 100Mi
+      dnsConfig:
+        options:
+        - name: single-request-reopen
+        - name: timeout
+          value: "30"
+      nodeSelector: NODE_SELECTOR
+      restartPolicy: Always
+      serviceAccountName: dkube-proxy
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: dkube-storage-exporter
+    ksonnet.io/component: dkube
+  name: dkube-storage-exporter-verTag
+  namespace: dkube
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: dkube-storage-exporter
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: dkube-storage-exporter
+    spec:
+      containers:
+      - env:
+        - name: DKUBE_STORAGE_PATH
+          value: /opt/dkube-storage
+        image: storageExporterImage
+        imagePullPolicy: IfNotPresent
+        name: main
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /opt/dkube-storage
+          name: storage
+      dnsConfig:
+        options:
+        - name: single-request-reopen
+        - name: timeout
+          value: "30"
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+      - name: dkubeDockerSecret
+      nodeSelector: NODE_SELECTOR
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: storage
+        nfs:
+          path: nfsBasePath/
+          server: nfsServer
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: dkube-d3watcher
+    ksonnet.io/component: dkube
+  name: dkube-watcher-verTag
+  namespace: dkube
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dkube-d3watcher
+  template:
+    metadata:
+      labels:
+        app: dkube-d3watcher
+    spec:
+      containers:
+      - env:
+        - name: DKUBE_SERVICE_ACCOUNT
+          value: dkube
+        image: dkubeWatcherImage
+        imagePullPolicy: IfNotPresent
+        name: main
+        securityContext:
+          procMount: Default
+          runAsUser: 0
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /var/log/dkube
+          name: dkube-logs-host
+      dnsConfig:
+        options:
+        - name: single-request-reopen
+        - name: timeout
+          value: "30"
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+      - name: dkubeDockerSecret
+      nodeSelector: NODE_SELECTOR
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      serviceAccount: dkube
+      serviceAccountName: dkube
+      volumes:
+      - hostPath:
+          path: /var/log/dkube
+          type: DirectoryOrCreate
+        name: dkube-logs-host
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: dkube-controller-master
+    ksonnet.io/component: dkube
+  name: dkube-controller-master-verTag
+  namespace: dkube
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dkube-controller-master
+  serviceName: dkube-controller-master-headless
+  template:
+    metadata:
+      labels:
+        app: dkube-controller-master
+    spec:
+      containers:
+      - env:
+        - name: DKUBE_MOUNT_PATH
+          value: /home/dkube/d3s
+        - name: DKUBE_REGISTRY
+          value: dkubeRegistryPath
+        - name: DKUBE_REGISTRY_UNAME
+          value: dkubeRegistryUname
+        - name: DKUBE_REGISTRY_PASSWD
+          value: dkubeRegistryPasswd
+        - name: DKUBE_SERVICE_ACCOUNT
+          value: dkube
+        - name: RDMA_ENABLED
+          value: "false"
+        - name: NFS_SERVER
+          value: nfsServer
+        - name: NFS_BASE_PATH
+          value: nfsBasePath
+        - name: DKUBE_APISERVER_ROLE
+          value: master
+        - name: PUBLIC_IP
+          value: dkubePubIP
+        image: dkubeApiServerImage
+        imagePullPolicy: IfNotPresent
+        name: main
+        ports:
+        - containerPort: 5000
+          name: dkube-d3api
+          protocol: TCP
+        securityContext:
+          procMount: Default
+          runAsUser: 0
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /home/dkube/d3s
+          name: store
+        - mountPath: /var/run/docker.sock
+          name: docker
+        - mountPath: /var/log/dkube
+          name: dkube-logs
+      dnsConfig:
+        options:
+        - name: single-request-reopen
+        - name: timeout
+          value: "30"
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+      - name: dkubeDockerSecret
+      nodeSelector: NODE_SELECTOR
+      restartPolicy: Always
+      serviceAccount: dkube
+      serviceAccountName: dkube
+      volumes:
+      - name: store
+        nfs:
+          path: nfsBasePath/dkube
+          server: nfsServer
+      - name: dkube-logs
+        nfs:
+          path: nfsBasePath/dkube/system/logs/dkube
+          server: nfsServer
+      - hostPath:
+          path: /var/run/docker.sock
+        name: docker

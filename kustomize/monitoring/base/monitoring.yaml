@@ -1,0 +1,3512 @@
+---
+apiVersion: v1
+data:
+  ds-overview-dashboard.json: |-
+    {
+        "inputs": [{
+            "name": "DS_PROMETHEUS",
+            "pluginId": "prometheus",
+            "type": "datasource",
+            "value": "prometheus"
+        }],
+        "overwrite": true,
+        "dashboard": {
+            "__inputs": [{
+                "description": "",
+                "label": "prometheus",
+                "name": "DS_PROMETHEUS",
+                "pluginId": "prometheus",
+                "pluginName": "Prometheus",
+                "type": "datasource"
+            }],
+            "annotations": {
+                "list": [
+                  {
+                    "$$hashKey": "object:321",
+                    "builtIn": 1,
+                    "datasource": "-- Grafana --",
+                    "enable": true,
+                    "hide": true,
+                    "iconColor": "rgba(0, 211, 255, 1)",
+                    "name": "Annotations & Alerts",
+                    "type": "dashboard"
+                  }
+                ]
+              },
+              "editable": true,
+              "gnetId": null,
+              "graphTooltip": 0,
+              "iteration": 1543298739959,
+              "links": [],
+              "panels": [
+                {
+                  "aliasColors": {},
+                  "bars": false,
+                  "dashLength": 10,
+                  "dashes": false,
+                  "datasource": "prometheus",
+                  "fill": 1,
+                  "gridPos": {
+                    "h": 5,
+                    "w": 12,
+                    "x": 0,
+                    "y": 0
+                  },
+                  "id": 2,
+                  "legend": {
+                    "alignAsTable": true,
+                    "avg": true,
+                    "current": true,
+                    "hideEmpty": true,
+                    "hideZero": true,
+                    "max": true,
+                    "min": true,
+                    "rightSide": false,
+                    "show": true,
+                    "sortDesc": false,
+                    "total": false,
+                    "values": true
+                  },
+                  "lines": true,
+                  "linewidth": 1,
+                  "links": [],
+                  "nullPointMode": "null",
+                  "percentage": false,
+                  "pointradius": 5,
+                  "points": false,
+                  "renderer": "flot",
+                  "seriesOverrides": [],
+                  "spaceLength": 10,
+                  "stack": false,
+                  "steppedLine": false,
+                  "targets": [
+                    {
+                      "expr": "sum(nvidia_device_count{username='$username'})",
+                      "format": "time_series",
+                      "intervalFactor": 1,
+                      "legendFormat": "GPUs Usage by $username",
+                      "refId": "A"
+                    }
+                  ],
+                  "thresholds": [],
+                  "timeFrom": null,
+                  "timeShift": null,
+                  "title": "#GPU Usage",
+                  "tooltip": {
+                    "shared": true,
+                    "sort": 0,
+                    "value_type": "individual"
+                  },
+                  "transparent": false,
+                  "type": "graph",
+                  "xaxis": {
+                    "buckets": null,
+                    "mode": "time",
+                    "name": null,
+                    "show": true,
+                    "values": []
+                  },
+                  "yaxes": [
+                    {
+                      "decimals": 0,
+                      "format": "short",
+                      "label": "#GPUs",
+                      "logBase": 1,
+                      "max": null,
+                      "min": null,
+                      "show": true
+                    },
+                    {
+                      "format": "short",
+                      "label": null,
+                      "logBase": 1,
+                      "max": null,
+                      "min": null,
+                      "show": true
+                    }
+                  ]
+                },
+                {
+                  "aliasColors": {},
+                  "bars": false,
+                  "dashLength": 10,
+                  "dashes": false,
+                  "datasource": "prometheus",
+                  "fill": 1,
+                  "gridPos": {
+                    "h": 5,
+                    "w": 12,
+                    "x": 12,
+                    "y": 0
+                  },
+                  "id": 3,
+                  "legend": {
+                    "alignAsTable": true,
+                    "avg": true,
+                    "current": true,
+                    "max": true,
+                    "min": true,
+                    "rightSide": false,
+                    "show": true,
+                    "total": false,
+                    "values": true
+                  },
+                  "lines": true,
+                  "linewidth": 1,
+                  "links": [],
+                  "nullPointMode": "null",
+                  "percentage": false,
+                  "pointradius": 5,
+                  "points": false,
+                  "renderer": "flot",
+                  "seriesOverrides": [],
+                  "spaceLength": 10,
+                  "stack": false,
+                  "steppedLine": false,
+                  "targets": [
+                    {
+                      "$$hashKey": "object:120",
+                      "expr": "sum(nvidia_utilization_gpu{username=~\"$username\"}) / sum(nvidia_device_count{username=~\"$username\"})",
+                      "format": "time_series",
+                      "intervalFactor": 1,
+                      "legendFormat": "Gpu",
+                      "refId": "A"
+                    }
+                  ],
+                  "thresholds": [],
+                  "timeFrom": null,
+                  "timeShift": null,
+                  "title": "Gpu Utilization",
+                  "tooltip": {
+                    "shared": true,
+                    "sort": 0,
+                    "value_type": "individual"
+                  },
+                  "transparent": false,
+                  "type": "graph",
+                  "xaxis": {
+                    "buckets": null,
+                    "mode": "time",
+                    "name": null,
+                    "show": true,
+                    "values": []
+                  },
+                  "yaxes": [
+                    {
+                      "$$hashKey": "object:938",
+                      "format": "percent",
+                      "label": null,
+                      "logBase": 1,
+                      "max": null,
+                      "min": null,
+                      "show": true
+                    },
+                    {
+                      "$$hashKey": "object:939",
+                      "format": "short",
+                      "label": null,
+                      "logBase": 1,
+                      "max": null,
+                      "min": null,
+                      "show": true
+                    }
+                  ]
+                },
+                {
+                  "aliasColors": {},
+                  "bars": false,
+                  "dashLength": 10,
+                  "dashes": false,
+                  "datasource": "prometheus",
+                  "fill": 1,
+                  "gridPos": {
+                    "h": 5,
+                    "w": 12,
+                    "x": 0,
+                    "y": 5
+                  },
+                  "id": 5,
+                  "legend": {
+                    "alignAsTable": true,
+                    "avg": true,
+                    "current": true,
+                    "max": true,
+                    "min": true,
+                    "rightSide": false,
+                    "show": true,
+                    "total": false,
+                    "values": true
+                  },
+                  "lines": true,
+                  "linewidth": 1,
+                  "links": [],
+                  "nullPointMode": "null",
+                  "percentage": false,
+                  "pointradius": 5,
+                  "points": false,
+                  "renderer": "flot",
+                  "seriesOverrides": [],
+                  "spaceLength": 10,
+                  "stack": false,
+                  "steppedLine": false,
+                  "targets": [
+                    {
+                      "$$hashKey": "object:121",
+                      "expr": "sum(rate(container_cpu_usage_seconds_total{container_label_io_kubernetes_pod_uid=~\"$pods\"}[1m]))",
+                      "format": "time_series",
+                      "interval": "",
+                      "intervalFactor": 1,
+                      "legendFormat": "Cpu",
+                      "refId": "B"
+                    }
+                  ],
+                  "thresholds": [],
+                  "timeFrom": null,
+                  "timeShift": null,
+                  "title": "Cpu Utilization",
+                  "tooltip": {
+                    "shared": true,
+                    "sort": 0,
+                    "value_type": "individual"
+                  },
+                  "transparent": false,
+                  "type": "graph",
+                  "xaxis": {
+                    "buckets": null,
+                    "mode": "time",
+                    "name": null,
+                    "show": true,
+                    "values": []
+                  },
+                  "yaxes": [
+                    {
+                      "$$hashKey": "object:938",
+                      "format": "percent",
+                      "label": null,
+                      "logBase": 1,
+                      "max": null,
+                      "min": null,
+                      "show": true
+                    },
+                    {
+                      "$$hashKey": "object:939",
+                      "format": "short",
+                      "label": null,
+                      "logBase": 1,
+                      "max": null,
+                      "min": null,
+                      "show": true
+                    }
+                  ]
+                },
+                {
+                  "aliasColors": {},
+                  "bars": false,
+                  "dashLength": 10,
+                  "dashes": false,
+                  "datasource": "prometheus",
+                  "fill": 1,
+                  "gridPos": {
+                    "h": 5,
+                    "w": 12,
+                    "x": 12,
+                    "y": 5
+                  },
+                  "id": 4,
+                  "legend": {
+                    "alignAsTable": true,
+                    "avg": true,
+                    "current": true,
+                    "max": true,
+                    "min": true,
+                    "rightSide": false,
+                    "show": true,
+                    "total": false,
+                    "values": true
+                  },
+                  "lines": true,
+                  "linewidth": 1,
+                  "links": [],
+                  "nullPointMode": "null",
+                  "percentage": false,
+                  "pointradius": 5,
+                  "points": false,
+                  "renderer": "flot",
+                  "seriesOverrides": [],
+                  "spaceLength": 10,
+                  "stack": false,
+                  "steppedLine": false,
+                  "targets": [
+                    {
+                      "$$hashKey": "object:122",
+                      "expr": "sum(container_memory_usage_bytes{container_label_io_kubernetes_pod_uid=~\"$pods\"})",
+                      "format": "time_series",
+                      "intervalFactor": 1,
+                      "legendFormat": "Memory",
+                      "refId": "C"
+                    }
+                  ],
+                  "thresholds": [],
+                  "timeFrom": null,
+                  "timeShift": null,
+                  "title": "Memory Utilization",
+                  "tooltip": {
+                    "shared": true,
+                    "sort": 0,
+                    "value_type": "individual"
+                  },
+                  "transparent": false,
+                  "type": "graph",
+                  "xaxis": {
+                    "buckets": null,
+                    "mode": "time",
+                    "name": null,
+                    "show": true,
+                    "values": []
+                  },
+                  "yaxes": [
+                    {
+                      "$$hashKey": "object:938",
+                      "format": "bytes",
+                      "label": null,
+                      "logBase": 1,
+                      "max": null,
+                      "min": null,
+                      "show": true
+                    },
+                    {
+                      "$$hashKey": "object:939",
+                      "format": "short",
+                      "label": null,
+                      "logBase": 1,
+                      "max": null,
+                      "min": null,
+                      "show": true
+                    }
+                  ]
+                }
+              ],
+              "refresh": "30s",
+              "schemaVersion": 16,
+              "style": "dark",
+              "tags": [],
+              "templating": {
+                "list": [
+                  {
+                    "allValue": null,
+                    "current": {
+                      "text": "ocdkube",
+                      "value": "ocdkube"
+                    },
+                    "datasource": "prometheus",
+                    "hide": 2,
+                    "includeAll": true,
+                    "label": null,
+                    "multi": false,
+                    "name": "username",
+                    "options": [],
+                    "query": "label_values(username)",
+                    "refresh": 1,
+                    "regex": "",
+                    "sort": 0,
+                    "tagValuesQuery": "",
+                    "tags": [],
+                    "tagsQuery": "",
+                    "type": "query",
+                    "useTags": false
+                  },
+                  {
+                    "allValue": null,
+                    "current": {
+                      "text": "All",
+                      "value": "$__all"
+                    },
+                    "datasource": "prometheus",
+                    "hide": 2,
+                    "includeAll": true,
+                    "label": null,
+                    "multi": false,
+                    "name": "pods",
+                    "options": [],
+                    "query": "label_values(container_label_io_kubernetes_pod_uid)",
+                    "refresh": 1,
+                    "regex": "",
+                    "sort": 0,
+                    "tagValuesQuery": "",
+                    "tags": [],
+                    "tagsQuery": "",
+                    "type": "query",
+                    "useTags": false
+                  }
+                ]
+              },
+              "time": {
+                "from": "now-24h",
+                "to": "now"
+              },
+              "timepicker": {
+                "refresh_intervals": [
+                  "5s",
+                  "10s",
+                  "30s",
+                  "1m",
+                  "5m",
+                  "15m",
+                  "30m",
+                  "1h",
+                  "2h",
+                  "1d"
+                ],
+                "time_options": [
+                  "5m",
+                  "15m",
+                  "1h",
+                  "6h",
+                  "12h",
+                  "24h",
+                  "2d",
+                  "7d",
+                  "30d"
+                ]
+              },
+              "timezone": "browser",
+              "title": "ds-overview",
+              "uid": "OUPXKPomz",
+              "version": 1
+        }
+    }
+  node-dashboard.json: |-
+    {
+        "inputs": [{
+            "name": "DS_PROMETHEUS",
+            "pluginId": "prometheus",
+            "type": "datasource",
+            "value": "prometheus"
+        }],
+        "overwrite": true,
+        "dashboard": {
+            "__inputs": [{
+                "description": "",
+                "label": "prometheus",
+                "name": "DS_PROMETHEUS",
+                "pluginId": "prometheus",
+                "pluginName": "Prometheus",
+                "type": "datasource"
+            }],
+            "annotations": {
+                "list": [
+                  {
+                    "$$hashKey": "object:84",
+                    "builtIn": 1,
+                    "datasource": "-- Grafana --",
+                    "enable": true,
+                    "hide": true,
+                    "iconColor": "rgba(0, 211, 255, 1)",
+                    "name": "Annotations & Alerts",
+                    "type": "dashboard"
+                  }
+                ]
+              },
+              "description": "Dashboard to get an overview of one server",
+              "editable": true,
+              "gnetId": 22,
+              "graphTooltip": 0,
+              "iteration": 1534765404973,
+              "links": [],
+              "panels": [
+                {
+                  "aliasColors": {},
+                  "bars": false,
+                  "dashLength": 10,
+                  "dashes": false,
+                  "datasource": "prometheus",
+                  "editable": true,
+                  "error": false,
+                  "fill": 1,
+                  "grid": {
+                    "threshold1Color": "rgba(216, 200, 27, 0.27)",
+                    "threshold2Color": "rgba(234, 112, 112, 0.22)"
+                  },
+                  "gridPos": {
+                    "h": 7,
+                    "w": 12,
+                    "x": 0,
+                    "y": 0
+                  },
+                  "id": 3,
+                  "isNew": false,
+                  "legend": {
+                    "alignAsTable": false,
+                    "avg": false,
+                    "current": false,
+                    "hideEmpty": false,
+                    "hideZero": false,
+                    "max": false,
+                    "min": false,
+                    "rightSide": false,
+                    "show": true,
+                    "total": false,
+                    "values": false
+                  },
+                  "lines": true,
+                  "linewidth": 2,
+                  "links": [],
+                  "nullPointMode": "connected",
+                  "percentage": false,
+                  "pointradius": 5,
+                  "points": false,
+                  "renderer": "flot",
+                  "seriesOverrides": [],
+                  "spaceLength": 10,
+                  "stack": false,
+                  "steppedLine": false,
+                  "targets": [
+                    {
+                      "expr": "100 - (avg by (cpu) (irate(node_cpu{mode=\"idle\", instance=\"$server\"}[5m])) * 100)",
+                      "hide": false,
+                      "intervalFactor": 10,
+                      "legendFormat": "{{cpu}}",
+                      "refId": "A",
+                      "step": 50
+                    }
+                  ],
+                  "thresholds": [],
+                  "timeFrom": null,
+                  "timeShift": null,
+                  "title": "CPU Usage",
+                  "tooltip": {
+                    "msResolution": false,
+                    "shared": true,
+                    "sort": 0,
+                    "value_type": "cumulative"
+                  },
+                  "type": "graph",
+                  "xaxis": {
+                    "buckets": null,
+                    "mode": "time",
+                    "name": null,
+                    "show": true,
+                    "values": []
+                  },
+                  "yaxes": [
+                    {
+                      "format": "percent",
+                      "label": "cpu usage",
+                      "logBase": 1,
+                      "max": 100,
+                      "min": 0,
+                      "show": true
+                    },
+                    {
+                      "format": "short",
+                      "logBase": 1,
+                      "show": true
+                    }
+                  ]
+                },
+                {
+                  "aliasColors": {},
+                  "bars": false,
+                  "dashLength": 10,
+                  "dashes": false,
+                  "datasource": "prometheus",
+                  "editable": true,
+                  "error": false,
+                  "fill": 1,
+                  "grid": {
+                    "threshold1Color": "rgba(216, 200, 27, 0.27)",
+                    "threshold2Color": "rgba(234, 112, 112, 0.22)"
+                  },
+                  "gridPos": {
+                    "h": 7,
+                    "w": 12,
+                    "x": 12,
+                    "y": 0
+                  },
+                  "id": 9,
+                  "isNew": false,
+                  "legend": {
+                    "alignAsTable": false,
+                    "avg": false,
+                    "current": false,
+                    "hideEmpty": false,
+                    "hideZero": false,
+                    "max": false,
+                    "min": false,
+                    "rightSide": false,
+                    "show": true,
+                    "total": false,
+                    "values": false
+                  },
+                  "lines": true,
+                  "linewidth": 2,
+                  "links": [],
+                  "nullPointMode": "connected",
+                  "percentage": false,
+                  "pointradius": 5,
+                  "points": false,
+                  "renderer": "flot",
+                  "seriesOverrides": [],
+                  "spaceLength": 10,
+                  "stack": false,
+                  "steppedLine": false,
+                  "targets": [
+                    {
+                      "expr": "node_load1{instance=\"$server\"}",
+                      "intervalFactor": 4,
+                      "legendFormat": "load 1m",
+                      "refId": "A",
+                      "step": 20,
+                      "target": ""
+                    },
+                    {
+                      "expr": "node_load5{instance=\"$server\"}",
+                      "intervalFactor": 4,
+                      "legendFormat": "load 5m",
+                      "refId": "B",
+                      "step": 20,
+                      "target": ""
+                    },
+                    {
+                      "expr": "node_load15{instance=\"$server\"}",
+                      "intervalFactor": 4,
+                      "legendFormat": "load 15m",
+                      "refId": "C",
+                      "step": 20,
+                      "target": ""
+                    }
+                  ],
+                  "thresholds": [],
+                  "timeFrom": null,
+                  "timeShift": null,
+                  "title": "System Load",
+                  "tooltip": {
+                    "msResolution": false,
+                    "shared": true,
+                    "sort": 0,
+                    "value_type": "cumulative"
+                  },
+                  "type": "graph",
+                  "xaxis": {
+                    "buckets": null,
+                    "mode": "time",
+                    "name": null,
+                    "show": true,
+                    "values": []
+                  },
+                  "yaxes": [
+                    {
+                      "format": "percentunit",
+                      "logBase": 1,
+                      "show": true
+                    },
+                    {
+                      "format": "short",
+                      "logBase": 1,
+                      "show": true
+                    }
+                  ]
+                },
+                {
+                  "aliasColors": {},
+                  "bars": false,
+                  "dashLength": 10,
+                  "dashes": false,
+                  "datasource": "prometheus",
+                  "editable": true,
+                  "error": false,
+                  "fill": 1,
+                  "grid": {
+                    "threshold1Color": "rgba(216, 200, 27, 0.27)",
+                    "threshold2Color": "rgba(234, 112, 112, 0.22)"
+                  },
+                  "gridPos": {
+                    "h": 7,
+                    "w": 18,
+                    "x": 0,
+                    "y": 7
+                  },
+                  "id": 4,
+                  "isNew": false,
+                  "legend": {
+                    "alignAsTable": false,
+                    "avg": false,
+                    "current": false,
+                    "hideEmpty": false,
+                    "hideZero": false,
+                    "max": false,
+                    "min": false,
+                    "rightSide": false,
+                    "show": true,
+                    "total": false,
+                    "values": false
+                  },
+                  "lines": true,
+                  "linewidth": 2,
+                  "links": [],
+                  "nullPointMode": "connected",
+                  "percentage": false,
+                  "pointradius": 5,
+                  "points": false,
+                  "renderer": "flot",
+                  "seriesOverrides": [
+                    {
+                      "alias": "node_memory_SwapFree{instance=\"172.17.0.1:9100\",job=\"prometheus\"}",
+                      "yaxis": 2
+                    }
+                  ],
+                  "spaceLength": 10,
+                  "stack": true,
+                  "steppedLine": false,
+                  "targets": [
+                    {
+                      "expr": "node_memory_MemTotal{instance=\"$server\"} - node_memory_MemFree{instance=\"$server\"} - node_memory_Buffers{instance=\"$server\"} - node_memory_Cached{instance=\"$server\"}",
+                      "hide": false,
+                      "interval": "",
+                      "intervalFactor": 2,
+                      "legendFormat": "memory used",
+                      "metric": "",
+                      "refId": "C",
+                      "step": 10
+                    },
+                    {
+                      "expr": "node_memory_Buffers{instance=\"$server\"}",
+                      "interval": "",
+                      "intervalFactor": 2,
+                      "legendFormat": "memory buffers",
+                      "metric": "",
+                      "refId": "E",
+                      "step": 10
+                    },
+                    {
+                      "expr": "node_memory_Cached{instance=\"$server\"}",
+                      "intervalFactor": 2,
+                      "legendFormat": "memory cached",
+                      "metric": "",
+                      "refId": "F",
+                      "step": 10
+                    },
+                    {
+                      "expr": "node_memory_MemFree{instance=\"$server\"}",
+                      "intervalFactor": 2,
+                      "legendFormat": "memory free",
+                      "metric": "",
+                      "refId": "D",
+                      "step": 10
+                    }
+                  ],
+                  "thresholds": [],
+                  "timeFrom": null,
+                  "timeShift": null,
+                  "title": "Memory Usage",
+                  "tooltip": {
+                    "msResolution": false,
+                    "shared": true,
+                    "sort": 0,
+                    "value_type": "individual"
+                  },
+                  "type": "graph",
+                  "xaxis": {
+                    "buckets": null,
+                    "mode": "time",
+                    "name": null,
+                    "show": true,
+                    "values": []
+                  },
+                  "yaxes": [
+                    {
+                      "format": "bytes",
+                      "logBase": 1,
+                      "min": "0",
+                      "show": true
+                    },
+                    {
+                      "format": "short",
+                      "logBase": 1,
+                      "show": true
+                    }
+                  ]
+                },
+                {
+                  "cacheTimeout": null,
+                  "colorBackground": false,
+                  "colorValue": false,
+                  "colors": [
+                    "rgba(50, 172, 45, 0.97)",
+                    "rgba(237, 129, 40, 0.89)",
+                    "rgba(245, 54, 54, 0.9)"
+                  ],
+                  "datasource": "prometheus",
+                  "editable": true,
+                  "format": "percent",
+                  "gauge": {
+                    "maxValue": 100,
+                    "minValue": 0,
+                    "show": true,
+                    "thresholdLabels": false,
+                    "thresholdMarkers": true
+                  },
+                  "gridPos": {
+                    "h": 7,
+                    "w": 6,
+                    "x": 18,
+                    "y": 7
+                  },
+                  "hideTimeOverride": false,
+                  "id": 5,
+                  "interval": null,
+                  "links": [],
+                  "mappingType": 1,
+                  "mappingTypes": [
+                    {
+                      "name": "value to text",
+                      "value": 1
+                    },
+                    {
+                      "name": "range to text",
+                      "value": 2
+                    }
+                  ],
+                  "maxDataPoints": 100,
+                  "nullPointMode": "connected",
+                  "nullText": null,
+                  "postfix": "",
+                  "postfixFontSize": "50%",
+                  "prefix": "",
+                  "prefixFontSize": "50%",
+                  "rangeMaps": [
+                    {
+                      "from": "null",
+                      "text": "N/A",
+                      "to": "null"
+                    }
+                  ],
+                  "sparkline": {
+                    "fillColor": "rgba(31, 118, 189, 0.18)",
+                    "full": false,
+                    "lineColor": "rgb(31, 120, 193)",
+                    "show": false
+                  },
+                  "tableColumn": "",
+                  "targets": [
+                    {
+                      "expr": "((node_memory_MemTotal{instance=\"$server\"} - node_memory_MemFree{instance=\"$server\"}  - node_memory_Buffers{instance=\"$server\"} - node_memory_Cached{instance=\"$server\"}) / node_memory_MemTotal{instance=\"$server\"}) * 100",
+                      "intervalFactor": 2,
+                      "refId": "A",
+                      "step": 60,
+                      "target": ""
+                    }
+                  ],
+                  "thresholds": "80, 90",
+                  "title": "Memory Usage",
+                  "transparent": false,
+                  "type": "singlestat",
+                  "valueFontSize": "80%",
+                  "valueMaps": [
+                    {
+                      "op": "=",
+                      "text": "N/A",
+                      "value": "null"
+                    }
+                  ],
+                  "valueName": "avg"
+                },
+                {
+                  "aliasColors": {},
+                  "bars": false,
+                  "dashLength": 10,
+                  "dashes": false,
+                  "datasource": "prometheus",
+                  "editable": true,
+                  "error": false,
+                  "fill": 1,
+                  "grid": {
+                    "threshold1Color": "rgba(216, 200, 27, 0.27)",
+                    "threshold2Color": "rgba(234, 112, 112, 0.22)"
+                  },
+                  "gridPos": {
+                    "h": 7,
+                    "w": 18,
+                    "x": 0,
+                    "y": 14
+                  },
+                  "id": 6,
+                  "isNew": true,
+                  "legend": {
+                    "alignAsTable": false,
+                    "avg": false,
+                    "current": false,
+                    "hideEmpty": false,
+                    "hideZero": false,
+                    "max": false,
+                    "min": false,
+                    "rightSide": false,
+                    "show": true,
+                    "total": false,
+                    "values": false
+                  },
+                  "lines": true,
+                  "linewidth": 2,
+                  "links": [],
+                  "nullPointMode": "connected",
+                  "percentage": false,
+                  "pointradius": 5,
+                  "points": false,
+                  "renderer": "flot",
+                  "seriesOverrides": [
+                    {
+                      "alias": "read",
+                      "yaxis": 1
+                    },
+                    {
+                      "alias": "{instance=\"172.17.0.1:9100\"}",
+                      "yaxis": 2
+                    },
+                    {
+                      "alias": "io time",
+                      "yaxis": 2
+                    }
+                  ],
+                  "spaceLength": 10,
+                  "stack": false,
+                  "steppedLine": false,
+                  "targets": [
+                    {
+                      "expr": "sum by (instance) (rate(node_disk_bytes_read{instance=\"$server\"}[2m]))",
+                      "hide": false,
+                      "intervalFactor": 4,
+                      "legendFormat": "read",
+                      "refId": "A",
+                      "step": 20,
+                      "target": ""
+                    },
+                    {
+                      "expr": "sum by (instance) (rate(node_disk_bytes_written{instance=\"$server\"}[2m]))",
+                      "intervalFactor": 4,
+                      "legendFormat": "written",
+                      "refId": "B",
+                      "step": 20
+                    },
+                    {
+                      "expr": "sum by (instance) (rate(node_disk_io_time_ms{instance=\"$server\"}[2m]))",
+                      "intervalFactor": 4,
+                      "legendFormat": "io time",
+                      "refId": "C",
+                      "step": 20
+                    }
+                  ],
+                  "thresholds": [],
+                  "timeFrom": null,
+                  "timeShift": null,
+                  "title": "Disk I/O",
+                  "tooltip": {
+                    "msResolution": false,
+                    "shared": true,
+                    "sort": 0,
+                    "value_type": "cumulative"
+                  },
+                  "type": "graph",
+                  "xaxis": {
+                    "buckets": null,
+                    "mode": "time",
+                    "name": null,
+                    "show": true,
+                    "values": []
+                  },
+                  "yaxes": [
+                    {
+                      "format": "bytes",
+                      "logBase": 1,
+                      "show": true
+                    },
+                    {
+                      "format": "ms",
+                      "logBase": 1,
+                      "show": true
+                    }
+                  ]
+                },
+                {
+                  "cacheTimeout": null,
+                  "colorBackground": false,
+                  "colorValue": false,
+                  "colors": [
+                    "rgba(50, 172, 45, 0.97)",
+                    "rgba(237, 129, 40, 0.89)",
+                    "rgba(245, 54, 54, 0.9)"
+                  ],
+                  "datasource": "prometheus",
+                  "editable": true,
+                  "format": "percentunit",
+                  "gauge": {
+                    "maxValue": 1,
+                    "minValue": 0,
+                    "show": true,
+                    "thresholdLabels": false,
+                    "thresholdMarkers": true
+                  },
+                  "gridPos": {
+                    "h": 7,
+                    "w": 6,
+                    "x": 18,
+                    "y": 14
+                  },
+                  "hideTimeOverride": false,
+                  "id": 7,
+                  "interval": null,
+                  "links": [],
+                  "mappingType": 1,
+                  "mappingTypes": [
+                    {
+                      "name": "value to text",
+                      "value": 1
+                    },
+                    {
+                      "name": "range to text",
+                      "value": 2
+                    }
+                  ],
+                  "maxDataPoints": 100,
+                  "nullPointMode": "connected",
+                  "nullText": null,
+                  "postfix": "",
+                  "postfixFontSize": "50%",
+                  "prefix": "",
+                  "prefixFontSize": "50%",
+                  "rangeMaps": [
+                    {
+                      "from": "null",
+                      "text": "N/A",
+                      "to": "null"
+                    }
+                  ],
+                  "sparkline": {
+                    "fillColor": "rgba(31, 118, 189, 0.18)",
+                    "full": false,
+                    "lineColor": "rgb(31, 120, 193)",
+                    "show": false
+                  },
+                  "tableColumn": "",
+                  "targets": [
+                    {
+                      "expr": "(sum(node_filesystem_size{device!=\"rootfs\",instance=\"$server\"}) - sum(node_filesystem_free{device!=\"rootfs\",instance=\"$server\"})) / sum(node_filesystem_size{device!=\"rootfs\",instance=\"$server\"})",
+                      "intervalFactor": 2,
+                      "refId": "A",
+                      "step": 60,
+                      "target": ""
+                    }
+                  ],
+                  "thresholds": "0.75, 0.9",
+                  "title": "Disk Space Usage",
+                  "transparent": false,
+                  "type": "singlestat",
+                  "valueFontSize": "80%",
+                  "valueMaps": [
+                    {
+                      "op": "=",
+                      "text": "N/A",
+                      "value": "null"
+                    }
+                  ],
+                  "valueName": "current"
+                },
+                {
+                  "aliasColors": {},
+                  "bars": false,
+                  "dashLength": 10,
+                  "dashes": false,
+                  "datasource": "prometheus",
+                  "editable": true,
+                  "error": false,
+                  "fill": 1,
+                  "grid": {
+                    "threshold1Color": "rgba(216, 200, 27, 0.27)",
+                    "threshold2Color": "rgba(234, 112, 112, 0.22)"
+                  },
+                  "gridPos": {
+                    "h": 7,
+                    "w": 12,
+                    "x": 0,
+                    "y": 21
+                  },
+                  "id": 8,
+                  "isNew": false,
+                  "legend": {
+                    "alignAsTable": false,
+                    "avg": false,
+                    "current": false,
+                    "hideEmpty": false,
+                    "hideZero": false,
+                    "max": false,
+                    "min": false,
+                    "rightSide": false,
+                    "show": true,
+                    "total": false,
+                    "values": false
+                  },
+                  "lines": true,
+                  "linewidth": 2,
+                  "links": [],
+                  "nullPointMode": "connected",
+                  "percentage": false,
+                  "pointradius": 5,
+                  "points": false,
+                  "renderer": "flot",
+                  "seriesOverrides": [
+                    {
+                      "alias": "transmitted",
+                      "yaxis": 2
+                    }
+                  ],
+                  "spaceLength": 10,
+                  "stack": false,
+                  "steppedLine": false,
+                  "targets": [
+                    {
+                      "expr": "rate(node_network_receive_bytes{instance=\"$server\",device!~\"lo\"}[5m])",
+                      "hide": false,
+                      "intervalFactor": 2,
+                      "legendFormat": "{{device}}",
+                      "refId": "A",
+                      "step": 10,
+                      "target": ""
+                    }
+                  ],
+                  "thresholds": [],
+                  "timeFrom": null,
+                  "timeShift": null,
+                  "title": "Network Received",
+                  "tooltip": {
+                    "msResolution": false,
+                    "shared": true,
+                    "sort": 0,
+                    "value_type": "cumulative"
+                  },
+                  "type": "graph",
+                  "xaxis": {
+                    "buckets": null,
+                    "mode": "time",
+                    "name": null,
+                    "show": true,
+                    "values": []
+                  },
+                  "yaxes": [
+                    {
+                      "format": "bytes",
+                      "logBase": 1,
+                      "show": true
+                    },
+                    {
+                      "format": "bytes",
+                      "logBase": 1,
+                      "show": true
+                    }
+                  ]
+                },
+                {
+                  "aliasColors": {},
+                  "bars": false,
+                  "dashLength": 10,
+                  "dashes": false,
+                  "datasource": "prometheus",
+                  "editable": true,
+                  "error": false,
+                  "fill": 1,
+                  "grid": {
+                    "threshold1Color": "rgba(216, 200, 27, 0.27)",
+                    "threshold2Color": "rgba(234, 112, 112, 0.22)"
+                  },
+                  "gridPos": {
+                    "h": 7,
+                    "w": 12,
+                    "x": 12,
+                    "y": 21
+                  },
+                  "id": 10,
+                  "isNew": false,
+                  "legend": {
+                    "alignAsTable": false,
+                    "avg": false,
+                    "current": false,
+                    "hideEmpty": false,
+                    "hideZero": false,
+                    "max": false,
+                    "min": false,
+                    "rightSide": false,
+                    "show": true,
+                    "total": false,
+                    "values": false
+                  },
+                  "lines": true,
+                  "linewidth": 2,
+                  "links": [],
+                  "nullPointMode": "connected",
+                  "percentage": false,
+                  "pointradius": 5,
+                  "points": false,
+                  "renderer": "flot",
+                  "seriesOverrides": [
+                    {
+                      "alias": "transmitted",
+                      "yaxis": 2
+                    }
+                  ],
+                  "spaceLength": 10,
+                  "stack": false,
+                  "steppedLine": false,
+                  "targets": [
+                    {
+                      "expr": "rate(node_network_transmit_bytes{instance=\"$server\",device!~\"lo\"}[5m])",
+                      "hide": false,
+                      "intervalFactor": 2,
+                      "legendFormat": "{{device}}",
+                      "refId": "B",
+                      "step": 10,
+                      "target": ""
+                    }
+                  ],
+                  "thresholds": [],
+                  "timeFrom": null,
+                  "timeShift": null,
+                  "title": "Network Transmitted",
+                  "tooltip": {
+                    "msResolution": false,
+                    "shared": true,
+                    "sort": 0,
+                    "value_type": "cumulative"
+                  },
+                  "type": "graph",
+                  "xaxis": {
+                    "buckets": null,
+                    "mode": "time",
+                    "name": null,
+                    "show": true,
+                    "values": []
+                  },
+                  "yaxes": [
+                    {
+                      "format": "bytes",
+                      "logBase": 1,
+                      "show": true
+                    },
+                    {
+                      "format": "bytes",
+                      "logBase": 1,
+                      "show": true
+                    }
+                  ]
+                }
+              ],
+              "refresh": false,
+              "schemaVersion": 16,
+              "style": "dark",
+              "tags": [],
+              "templating": {
+                "list": [
+                  {
+                    "allValue": null,
+                    "current": {
+                      "text": "172.16.0.101:9100",
+                      "value": "172.16.0.101:9100"
+                    },
+                    "datasource": "prometheus",
+                    "hide": 2,
+                    "includeAll": false,
+                    "label": null,
+                    "multi": false,
+                    "name": "server",
+                    "options": [],
+                    "query": "label_values(node_boot_time, instance)",
+                    "refresh": 1,
+                    "regex": "",
+                    "sort": 0,
+                    "tagValuesQuery": "",
+                    "tags": [],
+                    "tagsQuery": "",
+                    "type": "query",
+                    "useTags": false
+                  }
+                ]
+              },
+              "time": {
+                "from": "now-1h",
+                "to": "now"
+              },
+              "timepicker": {
+                "refresh_intervals": [
+                  "5s",
+                  "10s",
+                  "30s",
+                  "1m",
+                  "5m",
+                  "15m",
+                  "30m",
+                  "1h",
+                  "2h",
+                  "1d"
+                ],
+                "time_options": [
+                  "5m",
+                  "15m",
+                  "1h",
+                  "6h",
+                  "12h",
+                  "24h",
+                  "2d",
+                  "7d",
+                  "30d"
+                ]
+              },
+              "timezone": "browser",
+              "title": "Nodes",
+              "uid": "0GobAq5mz",
+              "version": 1
+        }
+    }
+  nvidia-gpu-dashboard.json: |-
+    {
+        "inputs": [{
+            "name": "DS_PROMETHEUS",
+            "pluginId": "prometheus",
+            "type": "datasource",
+            "value": "prometheus"
+        }],
+        "overwrite": true,
+        "dashboard": {
+            "__inputs": [{
+                "description": "",
+                "label": "prometheus",
+                "name": "DS_PROMETHEUS",
+                "pluginId": "prometheus",
+                "pluginName": "Prometheus",
+                "type": "datasource"
+            }],
+            "annotations": {
+                "list": [
+                  {
+                    "builtIn": 1,
+                    "datasource": "-- Grafana --",
+                    "enable": true,
+                    "hide": true,
+                    "iconColor": "rgba(0, 211, 255, 1)",
+                    "name": "Annotations & Alerts",
+                    "type": "dashboard"
+                  }
+                ]
+              },
+              "description": "GPU dashboard for nvidia metrics ",
+              "editable": true,
+              "gnetId": 6387,
+              "graphTooltip": 1,
+              "iteration": 1538216220911,
+              "links": [],
+              "panels": [
+                {
+                  "gridPos": {
+                    "h": 6,
+                    "w": 7,
+                    "x": 0,
+                    "y": 0
+                  },
+                  "id": 27,
+                  "limit": 10,
+                  "links": [],
+                  "onlyAlertsOnDashboard": true,
+                  "show": "current",
+                  "sortOrder": 1,
+                  "stateFilter": [],
+                  "title": "Alerts",
+                  "transparent": true,
+                  "type": "alertlist"
+                },
+                {
+                  "cacheTimeout": null,
+                  "colorBackground": false,
+                  "colorValue": false,
+                  "colors": [
+                    "#299c46",
+                    "rgba(237, 129, 40, 0.89)",
+                    "#d44a3a"
+                  ],
+                  "datasource": "prometheus",
+                  "format": "none",
+                  "gauge": {
+                    "maxValue": 100,
+                    "minValue": 0,
+                    "show": true,
+                    "thresholdLabels": false,
+                    "thresholdMarkers": true
+                  },
+                  "gridPos": {
+                    "h": 6,
+                    "w": 7,
+                    "x": 8,
+                    "y": 0
+                  },
+                  "id": 22,
+                  "interval": null,
+                  "links": [],
+                  "mappingType": 1,
+                  "mappingTypes": [
+                    {
+                      "name": "value to text",
+                      "value": 1
+                    },
+                    {
+                      "name": "range to text",
+                      "value": 2
+                    }
+                  ],
+                  "maxDataPoints": 100,
+                  "nullPointMode": "connected",
+                  "nullText": null,
+                  "postfix": "%",
+                  "postfixFontSize": "50%",
+                  "prefix": "",
+                  "prefixFontSize": "50%",
+                  "rangeMaps": [
+                    {
+                      "from": "null",
+                      "text": "N/A",
+                      "to": "null"
+                    }
+                  ],
+                  "sparkline": {
+                    "fillColor": "rgba(31, 118, 189, 0.18)",
+                    "full": false,
+                    "lineColor": "rgb(31, 120, 193)",
+                    "show": true
+                  },
+                  "tableColumn": "",
+                  "targets": [
+                    {
+                      "expr": "sum(nvidia_utilization_gpu{nodename=~\"$nodename\", uuid=~\"$uuid\"}) / $count",
+                      "format": "time_series",
+                      "hide": false,
+                      "intervalFactor": 1,
+                      "refId": "A"
+                    }
+                  ],
+                  "thresholds": "50,80",
+                  "title": "GPU Utilization",
+                  "transparent": true,
+                  "type": "singlestat",
+                  "valueFontSize": "80%",
+                  "valueMaps": [
+                    {
+                      "op": "=",
+                      "text": "N/A",
+                      "value": "null"
+                    }
+                  ],
+                  "valueName": "current"
+                },
+                {
+                  "cacheTimeout": null,
+                  "colorBackground": false,
+                  "colorValue": false,
+                  "colors": [
+                    "#299c46",
+                    "rgba(237, 129, 40, 0.89)",
+                    "#d44a3a"
+                  ],
+                  "datasource": "prometheus",
+                  "format": "none",
+                  "gauge": {
+                    "maxValue": 100,
+                    "minValue": 0,
+                    "show": true,
+                    "thresholdLabels": false,
+                    "thresholdMarkers": true
+                  },
+                  "gridPos": {
+                    "h": 6,
+                    "w": 7,
+                    "x": 16,
+                    "y": 0
+                  },
+                  "id": 23,
+                  "interval": null,
+                  "links": [],
+                  "mappingType": 1,
+                  "mappingTypes": [
+                    {
+                      "name": "value to text",
+                      "value": 1
+                    },
+                    {
+                      "name": "range to text",
+                      "value": 2
+                    }
+                  ],
+                  "maxDataPoints": 100,
+                  "nullPointMode": "connected",
+                  "nullText": null,
+                  "postfix": "%",
+                  "postfixFontSize": "50%",
+                  "prefix": "",
+                  "prefixFontSize": "50%",
+                  "rangeMaps": [
+                    {
+                      "from": "null",
+                      "text": "N/A",
+                      "to": "null"
+                    }
+                  ],
+                  "sparkline": {
+                    "fillColor": "rgba(31, 118, 189, 0.18)",
+                    "full": false,
+                    "lineColor": "rgb(31, 120, 193)",
+                    "show": true
+                  },
+                  "tableColumn": "",
+                  "targets": [
+                    {
+                      "expr": "sum(nvidia_utilization_memory{nodename=~\"$nodename\", uuid=~\"$uuid\"}) / $count",
+                      "format": "time_series",
+                      "intervalFactor": 1,
+                      "refId": "A"
+                    }
+                  ],
+                  "thresholds": "50,80",
+                  "title": "Memory Utilization",
+                  "transparent": true,
+                  "type": "singlestat",
+                  "valueFontSize": "80%",
+                  "valueMaps": [
+                    {
+                      "op": "=",
+                      "text": "N/A",
+                      "value": "null"
+                    }
+                  ],
+                  "valueName": "current"
+                },
+                {
+                  "aliasColors": {},
+                  "bars": false,
+                  "dashLength": 10,
+                  "dashes": false,
+                  "datasource": "prometheus",
+                  "fill": 0,
+                  "gridPos": {
+                    "h": 6,
+                    "w": 24,
+                    "x": 0,
+                    "y": 6
+                  },
+                  "id": 11,
+                  "legend": {
+                    "alignAsTable": true,
+                    "avg": true,
+                    "current": true,
+                    "hideZero": false,
+                    "max": true,
+                    "min": true,
+                    "rightSide": true,
+                    "show": true,
+                    "total": false,
+                    "values": true
+                  },
+                  "lines": true,
+                  "linewidth": 1,
+                  "links": [],
+                  "nullPointMode": "null",
+                  "percentage": false,
+                  "pointradius": 5,
+                  "points": false,
+                  "renderer": "flot",
+                  "seriesOverrides": [],
+                  "spaceLength": 10,
+                  "stack": false,
+                  "steppedLine": false,
+                  "targets": [
+                    {
+                      "expr": "nvidia_utilization_memory{nodename=~\"$nodename\", uuid=~\"$uuid\"}",
+                      "format": "time_series",
+                      "hide": false,
+                      "interval": "",
+                      "intervalFactor": 1,
+                      "legendFormat": "{{nodename}} - gpu{{minor}}",
+                      "refId": "A"
+                    }
+                  ],
+                  "thresholds": [],
+                  "timeFrom": null,
+                  "timeShift": null,
+                  "title": "Memory Utilization / Card",
+                  "tooltip": {
+                    "shared": true,
+                    "sort": 2,
+                    "value_type": "individual"
+                  },
+                  "transparent": false,
+                  "type": "graph",
+                  "xaxis": {
+                    "buckets": null,
+                    "mode": "time",
+                    "name": null,
+                    "show": true,
+                    "values": []
+                  },
+                  "yaxes": [
+                    {
+                      "format": "percent",
+                      "label": null,
+                      "logBase": 1,
+                      "max": null,
+                      "min": null,
+                      "show": true
+                    },
+                    {
+                      "format": "short",
+                      "label": null,
+                      "logBase": 1,
+                      "max": null,
+                      "min": null,
+                      "show": true
+                    }
+                  ],
+                  "yaxis": {
+                    "align": false,
+                    "alignLevel": null
+                  }
+                },
+                {
+                  "aliasColors": {},
+                  "bars": false,
+                  "dashLength": 10,
+                  "dashes": false,
+                  "datasource": "prometheus",
+                  "fill": 0,
+                  "gridPos": {
+                    "h": 6,
+                    "w": 24,
+                    "x": 0,
+                    "y": 12
+                  },
+                  "id": 10,
+                  "legend": {
+                    "alignAsTable": true,
+                    "avg": true,
+                    "current": true,
+                    "hideEmpty": false,
+                    "hideZero": false,
+                    "max": true,
+                    "min": true,
+                    "rightSide": true,
+                    "show": true,
+                    "total": false,
+                    "values": true
+                  },
+                  "lines": true,
+                  "linewidth": 1,
+                  "links": [],
+                  "nullPointMode": "null",
+                  "percentage": false,
+                  "pointradius": 5,
+                  "points": false,
+                  "renderer": "flot",
+                  "seriesOverrides": [
+                    {}
+                  ],
+                  "spaceLength": 10,
+                  "stack": false,
+                  "steppedLine": false,
+                  "targets": [
+                    {
+                      "expr": "nvidia_utilization_gpu{nodename=~\"$nodename\", uuid=~\"$uuid\"}",
+                      "format": "time_series",
+                      "hide": false,
+                      "interval": "",
+                      "intervalFactor": 1,
+                      "legendFormat": "{{nodename}} - gpu{{minor}}",
+                      "refId": "A"
+                    }
+                  ],
+                  "thresholds": [],
+                  "timeFrom": null,
+                  "timeShift": null,
+                  "title": "GPU Utilization / Card",
+                  "tooltip": {
+                    "shared": true,
+                    "sort": 2,
+                    "value_type": "individual"
+                  },
+                  "transparent": false,
+                  "type": "graph",
+                  "xaxis": {
+                    "buckets": null,
+                    "mode": "time",
+                    "name": null,
+                    "show": true,
+                    "values": []
+                  },
+                  "yaxes": [
+                    {
+                      "format": "percent",
+                      "label": null,
+                      "logBase": 1,
+                      "max": null,
+                      "min": null,
+                      "show": true
+                    },
+                    {
+                      "format": "short",
+                      "label": null,
+                      "logBase": 1,
+                      "max": null,
+                      "min": null,
+                      "show": true
+                    }
+                  ],
+                  "yaxis": {
+                    "align": false,
+                    "alignLevel": null
+                  }
+                },
+                {
+                  "aliasColors": {},
+                  "bars": false,
+                  "dashLength": 10,
+                  "dashes": false,
+                  "datasource": "prometheus",
+                  "fill": 0,
+                  "gridPos": {
+                    "h": 6,
+                    "w": 24,
+                    "x": 0,
+                    "y": 18
+                  },
+                  "id": 2,
+                  "legend": {
+                    "alignAsTable": true,
+                    "avg": true,
+                    "current": true,
+                    "max": true,
+                    "min": true,
+                    "rightSide": true,
+                    "show": true,
+                    "sort": "current",
+                    "sortDesc": true,
+                    "total": false,
+                    "values": true
+                  },
+                  "lines": true,
+                  "linewidth": 1,
+                  "links": [],
+                  "nullPointMode": "null",
+                  "percentage": false,
+                  "pointradius": 5,
+                  "points": false,
+                  "renderer": "flot",
+                  "seriesOverrides": [],
+                  "spaceLength": 10,
+                  "stack": false,
+                  "steppedLine": false,
+                  "targets": [
+                    {
+                      "expr": "nvidia_temperatures{nodename=~\"$nodename\", uuid=~\"$uuid\"}",
+                      "format": "time_series",
+                      "hide": false,
+                      "instant": false,
+                      "interval": "",
+                      "intervalFactor": 1,
+                      "legendFormat": "{{nodename}} - gpu{{minor}}",
+                      "refId": "A"
+                    }
+                  ],
+                  "thresholds": [
+                    {
+                      "colorMode": "critical",
+                      "fill": true,
+                      "line": true,
+                      "op": "gt",
+                      "value": 90
+                    }
+                  ],
+                  "timeFrom": null,
+                  "timeShift": null,
+                  "title": "GPU Temperature",
+                  "tooltip": {
+                    "shared": true,
+                    "sort": 2,
+                    "value_type": "individual"
+                  },
+                  "type": "graph",
+                  "xaxis": {
+                    "buckets": null,
+                    "mode": "time",
+                    "name": null,
+                    "show": true,
+                    "values": []
+                  },
+                  "yaxes": [
+                    {
+                      "decimals": null,
+                      "format": "celsius",
+                      "label": null,
+                      "logBase": 1,
+                      "max": null,
+                      "min": null,
+                      "show": true
+                    },
+                    {
+                      "format": "short",
+                      "label": null,
+                      "logBase": 1,
+                      "max": null,
+                      "min": null,
+                      "show": true
+                    }
+                  ],
+                  "yaxis": {
+                    "align": false,
+                    "alignLevel": null
+                  }
+                },
+                {
+                  "aliasColors": {},
+                  "bars": false,
+                  "dashLength": 10,
+                  "dashes": false,
+                  "datasource": "prometheus",
+                  "fill": 0,
+                  "gridPos": {
+                    "h": 6,
+                    "w": 24,
+                    "x": 0,
+                    "y": 24
+                  },
+                  "id": 12,
+                  "legend": {
+                    "alignAsTable": true,
+                    "avg": true,
+                    "current": true,
+                    "max": true,
+                    "min": true,
+                    "rightSide": true,
+                    "show": true,
+                    "sort": "avg",
+                    "sortDesc": true,
+                    "total": false,
+                    "values": true
+                  },
+                  "lines": true,
+                  "linewidth": 1,
+                  "links": [],
+                  "nullPointMode": "null",
+                  "percentage": false,
+                  "pointradius": 5,
+                  "points": false,
+                  "renderer": "flot",
+                  "seriesOverrides": [],
+                  "spaceLength": 10,
+                  "stack": false,
+                  "steppedLine": false,
+                  "targets": [
+                    {
+                      "expr": "nvidia_fanspeed{nodename=~\"$nodename\", uuid=~\"$uuid\"}",
+                      "format": "time_series",
+                      "hide": false,
+                      "instant": false,
+                      "interval": "",
+                      "intervalFactor": 1,
+                      "legendFormat": "{{nodename}} - gpu{{minor}}",
+                      "refId": "A"
+                    }
+                  ],
+                  "thresholds": [],
+                  "timeFrom": null,
+                  "timeShift": null,
+                  "title": "Fan Speed",
+                  "tooltip": {
+                    "shared": true,
+                    "sort": 2,
+                    "value_type": "individual"
+                  },
+                  "type": "graph",
+                  "xaxis": {
+                    "buckets": null,
+                    "mode": "time",
+                    "name": null,
+                    "show": true,
+                    "values": []
+                  },
+                  "yaxes": [
+                    {
+                      "decimals": null,
+                      "format": "percent",
+                      "label": null,
+                      "logBase": 1,
+                      "max": null,
+                      "min": null,
+                      "show": true
+                    },
+                    {
+                      "format": "short",
+                      "label": null,
+                      "logBase": 1,
+                      "max": null,
+                      "min": null,
+                      "show": true
+                    }
+                  ],
+                  "yaxis": {
+                    "align": false,
+                    "alignLevel": null
+                  }
+                },
+                {
+                  "aliasColors": {},
+                  "bars": false,
+                  "dashLength": 10,
+                  "dashes": false,
+                  "datasource": "prometheus",
+                  "fill": 4,
+                  "gridPos": {
+                    "h": 6,
+                    "w": 24,
+                    "x": 0,
+                    "y": 30
+                  },
+                  "id": 20,
+                  "legend": {
+                    "alignAsTable": true,
+                    "avg": true,
+                    "current": true,
+                    "max": true,
+                    "min": true,
+                    "rightSide": true,
+                    "show": true,
+                    "sort": "current",
+                    "sortDesc": true,
+                    "total": false,
+                    "values": true
+                  },
+                  "lines": true,
+                  "linewidth": 1,
+                  "links": [],
+                  "nullPointMode": "null",
+                  "percentage": false,
+                  "pointradius": 5,
+                  "points": false,
+                  "renderer": "flot",
+                  "seriesOverrides": [],
+                  "spaceLength": 10,
+                  "stack": true,
+                  "steppedLine": false,
+                  "targets": [
+                    {
+                      "expr": "nvidia_power_usage{nodename=~\"$nodename\", uuid=~\"$uuid\"}",
+                      "format": "time_series",
+                      "hide": false,
+                      "intervalFactor": 1,
+                      "legendFormat": "{{nodename}} - gpu{{minor}}",
+                      "refId": "A"
+                    }
+                  ],
+                  "thresholds": [],
+                  "timeFrom": null,
+                  "timeShift": null,
+                  "title": "Power Usage",
+                  "tooltip": {
+                    "shared": true,
+                    "sort": 2,
+                    "value_type": "individual"
+                  },
+                  "type": "graph",
+                  "xaxis": {
+                    "buckets": null,
+                    "mode": "time",
+                    "name": null,
+                    "show": true,
+                    "values": []
+                  },
+                  "yaxes": [
+                    {
+                      "format": "mwatt",
+                      "label": null,
+                      "logBase": 1,
+                      "max": null,
+                      "min": null,
+                      "show": true
+                    },
+                    {
+                      "format": "short",
+                      "label": null,
+                      "logBase": 1,
+                      "max": null,
+                      "min": null,
+                      "show": true
+                    }
+                  ],
+                  "yaxis": {
+                    "align": false,
+                    "alignLevel": null
+                  }
+                }
+              ],
+              "refresh": "30s",
+              "schemaVersion": 16,
+              "style": "dark",
+              "tags": [
+                "gpu",
+                "cluster",
+                "hardware",
+                "infrastructure"
+              ],
+              "templating": {
+                "list": [
+                  {
+                    "allValue": null,
+                    "current": {
+                      "text": "All",
+                      "value": "$__all"
+                    },
+                    "datasource": "prometheus",
+                    "hide": 2,
+                    "includeAll": true,
+                    "label": null,
+                    "multi": false,
+                    "name": "instance",
+                    "options": [],
+                    "query": "label_values(instance)",
+                    "refresh": 1,
+                    "regex": "",
+                    "sort": 0,
+                    "tagValuesQuery": "",
+                    "tags": [],
+                    "tagsQuery": "",
+                    "type": "query",
+                    "useTags": false
+                  },
+                  {
+                    "allValue": null,
+                    "current": {
+                      "text": "0",
+                      "value": "0"
+                    },
+                    "datasource": "prometheus",
+                    "hide": 2,
+                    "includeAll": true,
+                    "label": null,
+                    "multi": false,
+                    "name": "minor",
+                    "options": [],
+                    "query": "label_values(minor)",
+                    "refresh": 1,
+                    "regex": "",
+                    "sort": 0,
+                    "tagValuesQuery": "",
+                    "tags": [],
+                    "tagsQuery": "",
+                    "type": "query",
+                    "useTags": false
+                  },
+                  {
+                    "current": {
+                      "text": "1",
+                      "value": "1"
+                    },
+                    "hide": 2,
+                    "label": null,
+                    "name": "count",
+                    "options": [
+                      {
+                        "selected": false,
+                        "text": "",
+                        "value": ""
+                      }
+                    ],
+                    "query": "",
+                    "type": "constant"
+                  },
+                  {
+                    "allValue": null,
+                    "current": {
+                      "text": "All",
+                      "value": "$__all"
+                    },
+                    "datasource": "prometheus",
+                    "hide": 2,
+                    "includeAll": true,
+                    "label": null,
+                    "multi": false,
+                    "name": "uuid",
+                    "options": [],
+                    "query": "label_values(uuid)",
+                    "refresh": 1,
+                    "regex": "",
+                    "sort": 0,
+                    "tagValuesQuery": "",
+                    "tags": [],
+                    "tagsQuery": "",
+                    "type": "query",
+                    "useTags": false
+                  },
+                  {
+                    "allValue": null,
+                    "current": {
+                      "selected": true,
+                      "text": "All",
+                      "value": "$__all"
+                    },
+                    "datasource": "prometheus",
+                    "hide": 2,
+                    "includeAll": true,
+                    "label": null,
+                    "multi": false,
+                    "name": "nodename",
+                    "options": [],
+                    "query": "label_values(nodename)",
+                    "refresh": 1,
+                    "regex": "",
+                    "sort": 0,
+                    "tagValuesQuery": "",
+                    "tags": [],
+                    "tagsQuery": "",
+                    "type": "query",
+                    "useTags": false
+                  }
+                ]
+              },
+              "time": {
+                "from": "now-24h",
+                "to": "now"
+              },
+              "timepicker": {
+                "refresh_intervals": [
+                  "5s",
+                  "10s",
+                  "30s",
+                  "1m",
+                  "5m",
+                  "15m",
+                  "30m",
+                  "1h",
+                  "2h",
+                  "1d"
+                ],
+                "time_options": [
+                  "5m",
+                  "15m",
+                  "1h",
+                  "6h",
+                  "12h",
+                  "24h",
+                  "2d",
+                  "7d",
+                  "30d"
+                ]
+              },
+              "timezone": "browser",
+              "title": "nvidia-gpu",
+              "uid": "fnvhnzGmk",
+              "version": 20
+        }
+    }
+  prometheus-datasource.json: |
+    {
+      "access": "proxy",
+      "basicAuth": false,
+      "name": "prometheus",
+      "type": "prometheus",
+      "url": "http://kube-prometheus:9090"
+    }
+  training-job-cpu-dashboard.json: |-
+    {
+        "inputs": [{
+            "name": "DS_PROMETHEUS",
+            "pluginId": "prometheus",
+            "type": "datasource",
+            "value": "prometheus"
+        }],
+        "overwrite": true,
+        "dashboard": {
+            "__inputs": [{
+                "description": "",
+                "label": "prometheus",
+                "name": "DS_PROMETHEUS",
+                "pluginId": "prometheus",
+                "pluginName": "Prometheus",
+                "type": "datasource"
+            }],
+            "annotations": {
+               "list": [
+                 {
+                   "builtIn": 1,
+                   "datasource": "-- Grafana --",
+                   "enable": true,
+                   "hide": true,
+                   "iconColor": "rgba(0, 211, 255, 1)",
+                   "name": "Annotations & Alerts",
+                   "type": "dashboard"
+                 }
+               ]
+             },
+             "editable": true,
+             "gnetId": null,
+             "graphTooltip": 0,
+             "iteration": 1538210887775,
+             "links": [],
+             "panels": [
+               {
+                 "aliasColors": {},
+                 "bars": false,
+                 "dashLength": 10,
+                 "dashes": false,
+                 "datasource": "prometheus",
+                 "fill": 1,
+                 "gridPos": {
+                   "h": 6,
+                   "w": 24,
+                   "x": 0,
+                   "y": 0
+                 },
+                 "id": 2,
+                 "legend": {
+                   "alignAsTable": true,
+                   "avg": true,
+                   "current": true,
+                   "max": true,
+                   "min": true,
+                   "rightSide": false,
+                   "show": true,
+                   "total": false,
+                   "values": true
+                 },
+                 "lines": true,
+                 "linewidth": 1,
+                 "links": [],
+                 "nullPointMode": "null",
+                 "percentage": false,
+                 "pointradius": 5,
+                 "points": false,
+                 "renderer": "flot",
+                 "seriesOverrides": [],
+                 "spaceLength": 10,
+                 "stack": false,
+                 "steppedLine": false,
+                 "targets": [
+                   {
+                     "expr": "sum(rate(container_cpu_usage_seconds_total{container_label_io_kubernetes_pod_uid=~\"$pods\"}[1m]))",
+                     "format": "time_series",
+                     "intervalFactor": 1,
+                     "legendFormat": "Cpu",
+                     "refId": "A"
+                   }
+                 ],
+                 "thresholds": [],
+                 "timeFrom": null,
+                 "timeShift": null,
+                 "title": "Cpu Utilization",
+                 "tooltip": {
+                   "shared": true,
+                   "sort": 0,
+                   "value_type": "individual"
+                 },
+                 "transparent": false,
+                 "type": "graph",
+                 "xaxis": {
+                   "buckets": null,
+                   "mode": "time",
+                   "name": null,
+                   "show": true,
+                   "values": []
+                 },
+                 "yaxes": [
+                   {
+                     "format": "percent",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": true
+                   },
+                   {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": true
+                   }
+                 ]
+               },
+               {
+                 "aliasColors": {},
+                 "bars": false,
+                 "dashLength": 10,
+                 "dashes": false,
+                 "datasource": "prometheus",
+                 "fill": 1,
+                 "gridPos": {
+                   "h": 6,
+                   "w": 24,
+                   "x": 0,
+                   "y": 6
+                 },
+                 "id": 4,
+                 "legend": {
+                   "alignAsTable": true,
+                   "avg": true,
+                   "current": true,
+                   "max": true,
+                   "min": true,
+                   "rightSide": false,
+                   "show": true,
+                   "total": false,
+                   "values": true
+                 },
+                 "lines": true,
+                 "linewidth": 1,
+                 "links": [],
+                 "nullPointMode": "null",
+                 "percentage": false,
+                 "pointradius": 5,
+                 "points": false,
+                 "renderer": "flot",
+                 "seriesOverrides": [],
+                 "spaceLength": 10,
+                 "stack": false,
+                 "steppedLine": false,
+                 "targets": [
+                   {
+                     "expr": "sum(container_memory_usage_bytes{container_label_io_kubernetes_pod_uid=~\"$pods\"})",
+                     "format": "time_series",
+                     "intervalFactor": 1,
+                     "legendFormat": "Memory",
+                     "refId": "A"
+                   }
+                 ],
+                 "thresholds": [],
+                 "timeFrom": null,
+                 "timeShift": null,
+                 "title": "Memory Utilization",
+                 "tooltip": {
+                   "shared": true,
+                   "sort": 0,
+                   "value_type": "individual"
+                 },
+                 "transparent": false,
+                 "type": "graph",
+                 "xaxis": {
+                   "buckets": null,
+                   "mode": "time",
+                   "name": null,
+                   "show": true,
+                   "values": []
+                 },
+                 "yaxes": [
+                   {
+                     "format": "bytes",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": true
+                   },
+                   {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": true
+                   }
+                 ]
+               }
+             ],
+             "refresh": "30s",
+             "schemaVersion": 16,
+             "style": "dark",
+             "tags": [],
+             "templating": {
+               "list": [
+                 {
+                   "allValue": null,
+                   "current": {
+                     "text": "All",
+                     "value": "$__all"
+                   },
+                   "datasource": "prometheus",
+                   "hide": 2,
+                   "includeAll": true,
+                   "label": null,
+                   "multi": false,
+                   "name": "pods",
+                   "options": [],
+                   "query": "label_values(container_label_io_kubernetes_pod_uid)",
+                   "refresh": 1,
+                   "regex": "",
+                   "sort": 0,
+                   "tagValuesQuery": "",
+                   "tags": [],
+                   "tagsQuery": "",
+                   "type": "query",
+                   "useTags": false
+                 }
+               ]
+             },
+             "time": {
+               "from": "now-24h",
+               "to": "now"
+             },
+             "timepicker": {
+               "refresh_intervals": [
+                 "5s",
+                 "10s",
+                 "30s",
+                 "1m",
+                 "5m",
+                 "15m",
+                 "30m",
+                 "1h",
+                 "2h",
+                 "1d"
+               ],
+               "time_options": [
+                 "5m",
+                 "15m",
+                 "1h",
+                 "6h",
+                 "12h",
+                 "24h",
+                 "2d",
+                 "7d",
+                 "30d"
+               ]
+             },
+             "timezone": "browser",
+             "title": "training-job-cpu",
+             "uid": "5W_Stjomz",
+             "version": 50
+        }
+    }
+  training-job-gpu-dashboard.json: |-
+    {
+        "inputs": [{
+            "name": "DS_PROMETHEUS",
+            "pluginId": "prometheus",
+            "type": "datasource",
+            "value": "prometheus"
+        }],
+        "overwrite": true,
+        "dashboard": {
+            "__inputs": [{
+                "description": "",
+                "label": "prometheus",
+                "name": "DS_PROMETHEUS",
+                "pluginId": "prometheus",
+                "pluginName": "Prometheus",
+                "type": "datasource"
+            }],
+            "annotations": {
+                "list": [
+                  {
+                    "builtIn": 1,
+                    "datasource": "-- Grafana --",
+                    "enable": true,
+                    "hide": true,
+                    "iconColor": "rgba(0, 211, 255, 1)",
+                    "name": "Annotations & Alerts",
+                    "type": "dashboard"
+                  }
+                ]
+              },
+              "editable": true,
+              "gnetId": null,
+              "graphTooltip": 0,
+              "iteration": 1543584093399,
+              "links": [],
+              "panels": [
+                {
+                  "aliasColors": {},
+                  "bars": false,
+                  "dashLength": 10,
+                  "dashes": false,
+                  "datasource": "prometheus",
+                  "fill": 1,
+                  "gridPos": {
+                    "h": 5,
+                    "w": 24,
+                    "x": 0,
+                    "y": 0
+                  },
+                  "id": 2,
+                  "legend": {
+                    "alignAsTable": true,
+                    "avg": true,
+                    "current": true,
+                    "max": true,
+                    "min": true,
+                    "rightSide": false,
+                    "show": true,
+                    "total": false,
+                    "values": true
+                  },
+                  "lines": true,
+                  "linewidth": 1,
+                  "links": [],
+                  "nullPointMode": "null",
+                  "percentage": false,
+                  "pointradius": 5,
+                  "points": false,
+                  "renderer": "flot",
+                  "seriesOverrides": [],
+                  "spaceLength": 10,
+                  "stack": false,
+                  "steppedLine": false,
+                  "targets": [
+                    {
+                      "expr": "sum(nvidia_utilization_gpu{jobid=~\"$jobid\"}) / $devices_count",
+                      "format": "time_series",
+                      "intervalFactor": 1,
+                      "legendFormat": "Gpu",
+                      "refId": "A"
+                    }
+                  ],
+                  "thresholds": [],
+                  "timeFrom": null,
+                  "timeShift": null,
+                  "title": "Gpu Utilization",
+                  "tooltip": {
+                    "shared": true,
+                    "sort": 0,
+                    "value_type": "individual"
+                  },
+                  "transparent": false,
+                  "type": "graph",
+                  "xaxis": {
+                    "buckets": null,
+                    "mode": "time",
+                    "name": null,
+                    "show": true,
+                    "values": []
+                  },
+                  "yaxes": [
+                    {
+                      "format": "percent",
+                      "label": null,
+                      "logBase": 1,
+                      "max": null,
+                      "min": null,
+                      "show": true
+                    },
+                    {
+                      "format": "short",
+                      "label": null,
+                      "logBase": 1,
+                      "max": null,
+                      "min": null,
+                      "show": true
+                    }
+                  ]
+                },
+                {
+                  "aliasColors": {},
+                  "bars": false,
+                  "dashLength": 10,
+                  "dashes": false,
+                  "datasource": "prometheus",
+                  "fill": 1,
+                  "gridPos": {
+                    "h": 5,
+                    "w": 24,
+                    "x": 0,
+                    "y": 5
+                  },
+                  "id": 6,
+                  "legend": {
+                    "alignAsTable": true,
+                    "avg": true,
+                    "current": true,
+                    "max": true,
+                    "min": true,
+                    "rightSide": false,
+                    "show": true,
+                    "total": false,
+                    "values": true
+                  },
+                  "lines": true,
+                  "linewidth": 1,
+                  "links": [],
+                  "nullPointMode": "null",
+                  "percentage": false,
+                  "pointradius": 5,
+                  "points": false,
+                  "renderer": "flot",
+                  "seriesOverrides": [],
+                  "spaceLength": 10,
+                  "stack": false,
+                  "steppedLine": false,
+                  "targets": [
+                    {
+                      "expr": "sum(nvidia_utilization_memory{jobid=~\"$jobid\"}) / $devices_count",
+                      "format": "time_series",
+                      "intervalFactor": 1,
+                      "legendFormat": "Memory",
+                      "refId": "B"
+                    }
+                  ],
+                  "thresholds": [],
+                  "timeFrom": null,
+                  "timeShift": null,
+                  "title": "Memory Utilization",
+                  "tooltip": {
+                    "shared": true,
+                    "sort": 0,
+                    "value_type": "individual"
+                  },
+                  "transparent": false,
+                  "type": "graph",
+                  "xaxis": {
+                    "buckets": null,
+                    "mode": "time",
+                    "name": null,
+                    "show": true,
+                    "values": []
+                  },
+                  "yaxes": [
+                    {
+                      "format": "percent",
+                      "label": null,
+                      "logBase": 1,
+                      "max": null,
+                      "min": null,
+                      "show": true
+                    },
+                    {
+                      "format": "short",
+                      "label": null,
+                      "logBase": 1,
+                      "max": null,
+                      "min": null,
+                      "show": true
+                    }
+                  ]
+                },
+                {
+                  "aliasColors": {},
+                  "bars": false,
+                  "dashLength": 10,
+                  "dashes": false,
+                  "datasource": "prometheus",
+                  "fill": 1,
+                  "gridPos": {
+                    "h": 5,
+                    "w": 24,
+                    "x": 0,
+                    "y": 10
+                  },
+                  "id": 4,
+                  "legend": {
+                    "alignAsTable": true,
+                    "avg": true,
+                    "current": true,
+                    "max": true,
+                    "min": true,
+                    "rightSide": false,
+                    "show": true,
+                    "total": false,
+                    "values": true
+                  },
+                  "lines": true,
+                  "linewidth": 1,
+                  "links": [],
+                  "nullPointMode": "null",
+                  "percentage": false,
+                  "pointradius": 5,
+                  "points": false,
+                  "renderer": "flot",
+                  "seriesOverrides": [],
+                  "spaceLength": 10,
+                  "stack": false,
+                  "steppedLine": false,
+                  "targets": [
+                    {
+                      "expr": "sum(rate(container_cpu_usage_seconds_total{container_label_io_kubernetes_pod_uid=~\"$pods\"}[1m]))",
+                      "format": "time_series",
+                      "intervalFactor": 1,
+                      "legendFormat": "Cpu",
+                      "refId": "C"
+                    }
+                  ],
+                  "thresholds": [],
+                  "timeFrom": null,
+                  "timeShift": null,
+                  "title": "Cpu Utilization",
+                  "tooltip": {
+                    "shared": true,
+                    "sort": 0,
+                    "value_type": "individual"
+                  },
+                  "transparent": false,
+                  "type": "graph",
+                  "xaxis": {
+                    "buckets": null,
+                    "mode": "time",
+                    "name": null,
+                    "show": true,
+                    "values": []
+                  },
+                  "yaxes": [
+                    {
+                      "format": "percent",
+                      "label": null,
+                      "logBase": 1,
+                      "max": null,
+                      "min": null,
+                      "show": true
+                    },
+                    {
+                      "format": "short",
+                      "label": null,
+                      "logBase": 1,
+                      "max": null,
+                      "min": null,
+                      "show": true
+                    }
+                  ]
+                }
+              ],
+              "refresh": "30s",
+              "schemaVersion": 16,
+              "style": "dark",
+              "tags": [],
+              "templating": {
+                "list": [
+                  {
+                    "allValue": null,
+                    "current": {
+                      "text": "All",
+                      "value": "$__all"
+                    },
+                    "datasource": "prometheus",
+                    "hide": 2,
+                    "includeAll": true,
+                    "label": null,
+                    "multi": false,
+                    "name": "jobid",
+                    "options": [],
+                    "query": "label_values(jobid)",
+                    "refresh": 1,
+                    "regex": "",
+                    "sort": 0,
+                    "tagValuesQuery": "",
+                    "tags": [],
+                    "tagsQuery": "",
+                    "type": "query",
+                    "useTags": false
+                  },
+                  {
+                    "allValue": null,
+                    "current": {
+                      "text": "All",
+                      "value": "$__all"
+                    },
+                    "datasource": "prometheus",
+                    "hide": 2,
+                    "includeAll": true,
+                    "label": null,
+                    "multi": false,
+                    "name": "pods",
+                    "options": [],
+                    "query": "label_values(container_label_io_kubernetes_pod_uid)",
+                    "refresh": 1,
+                    "regex": "",
+                    "sort": 0,
+                    "tagValuesQuery": "",
+                    "tags": [],
+                    "tagsQuery": "",
+                    "type": "query",
+                    "useTags": false
+                  },
+                  {
+                    "current": {
+                      "text": "all",
+                      "value": "all"
+                    },
+                    "hide": 2,
+                    "label": null,
+                    "name": "devices_count",
+                    "options": [
+                      {
+                        "selected": false,
+                        "text": "",
+                        "value": ""
+                      }
+                    ],
+                    "query": "",
+                    "type": "constant"
+                  }
+                ]
+              },
+              "time": {
+                "from": "now-24h",
+                "to": "now"
+              },
+              "timepicker": {
+                "refresh_intervals": [
+                  "5s",
+                  "10s",
+                  "30s",
+                  "1m",
+                  "5m",
+                  "15m",
+                  "30m",
+                  "1h",
+                  "2h",
+                  "1d"
+                ],
+                "time_options": [
+                  "5m",
+                  "15m",
+                  "1h",
+                  "6h",
+                  "12h",
+                  "24h",
+                  "2d",
+                  "7d",
+                  "30d"
+                ]
+              },
+              "timezone": "browser",
+              "title": "training-job-gpu",
+              "uid": "MqtBOETmz",
+              "version": 10
+        }
+    }
+kind: ConfigMap
+metadata:
+  labels:
+    app: kube-prometheus-grafana
+    app.kubernetes.io/deploy-manager: ksonnet
+    ksonnet.io/component: monitoring
+  name: dkube-grafana-dashboard
+  namespace: dkube
+---
+apiVersion: v1
+data:
+  grafana.ini: |
+    ##################### Grafana Configuration Example #####################
+    #
+    # Everything has defaults so you only need to uncomment things you want to
+    # change
+    # possible values : production, development
+    ; app_mode = production
+    # instance name, defaults to HOSTNAME environment variable value or hostname if HOSTNAME var is empty
+    ; instance_name = ${HOSTNAME}
+    #################################### Paths ####################################
+    [paths]
+    # Path to where grafana can store temp files, sessions, and the sqlite3 db (if that is used)
+    #
+    ;data = /var/lib/grafana
+    #
+    # Directory where grafana can store logs
+    #
+    ;logs = /var/log/grafana
+    #
+    # Directory where grafana will automatically scan and look for plugins
+    #
+    ;plugins = /var/lib/grafana/plugins
+    #
+    #################################### Server ####################################
+    [server]
+    # Protocol (http, https, socket)
+    ;protocol = http
+    # The ip address to bind to, empty will bind to all interfaces
+    ;http_addr =
+    # The http port  to use
+    ;http_port = 3000
+    # The public facing domain name used to access grafana from a browser
+    ;domain = localhost
+    # Redirect to correct domain if host header does not match domain
+    # Prevents DNS rebinding attacks
+    ;enforce_domain = false
+    # The full public facing url you use in browser, used for redirects and emails
+    # If you use reverse proxy and sub path specify full url (with sub path)
+    root_url = http://localhost:3000/dkube/grafana
+    # Log web requests
+    ;router_logging = false
+    # the path relative working path
+    ;static_root_path = public
+    # enable gzip
+    ;enable_gzip = false
+    # https certs & key file
+    ;cert_file =
+    ;cert_key =
+    # Unix socket path
+    ;socket =
+    #################################### Database ####################################
+    [database]
+    # You can configure the database connection by specifying type, host, name, user and password
+    # as seperate properties or as on string using the url propertie.
+    # Either "mysql", "postgres" or "sqlite3", it's your choice
+    ;type = sqlite3
+    ;host = 127.0.0.1:3306
+    ;name = grafana
+    ;user = root
+    # If the password contains # or ; you have to wrap it with trippel quotes. Ex """#password;"""
+    ;password =
+    # Use either URL or the previous fields to configure the database
+    # Example: mysql://user:secret@host:port/database
+    ;url =
+    # For "postgres" only, either "disable", "require" or "verify-full"
+    ;ssl_mode = disable
+    # For "sqlite3" only, path relative to data_path setting
+    ;path = grafana.db
+    # Max conn setting default is 0 (mean not set)
+    ;max_idle_conn =
+    ;max_open_conn =
+    #################################### Session ####################################
+    [session]
+    # Either "memory", "file", "redis", "mysql", "postgres", default is "file"
+    ;provider = file
+    # Provider config options
+    # memory: not have any config yet
+    # file: session dir path, is relative to grafana data_path
+    # redis: config like redis server e.g. `addr=127.0.0.1:6379,pool_size=100,db=grafana`
+    # mysql: go-sql-driver/mysql dsn config string, e.g. `user:password@tcp(127.0.0.1:3306)/database_name`
+    # postgres: user=a password=b host=localhost port=5432 dbname=c sslmode=disable
+    ;provider_config = sessions
+    # Session cookie name
+    ;cookie_name = grafana_sess
+    # If you use session in https only, default is false
+    ;cookie_secure = false
+    # Session life time, default is 86400
+    ;session_life_time = 86400
+    #################################### Data proxy ###########################
+    [dataproxy]
+    # This enables data proxy logging, default is false
+    ;logging = false
+    #################################### Analytics ####################################
+    [analytics]
+    # Server reporting, sends usage counters to stats.grafana.org every 24 hours.
+    # No ip addresses are being tracked, only simple counters to track
+    # running instances, dashboard and error counts. It is very helpful to us.
+    # Change this option to false to disable reporting.
+    ;reporting_enabled = true
+    # Set to false to disable all checks to https://grafana.net
+    # for new vesions (grafana itself and plugins), check is used
+    # in some UI views to notify that grafana or plugin update exists
+    # This option does not cause any auto updates, nor send any information
+    # only a GET request to http://grafana.com to get latest versions
+    ;check_for_updates = true
+    # Google Analytics universal tracking code, only enabled if you specify an id here
+    ;google_analytics_ua_id =
+    #################################### Security ####################################
+    [security]
+    # default admin user, created on startup
+    ;admin_user = admin
+    # default admin password, can be changed before first start of grafana,  or in profile settings
+    ;admin_password = admin
+    # used for signing
+    ;secret_key = SW2YcwTIb9zpOOhoPsMm
+    # Auto-login remember days
+    ;login_remember_days = 7
+    ;cookie_username = grafana_user
+    ;cookie_remember_name = grafana_remember
+    # disable gravatar profile images
+    ;disable_gravatar = false
+    # data source proxy whitelist (ip_or_domain:port separated by spaces)
+    ;data_source_proxy_whitelist =
+    [snapshots]
+    # snapshot sharing options
+    ;external_enabled = true
+    ;external_snapshot_url = https://snapshots-origin.raintank.io
+    ;external_snapshot_name = Publish to snapshot.raintank.io
+    # remove expired snapshot
+    ;snapshot_remove_expired = true
+    # remove snapshots after 90 days
+    ;snapshot_TTL_days = 90
+    #################################### Users ####################################
+    [users]
+    # disable user signup / registration
+    ;allow_sign_up = true
+    # Allow non admin users to create organizations
+    ;allow_org_create = true
+    # Set to true to automatically assign new users to the default organization (id 1)
+    ;auto_assign_org = true
+    # Default role new users will be automatically assigned (if disabled above is set to true)
+    ;auto_assign_org_role = Viewer
+    # Background text for the user field on the login page
+    ;login_hint = email or username
+    # Default UI theme ("dark" or "light")
+    default_theme = light
+    [auth]
+    # Set to true to disable (hide) the login form, useful if you use OAuth, defaults to false
+    ;disable_login_form = false
+    # Set to true to disable the signout link in the side menu. useful if you use auth.proxy, defaults to false
+    ;disable_signout_menu = false
+    #################################### Anonymous Auth ##########################
+    [auth.anonymous]
+    # enable anonymous access
+    ;enabled = false
+    # specify organization name that should be used for unauthenticated users
+    ;org_name = Main Org.
+    # specify role for unauthenticated users
+    ;org_role = Viewer
+    #################################### Github Auth ##########################
+    [auth.github]
+    ;enabled = false
+    ;allow_sign_up = true
+    ;client_id = some_id
+    ;client_secret = some_secret
+    ;scopes = user:email,read:org
+    ;auth_url = https://github.com/login/oauth/authorize
+    ;token_url = https://github.com/login/oauth/access_token
+    ;api_url = https://api.github.com/user
+    ;team_ids =
+    ;allowed_organizations =
+    #################################### Google Auth ##########################
+    [auth.google]
+    ;enabled = false
+    ;allow_sign_up = true
+    ;client_id = some_client_id
+    ;client_secret = some_client_secret
+    ;scopes = https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email
+    ;auth_url = https://accounts.google.com/o/oauth2/auth
+    ;token_url = https://accounts.google.com/o/oauth2/token
+    ;api_url = https://www.googleapis.com/oauth2/v1/userinfo
+    ;allowed_domains =
+    #################################### Generic OAuth ##########################
+    [auth.generic_oauth]
+    ;enabled = false
+    ;name = OAuth
+    ;allow_sign_up = true
+    ;client_id = some_id
+    ;client_secret = some_secret
+    ;scopes = user:email,read:org
+    ;auth_url = https://foo.bar/login/oauth/authorize
+    ;token_url = https://foo.bar/login/oauth/access_token
+    ;api_url = https://foo.bar/user
+    ;team_ids =
+    ;allowed_organizations =
+    #################################### Grafana.com Auth ####################
+    [auth.grafana_com]
+    ;enabled = false
+    ;allow_sign_up = true
+    ;client_id = some_id
+    ;client_secret = some_secret
+    ;scopes = user:email
+    ;allowed_organizations =
+    #################################### Auth Proxy ##########################
+    [auth.proxy]
+    ;enabled = false
+    ;header_name = X-WEBAUTH-USER
+    ;header_property = username
+    ;auto_sign_up = true
+    ;ldap_sync_ttl = 60
+    ;whitelist = 192.168.1.1, 192.168.2.1
+    #################################### Basic Auth ##########################
+    [auth.basic]
+    ;enabled = true
+    #################################### Auth LDAP ##########################
+    [auth.ldap]
+    ;enabled = false
+    ;config_file = /etc/grafana/ldap.toml
+    ;allow_sign_up = true
+    #################################### SMTP / Emailing ##########################
+    [smtp]
+    ;enabled = false
+    ;host = localhost:25
+    ;user =
+    # If the password contains # or ; you have to wrap it with trippel quotes. Ex """#password;"""
+    ;password =
+    ;cert_file =
+    ;key_file =
+    ;skip_verify = false
+    ;from_address = admin@grafana.localhost
+    ;from_name = Grafana
+    [emails]
+    ;welcome_email_on_sign_up = false
+    #################################### Logging ##########################
+    [log]
+    # Either "console", "file", "syslog". Default is console and  file
+    # Use space to separate multiple modes, e.g. "console file"
+    ;mode = console file
+    # Either "debug", "info", "warn", "error", "critical", default is "info"
+    ;level = info
+    # optional settings to set different levels for specific loggers. Ex filters = sqlstore:debug
+    ;filters =
+    # For "console" mode only
+    [log.console]
+    ;level =
+    # log line format, valid options are text, console and json
+    ;format = console
+    # For "file" mode only
+    [log.file]
+    ;level =
+    # log line format, valid options are text, console and json
+    ;format = text
+    # This enables automated log rotate(switch of following options), default is true
+    ;log_rotate = true
+    # Max line number of single file, default is 1000000
+    ;max_lines = 1000000
+    # Max size shift of single file, default is 28 means 1 << 28, 256MB
+    ;max_size_shift = 28
+    # Segment log daily, default is true
+    ;daily_rotate = true
+    # Expired days of log file(delete after max days), default is 7
+    ;max_days = 7
+    [log.syslog]
+    ;level =
+    # log line format, valid options are text, console and json
+    ;format = text
+    # Syslog network type and address. This can be udp, tcp, or unix. If left blank, the default unix endpoints will be used.
+    ;network =
+    ;address =
+    # Syslog facility. user, daemon and local0 through local7 are valid.
+    ;facility =
+    # Syslog tag. By default, the process' argv[0] is used.
+    ;tag =
+    #################################### AMQP Event Publisher ##########################
+    [event_publisher]
+    ;enabled = false
+    ;rabbitmq_url = amqp://localhost/
+    ;exchange = grafana_events
+    ;#################################### Dashboard JSON files ##########################
+    [dashboards.json]
+    ;enabled = false
+    ;path = /var/lib/grafana/dashboards
+    #################################### Alerting ############################
+    [alerting]
+    # Disable alerting engine & UI features
+    ;enabled = true
+    # Makes it possible to turn off alert rule execution but alerting UI is visible
+    ;execute_alerts = true
+    #################################### Internal Grafana Metrics ##########################
+    # Metrics available at HTTP API Url /api/metrics
+    [metrics]
+    # Disable / Enable internal metrics
+    ;enabled           = true
+    # Publish interval
+    ;interval_seconds  = 10
+    # Send internal metrics to Graphite
+    [metrics.graphite]
+    # Enable by setting the address setting (ex localhost:2003)
+    ;address =
+    ;prefix = prod.grafana.%(instance_name)s.
+    #################################### Grafana.com integration  ##########################
+    # Url used to to import dashboards directly from Grafana.com
+    [grafana_com]
+    ;url = https://grafana.com
+    #################################### External image storage ##########################
+    [external_image_storage]
+    # Used for uploading images to public servers so they can be included in slack/email messages.
+    # you can choose between (s3, webdav)
+    ;provider =
+    [external_image_storage.s3]
+    ;bucket_url =
+    ;access_key =
+    ;secret_key =
+    [external_image_storage.webdav]
+    ;url =
+    ;public_url =
+    ;username =
+    ;password =
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/deploy-manager: ksonnet
+    ksonnet.io/component: monitoring
+  name: dkube-grafana-init
+  namespace: dkube
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    prometheus.io/port: "8080"
+    prometheus.io/scrape: "true"
+  labels:
+    app: dkube-pod-exporter
+    ksonnet.io/component: monitoring
+  name: dkube-cpu-exporter-service
+  namespace: dkube
+spec:
+  ports:
+  - name: http-metrics
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: pod-exporter
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: dkube-prometheus-grafana
+    ksonnet.io/component: monitoring
+  name: dkube-grafana
+  namespace: dkube
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 3000
+  selector:
+    app: dkube-prometheus-grafana
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  labels:
+    ksonnet.io/component: monitoring
+  name: dkube-cpu-exporter
+  namespace: dkube
+spec:
+  selector:
+    matchLabels:
+      app: pod-exporter
+  template:
+    metadata:
+      labels:
+        app: pod-exporter
+    spec:
+      containers:
+      - image: google/cadvisor:latest
+        imagePullPolicy: IfNotPresent
+        name: cadvisor
+        ports:
+        - containerPort: 8080
+          name: http-metrics
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /rootfs:ro
+          name: rootfs
+        - mountPath: /var/run:rw
+          name: run
+        - mountPath: /sys:ro
+          name: sys
+        - mountPath: /var/lib/docker:rw
+          name: docker
+      dnsConfig:
+        options:
+        - name: single-request-reopen
+        - name: timeout
+          value: "30"
+      volumes:
+      - hostPath:
+          path: /
+          type: ""
+        name: rootfs
+      - hostPath:
+          path: /var/run
+          type: ""
+        name: run
+      - hostPath:
+          path: /sys
+          type: ""
+        name: sys
+      - hostPath:
+          path: /var/lib/docker/
+          type: ""
+        name: docker
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: dkube-prometheus-grafana
+    chart: grafana-0.0.37
+    heritage: Tiller
+    ksonnet.io/component: monitoring
+    release: kube-prometheus
+  name: dkube-grafana
+  namespace: dkube
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: dkube-prometheus-grafana
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: dkube-prometheus-grafana
+        release: kube-prometheus
+    spec:
+      containers:
+      - env:
+        - name: GF_AUTH_BASIC_ENABLED
+          value: "true"
+        - name: GF_AUTH_ANONYMOUS_ENABLED
+          value: "true"
+        - name: GF_SECURITY_ADMIN_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: kube-prometheus-grafana
+        - name: GF_SECURITY_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: kube-prometheus-grafana
+        image: grafana/grafana:5.0.0
+        imagePullPolicy: IfNotPresent
+        name: grafana
+        ports:
+        - containerPort: 3000
+          name: web
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 10
+          httpGet:
+            path: /api/health
+            port: 3000
+            scheme: HTTP
+          periodSeconds: 1
+          successThreshold: 1
+          timeoutSeconds: 1
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /var/lib/grafana
+          name: grafana-storage
+        - mountPath: /etc/grafana/grafana.ini
+          name: grafana-config
+          subPath: grafana.ini
+      - args:
+        - --watch-dir=/var/grafana-dashboards
+        - --grafana-url=http://127.0.0.1:3000
+        env:
+        - name: GRAFANA_USER
+          valueFrom:
+            secretKeyRef:
+              key: user
+              name: kube-prometheus-grafana
+        - name: GRAFANA_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: kube-prometheus-grafana
+        image: quay.io/coreos/grafana-watcher:v0.0.8
+        imagePullPolicy: IfNotPresent
+        name: grafana-watcher
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /var/grafana-dashboards
+          name: grafana-dashboards
+      dnsConfig:
+        options:
+        - name: single-request-reopen
+        - name: timeout
+          value: "30"
+      dnsPolicy: ClusterFirst
+      nodeSelector: NODE_SELECTOR
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      serviceAccount: kube-prometheus-grafana
+      serviceAccountName: kube-prometheus-grafana
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: grafana-storage
+      - configMap:
+          defaultMode: 420
+          name: dkube-grafana-dashboard
+        name: grafana-dashboards
+      - configMap:
+          defaultMode: 420
+          name: dkube-grafana-init
+        name: grafana-config
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app: prometheus
+    app.kubernetes.io/deploy-manager: ksonnet
+    ksonnet.io/component: monitoring
+    prometheus: kube-prometheus
+  name: dkube-log-metric-processor
+  namespace: dkube
+spec:
+  endpoints:
+  - interval: 15s
+    port: dkube-log-metrics
+  jobLabel: k8s-app
+  namespaceSelector:
+    matchNames:
+    - dkube
+  selector:
+    matchLabels:
+      app: dkube-log-processor
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app: prometheus
+    ksonnet.io/component: monitoring
+    prometheus: kube-prometheus
+  name: dkube-prometheus-exporter-gpu
+  namespace: dkube
+spec:
+  endpoints:
+  - interval: 15s
+    port: http-metrics
+  jobLabel: k8s-app
+  namespaceSelector:
+    matchNames:
+    - dkube
+  selector:
+    matchLabels:
+      app: dkube-gpu-exporter
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app: prometheus
+    ksonnet.io/component: monitoring
+    prometheus: kube-prometheus
+  name: dkube-prometheus-exporter-pod
+  namespace: dkube
+spec:
+  endpoints:
+  - interval: 15s
+    port: http-metrics
+  jobLabel: k8s-app
+  namespaceSelector:
+    matchNames:
+    - dkube
+  selector:
+    matchLabels:
+      app: dkube-pod-exporter
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app: prometheus
+    ksonnet.io/component: monitoring
+    prometheus: kube-prometheus
+  name: dkube-storage-exporter
+  namespace: dkube
+spec:
+  endpoints:
+  - interval: 60s
+    port: http-metrics
+  jobLabel: k8s-app
+  namespaceSelector:
+    matchNames:
+    - dkube
+  selector:
+    matchLabels:
+      app: dkube-storage-exporter
