@@ -42,7 +42,7 @@
                 ],
                 "image": dkubeUIImage, 
                 "imagePullPolicy": "IfNotPresent", 
-                "name": "ui", 
+                "name": "main", 
                 "ports": [
                   {
                     "containerPort": 3000, 

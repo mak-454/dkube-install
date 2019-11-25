@@ -64,7 +64,7 @@
 			    ], 
 			    "image": dkubeExtImage, 
 			    "imagePullPolicy": "IfNotPresent", 
-			    "name": "dkube-ext",
+			    "name": "main",
 			    "securityContext": {
 			        "privileged": true
 			    },
@@ -138,7 +138,7 @@
 			{
 			    "image": fluentdImage,
 			    "imagePullPolicy": "IfNotPresent",
-			    "name": "metric-collector",
+			    "name": "main",
 			    "resources": {},
 			    "securityContext": {
                     "runAsUser": 0,
@@ -164,7 +164,7 @@
 			{
                 "image": fluentdImage,
                 "imagePullPolicy": "IfNotPresent",
-                "name": "log-collector",
+                "name": "sidecar",
                 "resources": {},
                 "securityContext": {
                     "runAsUser": 0,
@@ -244,7 +244,7 @@
     "kind": "DaemonSet",
     "metadata": {
         "labels": {
-            "app": "dkube-controller-worker"
+            "app": "dkube-controller-worker",
         },
         "name": "dkube-controller-worker-" + tag,
         "namespace": namespace,
@@ -320,7 +320,7 @@
                         ],
                         "image": apiServerImage,
                         "imagePullPolicy": "IfNotPresent",
-                        "name": "dkube-d3api",
+                        "name": "main",
                         "ports": [
                             {
                                 "containerPort": dkubeApiServerPort,
@@ -353,7 +353,7 @@
                     {
                         "image": dkubeDownloaderImage,
                         "imagePullPolicy": "IfNotPresent",
-                        "name": "downloader",
+                        "name": "sidecar",
                         "resources": {},
                         "securityContext": {
                             "procMount": "Default",

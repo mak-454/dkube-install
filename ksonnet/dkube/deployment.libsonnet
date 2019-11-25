@@ -40,13 +40,13 @@
                         {
                             "image": dkubeInferenceImage,
                             "imagePullPolicy": "IfNotPresent",
-                            "name": "inference",
+                            "name": "main",
                             "resources": {}
                         },
                         {
                             "image": dkubeDocsImage,
                             "imagePullPolicy": "IfNotPresent",
-                            "name": "docs",
+                            "name": "sidecar",
                             "resources": {}
                         }
                     ],
@@ -92,7 +92,7 @@
 			    ],
 			    "image": "k8s.gcr.io/etcd-amd64:3.1.12",
 			    "imagePullPolicy": "IfNotPresent",
-			    "name": "etcd",
+			    "name": "main",
 			    "volumeMounts": [
 			    {
 				"mountPath": "/var/lib/etcd",
@@ -162,7 +162,7 @@
 			{
 			    "image": dfabProxyImage,
 			    "imagePullPolicy": "IfNotPresent",
-			    "name": "dfabproxy",
+			    "name": "main",
 			    "resources": {},
 			    "terminationMessagePath": "/dev/termination-log",
 			    "terminationMessagePolicy": "File"
@@ -198,7 +198,7 @@
         "kind": "Deployment",
         "metadata": {
             "labels": {
-                "app": "dkube-auth"
+                "app": "dkube-auth",
             },
             "name": "dkube-auth-server-" + tag,
             "namespace": "dkube",
@@ -223,7 +223,7 @@
                     {
                         "image": dkubeAuthImage,
                         "imagePullPolicy": "IfNotPresent",
-                        "name": "dex-server",
+                        "name": "main",
                         "command": [
                             "/opt/dkube/dex",
                             "serve",
@@ -244,7 +244,7 @@
                         "volumeMounts": [
                         {
                             "mountPath": "/etc/dex/cfg",
-                            "name": "dex-cm"
+                            "name": "auth-cm"
                         }
                         ],
                     env: [
@@ -257,7 +257,7 @@
                     {
                         "image": dkubeAuthImage,
                         "imagePullPolicy": "IfNotPresent",
-                        "name": "authn",
+                        "name": "sidecar",
                         "ports": [
                         {
                             "containerPort": 3001,
@@ -295,7 +295,7 @@
                             "defaultMode": 420,
                             "name": "dkube-auth-config"
                         },
-                        "name": "dex-cm"
+                        "name": "auth-cm"
                     },
                     {
                         "nfs": {
@@ -343,7 +343,7 @@
                         ],
                         "image": dkubeWatcherImage,
                         "imagePullPolicy": "IfNotPresent",
-                        "name": "dkube-d3watcher",
+                        "name": "main",
                         "resources": {},
                         "securityContext": {
                             "procMount": "Default",
@@ -438,7 +438,7 @@
                     initialDelaySeconds: 30,
                     periodSeconds: 30,
                   },
-                  name: "ambassador",
+                  name: "main",
                   readinessProbe: {
                     httpGet: {
                       path: "/ambassador/v0/check_ready",
@@ -519,7 +519,7 @@
 			{
 			    "image": storageExporterImage,
 			    "imagePullPolicy": "IfNotPresent",
-			    "name": "storage-exporter",
+			    "name": "main",
                 "volumeMounts": [
                    {
                       "mountPath": "/opt/dkube-storage",
