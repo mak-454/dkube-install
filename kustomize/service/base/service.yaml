@@ -790,15 +790,13 @@ spec:
     port: 5556
     protocol: TCP
     targetPort: 5556
-    nodePort: 31534
   - name: authn
     port: 3001
     protocol: TCP
     targetPort: 3001
-    nodePort: 30049
   selector:
     app: dkube-auth
-  type: NodePort
+  type: ClusterIP
 ---
 apiVersion: v1
 kind: Service
