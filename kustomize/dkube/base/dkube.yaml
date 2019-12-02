@@ -132,6 +132,8 @@ spec:
           protocol: TCP
         securityContext:
           privileged: true
+          seLinuxOptions:
+            type: nvidia_container_t
         volumeMounts:
         - mountPath: /usr/local/nvidia/lib64
           name: nvidia-lib
@@ -170,6 +172,7 @@ spec:
         name: main
         securityContext:
           procMount: Default
+          privileged: true
           runAsUser: 0
         volumeMounts:
         - mountPath: /var/lib/docker/containers
@@ -539,6 +542,7 @@ spec:
         imagePullPolicy: IfNotPresent
         name: main
         securityContext:
+          privileged: true
           procMount: Default
           runAsUser: 0
         terminationMessagePath: /dev/termination-log
@@ -614,6 +618,7 @@ spec:
           name: dkube-d3api
           protocol: TCP
         securityContext:
+          privileged: true
           procMount: Default
           runAsUser: 0
         terminationMessagePath: /dev/termination-log

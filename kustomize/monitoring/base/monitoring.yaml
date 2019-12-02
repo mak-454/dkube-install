@@ -1,6 +1,19 @@
 ---
 apiVersion: v1
 data:
+  password: YWRtaW4=
+  user: YWRtaW4=
+kind: Secret
+metadata:
+  labels:
+    app: dkube-prometheus-grafana
+    ksonnet.io/component: monitoring
+  name: dkube-prometheus-grafana
+  namespace: dkube
+type: Opaque
+---
+apiVersion: v1
+data:
   ds-overview-dashboard.json: |-
     {
         "inputs": [{
@@ -2212,7 +2225,10 @@ data:
       "basicAuth": false,
       "name": "prometheus",
       "type": "prometheus",
-      "url": "http://kube-prometheus:9090"
+      "jsonData": {
+        "tlsSkipVerify": true
+      },
+      "url": "https://ambassador.dkube:443/dkube/v2/prometheus"
     }
   training-job-cpu-dashboard.json: |-
     {
@@ -2881,7 +2897,7 @@ data:
 kind: ConfigMap
 metadata:
   labels:
-    app: kube-prometheus-grafana
+    app: dkube-prometheus-grafana
     app.kubernetes.io/deploy-manager: ksonnet
     ksonnet.io/component: monitoring
   name: dkube-grafana-dashboard
@@ -3216,6 +3232,85 @@ metadata:
   namespace: dkube
 ---
 apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app: dkube-prometheus-grafana
+    ksonnet.io/component: monitoring
+  name: dkube-prometheus-grafana
+  namespace: dkube
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    app: dkube-prometheus-grafana
+    ksonnet.io/component: monitoring
+  name: dkube-prometheus-grafana
+  namespace: dkube
+rules:
+- apiGroups:
+  - extensions
+  resourceNames:
+  - dkube-prometheus-grafana
+  resources:
+  - podsecuritypolicies
+  verbs:
+  - use
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    ksonnet.io/component: monitoring
+  name: prometheus-k8s
+  namespace: dkube
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - services
+  - endpoints
+  - pods
+  verbs:
+  - list
+  - get
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    app: dkube-prometheus-grafana
+    ksonnet.io/component: monitoring
+  name: dkube-prometheus-grafana
+  namespace: dkube
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: dkube-prometheus-grafana
+subjects:
+- kind: ServiceAccount
+  name: dkube-prometheus-grafana
+  namespace: dkube
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    ksonnet.io/component: monitoring
+  name: prometheus-k8s
+  namespace: dkube
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: prometheus-k8s
+subjects:
+- kind: ServiceAccount
+  name: prometheus-k8s
+  namespace: openshift-monitoring
+---
+apiVersion: v1
 kind: Service
 metadata:
   annotations:
@@ -3280,13 +3375,17 @@ spec:
         - containerPort: 8080
           name: http-metrics
           protocol: TCP
+        securityContext:
+          privileged: true
         volumeMounts:
         - mountPath: /rootfs:ro
           name: rootfs
         - mountPath: /var/run:rw
           name: run
-        - mountPath: /sys:ro
+        - mountPath: /sys/fs/cgroup/cpuacct,cpu:ro
           name: sys
+        - mountPath: /sys/fs/cgroup/memory:ro
+          name: sys-mem
         - mountPath: /var/lib/docker:rw
           name: docker
       dnsConfig:
@@ -3304,9 +3403,13 @@ spec:
           type: ""
         name: run
       - hostPath:
-          path: /sys
+          path: /sys/fs/cgroup/cpu,cpuacct
           type: ""
         name: sys
+      - hostPath:
+          path: /sys/fs/cgroup/memory
+          type: ""
+        name: sys-mem
       - hostPath:
           path: /var/lib/docker/
           type: ""
@@ -3351,12 +3454,12 @@ spec:
           valueFrom:
             secretKeyRef:
               key: user
-              name: kube-prometheus-grafana
+              name: dkube-prometheus-grafana
         - name: GF_SECURITY_ADMIN_PASSWORD
           valueFrom:
             secretKeyRef:
               key: password
-              name: kube-prometheus-grafana
+              name: dkube-prometheus-grafana
         image: grafana/grafana:5.0.0
         imagePullPolicy: IfNotPresent
         name: grafana
@@ -3389,12 +3492,12 @@ spec:
           valueFrom:
             secretKeyRef:
               key: user
-              name: kube-prometheus-grafana
+              name: dkube-prometheus-grafana
         - name: GRAFANA_PASSWORD
           valueFrom:
             secretKeyRef:
               key: password
-              name: kube-prometheus-grafana
+              name: dkube-prometheus-grafana
         image: quay.io/coreos/grafana-watcher:v0.0.8
         imagePullPolicy: IfNotPresent
         name: grafana-watcher
@@ -3412,8 +3515,8 @@ spec:
       nodeSelector: NODE_SELECTOR
       restartPolicy: Always
       schedulerName: default-scheduler
-      serviceAccount: kube-prometheus-grafana
-      serviceAccountName: kube-prometheus-grafana
+      serviceAccount: dkube-prometheus-grafana
+      serviceAccountName: dkube-prometheus-grafana
       terminationGracePeriodSeconds: 30
       volumes:
       - name: grafana-storage
@@ -3456,7 +3559,7 @@ metadata:
     ksonnet.io/component: monitoring
     prometheus: kube-prometheus
   name: dkube-prometheus-exporter-gpu
-  namespace: dkube
+  namespace: openshift-monitoring
 spec:
   endpoints:
   - interval: 15s
@@ -3474,10 +3577,11 @@ kind: ServiceMonitor
 metadata:
   labels:
     app: prometheus
+    k8s-app: prometheus
     ksonnet.io/component: monitoring
     prometheus: kube-prometheus
   name: dkube-prometheus-exporter-pod
-  namespace: dkube
+  namespace: openshift-monitoring
 spec:
   endpoints:
   - interval: 15s
