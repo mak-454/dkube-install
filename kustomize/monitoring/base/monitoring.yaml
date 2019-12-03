@@ -3599,6 +3599,7 @@ kind: ServiceMonitor
 metadata:
   labels:
     app: prometheus
+    k8s-app: prometheus
     ksonnet.io/component: monitoring
     prometheus: kube-prometheus
   name: dkube-storage-exporter
