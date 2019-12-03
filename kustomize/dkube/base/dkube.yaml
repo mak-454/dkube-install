@@ -184,6 +184,7 @@ spec:
         imagePullPolicy: IfNotPresent
         name: sidecar
         securityContext:
+          privileged: true
           runAsUser: 0
         volumeMounts:
         - mountPath: /var/lib/docker/containers
