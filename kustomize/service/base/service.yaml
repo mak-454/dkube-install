@@ -1096,6 +1096,9 @@ metadata:
        origins: "*"
        methods: "*"
        headers: "*"
+       headers: "*"
+      add_request_headers:
+       Authorization: Basic promBasicAuth
   labels:
     ksonnet.io/component: service
   name: dkube-prometheus-mapping-service
