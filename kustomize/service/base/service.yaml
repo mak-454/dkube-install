@@ -135,7 +135,7 @@ data:
     
     <source>
       @type tail
-      path /var/log/containers/*_dkube-controller-*.log
+      path /var/log/containers/*dkube-controller-*.log
       pos_file /var/log/fluentd-containers-api.log.pos
       time_key time
       time_format %Y-%m-%dT%H:%M:%S
