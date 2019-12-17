@@ -16,13 +16,6 @@ spec:
       labels:
         app: dkube-controller-worker
     spec:
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-            - matchExpressions:
-              - key: Accelerator
-                operator: Exists
       containers:
       - env:
         - name: DKUBE_MOUNT_PATH
@@ -109,13 +102,6 @@ spec:
       labels:
         app: dkube-ext
     spec:
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-            - matchExpressions:
-              - key: Accelerator
-                operator: Exists
       containers:
       - env:
         - name: MYNODENAME
