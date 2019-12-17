@@ -238,9 +238,6 @@ spec:
         - containerPort: 5556
           name: dex-s
           protocol: TCP
-        env:
-        - name: PUBLIC_IP
-          value: dkubePubIP
         securityContext:
           procMount: Default
           runAsUser: 0
@@ -255,9 +252,6 @@ spec:
         - containerPort: 3001
           name: authn
           protocol: TCP
-        env:
-        - name: PUBLIC_IP
-          value: dkubePubIP
         volumeMounts:
         - mountPath: /var/log/dkube
           name: dkube-logs
@@ -591,8 +585,6 @@ spec:
           value: nfsBasePath
         - name: DKUBE_APISERVER_ROLE
           value: master
-        - name: PUBLIC_IP
-          value: dkubePubIP
         image: dkubeApiServerImage
         imagePullPolicy: IfNotPresent
         name: main

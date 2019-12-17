@@ -52,38 +52,32 @@ subjects:
 apiVersion: v1
 data:
   config.yaml: |
-    issuer: http://PUB-IP:31534/dex
+    issuer: http://dkube-auth-server.dkube.svc.cluster.local:5556/dex
     storage:
       type: kubernetes
       config:
         inCluster: true
     frontend:
-      logoURL: https://PUB-IP:32222/dex/
+      logoURL: "/dex"
       extra:
-        dkubeUrl: https://PUB-IP:32222/dex/theme/logo.png
-        favUrl: https://PUB-IP:32222/dex/theme/favicon.png
-        mainCss: https://PUB-IP:32222/dex/static/main.css
-        styleCss: https://PUB-IP:32222/dex/theme/styles.css
+        dkubeUrl: "/dex/theme/logo.png"
+        favUrl: "/dex/theme/favicon.png"
+        mainCss: "/dex/static/main.css"
+        styleCss: "/dex/theme/styles.css"
     web:
       http: 0.0.0.0:5556
     telemetry:
       http: 0.0.0.0:5558
     expiry:
-      idTokens: 72h
+      idTokens: "72h"
     staticClients:
     - id: dkube
       redirectURIs:
-      - https://PUB-IP:32222/callback
-      name: Dkube App
+      - '/callback'
+      name: 'Dkube App'
       secret: dkube-secret
-    - id: kubeflow-authservice-oidc
-      redirectURIs:
-      - https://PUB-IP:31390/login/oidc
-      name: Kubeflow App
-      secret: QKQ2ZN6SDavgTBR8JnVpy2a1beiWnLiO
     oauth2:
       skipApprovalScreen: true
-      alwaysShowLoginScreen: true
     enablePasswordDB: true
     staticPasswords:
     - email: L-UNAME
@@ -796,15 +790,13 @@ spec:
     port: 5556
     protocol: TCP
     targetPort: 5556
-    nodePort: 31534
   - name: authn
     port: 3001
     protocol: TCP
     targetPort: 3001
-    nodePort: 30049
   selector:
     app: dkube-auth
-  type: NodePort
+  type: ClusterIP
 ---
 apiVersion: v1
 kind: Service
