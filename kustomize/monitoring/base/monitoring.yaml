@@ -3285,8 +3285,10 @@ spec:
           name: rootfs
         - mountPath: /var/run:rw
           name: run
-        - mountPath: /sys:ro
+        - mountPath: /sys/fs/cgroup/cpuacct,cpu:ro
           name: sys
+        - mountPath: /sys/fs/cgroup/memory:ro
+          name: sys-mem
         - mountPath: /var/lib/docker:rw
           name: docker
       dnsConfig:
@@ -3304,9 +3306,13 @@ spec:
           type: ""
         name: run
       - hostPath:
-          path: /sys
+          path: /sys/fs/cgroup/cpu,cpuacct
           type: ""
         name: sys
+      - hostPath:
+          path: /sys/fs/cgroup/memory
+          type: ""
+        name: sys-mem
       - hostPath:
           path: /var/lib/docker/
           type: ""
