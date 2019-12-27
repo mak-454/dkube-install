@@ -3277,6 +3277,9 @@ spec:
         - containerPort: 8080
           name: http-metrics
           protocol: TCP
+        resources:
+          limits:
+            memory: 2Gi
         volumeMounts:
         - mountPath: /rootfs:ro
           name: rootfs
