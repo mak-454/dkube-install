@@ -1,4 +1,18 @@
 ---
+apiVersion: v1
+data:
+  password: YWRtaW4=
+  user: YWRtaW4=
+kind: Secret
+metadata:
+  labels:
+    app: dkube-prometheus-grafana
+    ksonnet.io/component: monitoring
+  name: kube-prometheus-grafana
+  namespace: dkube
+type: Opaque
+
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
