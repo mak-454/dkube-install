@@ -1,4 +1,63 @@
 ---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+  name: dkube-prometheus-clusterrolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: dkube-prometheus-clusterrole
+subjects:
+- kind: ServiceAccount
+  name: dkube-prometheus
+  namespace: dkube
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: dkube-prometheus-clusterrole
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - nodes
+  - services
+  - endpoints
+  - pods
+  - nodes/proxy
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - get
+- nonResourceURLs:
+  - /metrics
+  verbs:
+  - get
+- apiGroups:
+  - extensions
+  resourceNames:
+  - kube-prometheus-grafana
+  resources:
+  - podsecuritypolicies
+  verbs:
+  - use
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: dkube-prometheus
+  namespace: dkube
+
+---
 apiVersion: v1
 data:
   ds-overview-dashboard.json: |-
@@ -2212,7 +2271,7 @@ data:
       "basicAuth": false,
       "name": "prometheus",
       "type": "prometheus",
-      "url": "http://kube-prometheus:9090"
+      "url": "http://dkube-prometheus:9090"
     }
   training-job-cpu-dashboard.json: |-
     {
@@ -3412,8 +3471,8 @@ spec:
       nodeSelector: NODE_SELECTOR
       restartPolicy: Always
       schedulerName: default-scheduler
-      serviceAccount: kube-prometheus-grafana
-      serviceAccountName: kube-prometheus-grafana
+      serviceAccount: dkube-prometheus
+      serviceAccountName: dkube-prometheus
       terminationGracePeriodSeconds: 30
       volumes:
       - name: grafana-storage
@@ -3425,88 +3484,3 @@ spec:
           defaultMode: 420
           name: dkube-grafana-init
         name: grafana-config
----
-apiVersion: monitoring.coreos.com/v1
-kind: ServiceMonitor
-metadata:
-  labels:
-    app: prometheus
-    app.kubernetes.io/deploy-manager: ksonnet
-    ksonnet.io/component: monitoring
-    prometheus: kube-prometheus
-  name: dkube-log-metric-processor
-  namespace: dkube
-spec:
-  endpoints:
-  - interval: 15s
-    port: dkube-log-metrics
-  jobLabel: k8s-app
-  namespaceSelector:
-    matchNames:
-    - dkube
-  selector:
-    matchLabels:
-      app: dkube-log-processor
----
-apiVersion: monitoring.coreos.com/v1
-kind: ServiceMonitor
-metadata:
-  labels:
-    app: prometheus
-    ksonnet.io/component: monitoring
-    prometheus: kube-prometheus
-  name: dkube-prometheus-exporter-gpu
-  namespace: dkube
-spec:
-  endpoints:
-  - interval: 15s
-    port: http-metrics
-  jobLabel: k8s-app
-  namespaceSelector:
-    matchNames:
-    - dkube
-  selector:
-    matchLabels:
-      app: dkube-gpu-exporter
----
-apiVersion: monitoring.coreos.com/v1
-kind: ServiceMonitor
-metadata:
-  labels:
-    app: prometheus
-    ksonnet.io/component: monitoring
-    prometheus: kube-prometheus
-  name: dkube-prometheus-exporter-pod
-  namespace: dkube
-spec:
-  endpoints:
-  - interval: 15s
-    port: http-metrics
-  jobLabel: k8s-app
-  namespaceSelector:
-    matchNames:
-    - dkube
-  selector:
-    matchLabels:
-      app: dkube-pod-exporter
----
-apiVersion: monitoring.coreos.com/v1
-kind: ServiceMonitor
-metadata:
-  labels:
-    app: prometheus
-    ksonnet.io/component: monitoring
-    prometheus: kube-prometheus
-  name: dkube-storage-exporter
-  namespace: dkube
-spec:
-  endpoints:
-  - interval: 60s
-    port: http-metrics
-  jobLabel: k8s-app
-  namespaceSelector:
-    matchNames:
-    - dkube
-  selector:
-    matchLabels:
-      app: dkube-storage-exporter

@@ -1089,20 +1089,7 @@ metadata:
       use_websocket: true
       prefix: "/dkube/v2/prometheus/api/v1"
       rewrite: "/api/v1"
-      service: "kube-prometheus.dkube:9090"
-      cors:
-       origins: "*"
-       methods: "*"
-       headers: "*"
-      ---
-      apiVersion: ambassador/v0
-      kind:  Mapping
-      name:  "prometheus-alert-manager"
-      timeout_ms: 600000
-      use_websocket: true
-      prefix: "/dkube/v2/prometheus/alertmanager/api/v1"
-      rewrite: "/api/v1"
-      service: "kube-prometheus-alertmanager.dkube:9093"
+      service: "dkube-prometheus.dkube:9090"
       cors:
        origins: "*"
        methods: "*"
