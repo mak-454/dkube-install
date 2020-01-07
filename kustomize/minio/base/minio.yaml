@@ -42,6 +42,28 @@ spec:
     app: minio
   type: NodePort
 ---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: dkube-minio-server
+  namespace: dkube
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - dkube-istio-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /minio/
+    rewrite:
+        uri: /
+    route:
+    - destination:
+        port:
+          number: 9000
+        host: dkube-minio-server
+---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
