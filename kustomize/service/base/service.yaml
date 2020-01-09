@@ -96,302 +96,103 @@ apiVersion: v1
 data:
   fluent.conf: |
     <source>
-      @type tail
-      path /var/log/containers/*.log
-      pos_file /var/log/fluentd-containers-jobs.log.pos
-      time_key time
-      time_format %Y-%m-%dT%H:%M:%S
-      refresh_interval 1s
-      open_on_every_update true
-      enable_stat_watcher false
-      rotate_wait 2
-      tag kubernetes_jobs.*
-      @label @JOBS
-      format json
-      read_from_head true
+     @type tail
+     path /var/log/containers/*.log
+     pos_file /var/log/fluentd-containers-jobs.log.pos
+     time_key time
+     time_format %Y-%m-%dT%H:%M:%S
+     refresh_interval 1s
+     open_on_every_update true
+     enable_stat_watcher false
+     rotate_wait 2
+     tag kubernetes_jobs.*
+     format json
+     read_from_head true
     </source>
-    
-    <source>
-      @type tail
-      path /var/log/containers/*.log
-      pos_file /var/log/fluentd-containers-pl.log.pos
-      time_key time
-      time_format %Y-%m-%dT%H:%M:%S
-      refresh_interval 1s
-      open_on_every_update true
-      enable_stat_watcher false
-      rotate_wait 2
-      tag kubernetes_pl.*
-      @label @PIPELINE
-      format json
-      read_from_head true
-    </source>
-    
-    <source>
-      @type tail
-      path /var/log/containers/*dkube-controller-*.log
-      pos_file /var/log/fluentd-containers-api.log.pos
-      time_key time
-      time_format %Y-%m-%dT%H:%M:%S
-      refresh_interval 1s
-      open_on_every_update true
-      enable_stat_watcher false
-      rotate_wait 2
-      tag kubernetes_apis.*
-      @label @MASTER
-      format json
-      read_from_head true
-    </source>
-    
-    
-    <label @JOBS>
-        #adding kubernetes metadata for accessing labels
-         <filter kubernetes_jobs.**>
-            @type kubernetes_metadata
-        </filter>
-    
-         #collect logs of pod which has label(logger: dkube)
-        <filter kubernetes_jobs.**>
-            @type grep
-            <regexp>
-                key $.kubernetes.labels.logger
-                pattern /^dkube$/
-            </regexp>
-        </filter>
-    
-        <filter kubernetes_jobs.**>
-           @type record_modifier
-           enable_ruby
-           <record>
-               jobname ${record.dig("kubernetes", "labels", "jobname")}
-               username ${record.dig("kubernetes", "labels", "username")}
-               container ${record.dig("kubernetes", "container_name")}
-               message ${record.dig("kubernetes", "labels", "tf-replica-type")}-${record.dig("kubernetes", "labels", "tf-replica-index")}:  ${record.dig("log")}
-               messagefile tfjob ${record.dig("kubernetes", "labels", "tf-replica-type")}-${record.dig("kubernetes", "labels", "tf-replica-index")}: ${record.dig("log")}
-           </record>
-           remove_keys log, stream, docker, kubernetes
-        </filter>
-    
-        <match kubernetes_jobs.**>
-          @type copy
-          #ouput to file
-          <store>
-            @type file
-            path /var/log/dkube/tfjob
-            append true
-            <format>
-              @type single_value
-              message_key messagefile
-              add_newline false
-            </format>
-            <buffer time>
-              @type file
-              timekey 10s
-              timekey_wait 10s
-              timekey_use_utc true
-              chunk_limit_size 256m
-              flush_thread_count 8
-              retry_forever true
-              #retry_max_times 100
-              overflow_action throw_exception
-              retry_type exponential_backoff
-              retry_exponential_backoff_base 2
-              flush_mode immediate
-              flush_at_shutdown true
-              queue_limit_length 10000
-            </buffer>
-          </store>
-          #ouput to s3
-          <store>
-            @type s3
-            aws_key_id dkube
-            aws_sec_key l06dands19s
-            s3_endpoint http://dkube-minio-server.dkube:9000/
-            s3_bucket dkube
-            path system/logs/${username}/${jobname}/${container}
-            s3_object_key_format %{path}/job-log-%{index}.%{file_extension}
-            store_as text
-            force_path_style true
-            <format>
-              @type single_value
-              message_key message
-              add_newline false
-            </format>
-            <buffer username, jobname, container>
-              @type file
-              path /var/log/td-agent/jobs/${username}/${jobname}/${container}
-              timekey 10s            # Flush the accumulated chunks every hour
-              timekey_wait 10s        # Wait for 60 seconds before flushing
-              timekey_use_utc true   # Use this option if you prefer UTC timestamps
-              chunk_limit_size 256m  # The maximum size of each chunk
-              flush_thread_count 8
-              retry_forever true
-              #retry_max_times 100
-              overflow_action throw_exception
-              retry_type exponential_backoff
-              retry_exponential_backoff_base 2
-              flush_mode immediate
-              flush_at_shutdown true
-              queue_limit_length 10000
-            </buffer>
-          </store>
-        </match>
-    </label>
-    
-    
-    <label @PIPELINE>
-        #adding kubernetes metadata for accessing labels
-         <filter kubernetes_pl.**>
-            @type kubernetes_metadata
-        </filter>
-    
-         #collect logs of pod which has label(logger: dkube)
-        <filter kubernetes_pl.**>
-            @type grep
-            <regexp>
-                key $.kubernetes.labels.logger
-                pattern /^dkubepl$/
-            </regexp>
-        </filter>
-    
-        # framing new records
-        <filter kubernetes_pl.**>
-           @type record_modifier
-           enable_ruby
-           <record>
-               podname ${record.dig("kubernetes", "labels", "runid")}
-               wfname ${record.dig("kubernetes", "labels", "workflows_argoproj_io/workflow")}
-               container ${record.dig("kubernetes", "container_name")}
-               messagefile pipeline ${record.dig("kubernetes", "labels", "workflows_argoproj_io/workflow")}-${record.dig("kubernetes", "labels", "runid")}-${record.dig("log")}
-           </record>
-           remove_keys  stream, docker, kubernetes
-        </filter>
-    
-        <match kubernetes_pl.**>
-          @type copy
-          #ouput to file
-          <store>
-            @type file
-            path /var/log/dkube/pipeline
-            append true
-            <format>
-              @type single_value
-              message_key messagefile
-              add_newline false
-            </format>
-            <buffer time>
-              @type file
-              timekey 10s            # Flush the accumulated chunks every hour
-              timekey_wait 10s        # Wait for 60 seconds before flushing
-              timekey_use_utc true   # Use this option if you prefer UTC timestamps
-              chunk_limit_size 256m  # The maximum size of each chunk
-              flush_thread_count 8
-              retry_forever true
-              overflow_action throw_exception
-              retry_type exponential_backoff
-              retry_exponential_backoff_base 2
-              retry_wait 5s
-              flush_mode immediate
-              flush_at_shutdown true
-              queue_limit_length 10000
-            </buffer>
-          </store>
-          #ouput to s3
-          <store>
-            @type s3
-            aws_key_id dkube
-            aws_sec_key l06dands19s
-            s3_endpoint http://dkube-minio-server.dkube:9000/
-            s3_bucket dkube
-            path system/logs/kubeflow/${wfname}/${podname}/${container}
-            s3_object_key_format %{path}/pl-log-%{index}.%{file_extension}
-            store_as text
-            force_path_style true
-            <format>
-              @type single_value
-              message_key log
-              add_newline false
-            </format>
-            <buffer wfname, podname, container>
-              @type file
-              path /var/log/td-agent/pljobs/${wfname}/${podname}/${container}
-              timekey 10s            # Flush the accumulated chunks every hour
-              timekey_wait 10s        # Wait for 60 seconds before flushing
-              timekey_use_utc true   # Use this option if you prefer UTC timestamps
-              chunk_limit_size 256m  # The maximum size of each chunk
-              flush_thread_count 8
-              retry_forever true
-              overflow_action throw_exception
-              retry_type exponential_backoff
-              retry_exponential_backoff_base 2
-              retry_wait 5s
-              flush_mode immediate
-              flush_at_shutdown true
-              queue_limit_length 10000
-            </buffer>
-          </store>
-        </match>
-    </label>
-    
-    <label @MASTER>
-        #adding kubernetes metadata for accessing labels
-         <filter kubernetes_apis.**>
-            @type kubernetes_metadata
-        </filter>
-    
-         #collect logs of pod which has label(logger: dkube)
-        <filter kubernetes_apis.**>
-            @type grep
-            <regexp>
-                key $.kubernetes.labels.app
-                pattern dkube-controller-master
-            </regexp>
-        </filter>
-    
-        <filter kubernetes_apis.**>
-           @type record_modifier
-           enable_ruby
-           <record>
-               message d3system ${record.dig("log")}
-           </record>
-        </filter>
-    
-        <match kubernetes_apis.**>
-          @type copy
-          #ouput to file
-          <store>
-            @type file
-            path /var/log/dkube/controller
-            append true
-            <format>
-              @type single_value
-              message_key message
-              add_newline false
-            </format>
-            <buffer time>
-              @type file
-              timekey 10s
-              timekey_wait 10s
-              timekey_use_utc true
-              chunk_limit_size 256m
-              flush_thread_count 8
-              retry_forever true
-              overflow_action throw_exception
-              retry_type exponential_backoff
-              retry_exponential_backoff_base 2
-              retry_wait 5s
-              flush_mode immediate
-              flush_at_shutdown true
-              queue_limit_length 10000
-            </buffer>
-          </store>
-        </match>
-    </label>
 
+    <filter kubernetes_jobs.**>
+       @type kubernetes_metadata
+    </filter>
+
+    #collecting logs... pod which has labels like logger: dkube (or) logger:dkubepl
+    <filter kubernetes_jobs.**>
+       @type grep
+       <regexp>
+          key $.kubernetes.labels.logger
+          pattern /^dkube/
+       </regexp>
+    </filter>
+
+    <filter kubernetes_jobs.**>
+        @type record_modifier
+        enable_ruby
+        <record>
+          plpath pllauncher
+          training_path jobs
+          #check for training job or pipeline  launcher 
+          jobuuid ${record.dig("kubernetes", "labels", "jobuuid") ? record.dig("kubernetes", "labels", "jobuuid") : record.dig("kubernetes", "labels", "runid") }
+          #check for trail job
+          studyuuid ${record.dig("kubernetes", "labels", "studyuuid")}
+
+          finalid ${record.dig("studyuuid") ? record.dig("studyuuid") : record.dig("jobuuid") }
+
+          #pipeline logs are stroing inside logs/pllauncher and training job logs are stroing inside logs/jobs
+          fpath ${record.dig("kubernetes", "labels", "runid")? record.dig("plpath") : record.dig("training_path")}
+
+          username ${record.dig("kubernetes", "labels", "username") ? record.dig("kubernetes", "labels", "username") : record.dig("kubernetes", "labels", "workflows_argoproj_io/workflow") }
+
+          container ${record.dig("kubernetes", "container_name")}
+
+          #td-replica-type and tf-replica-index are useful in Distributed job
+          training_log ${record.dig("kubernetes", "labels", "tf-replica-type")}-${record.dig("kubernetes", "labels", "tf-replica-index")}:  ${record.dig("log")}
+
+          #for trail jobs logs appending trailjobname to logs
+          trial_log ${record.dig("kubernetes", "labels", "jobname")}:  ${record.dig("training_log")}
+
+          #pod which has studyuuid label considering as trail job
+          final_log ${record.dig("kubernetes", "labels", "studyuuid") ? record.dig("trial_log") : record.dig("training_log")} 
+
+          #for pipeline launcher logs we are not adding extra fields 
+          message ${record.dig("kubernetes", "labels", "runid") ? record.dig("log") : record.dig("final_log") } 
+        </record>
+        #removing unwanted and temp fields
+        remove_keys log, stream, docker, kubernetes, final_log, trial_log, training_log, jobuuid, studyuuid, plpath, training_path
+    </filter>
+
+    <match kubernetes_jobs.**>
+       @type s3
+       aws_key_id dkube
+       aws_sec_key l06dands19s
+       s3_endpoint http://dkube-minio-server.dkube:9000/
+       s3_bucket dkube
+       path system/logs/${fpath}/${username}/${finalid}/${container}
+       s3_object_key_format %{path}/job-log-%{index}.%{file_extension}
+       store_as text
+       force_path_style true
+       <format>
+         @type single_value
+         message_key message
+         add_newline false
+       </format>
+       <buffer username, finalid, container, fpath>
+         @type file
+         path /var/log/td-agent/jobs/${fpath}/${username}/${finalid}/${container}
+         timekey 10s           
+         timekey_wait 10s  
+         timekey_use_utc true  
+         chunk_limit_size 256m
+         flush_thread_count 8
+         retry_forever true
+         overflow_action throw_exception
+         retry_type exponential_backoff
+         retry_exponential_backoff_base 2
+         flush_mode immediate
+         flush_at_shutdown true
+         queue_limit_length 10000
+       </buffer>
+    </match>
 kind: ConfigMap
 metadata:
-  labels:
-    ksonnet.io/component: service
   name: dkube-log-collector
   namespace: dkube
 ---
