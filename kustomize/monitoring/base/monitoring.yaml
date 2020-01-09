@@ -8,7 +8,7 @@ metadata:
   labels:
     app: dkube-prometheus-grafana
     ksonnet.io/component: monitoring
-  name: kube-prometheus-grafana
+  name: dkube-prometheus-grafana
   namespace: dkube
 type: Opaque
 
