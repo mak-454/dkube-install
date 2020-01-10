@@ -150,7 +150,7 @@ apiVersion: v1
 kind: Service
 metadata:
   annotations:
-    prometheus.io/port: "9100"
+    prometheus.io/port: "9111"
     prometheus.io/dkube_scrape: "true"
   labels:
     app: dkube-node-exporter
@@ -159,7 +159,7 @@ metadata:
 spec:
   ports:
   - name: metrics
-    port: 9100
+    port: 9111
     protocol: TCP
     targetPort: metrics
   selector:
@@ -187,15 +187,15 @@ spec:
     spec:
       containers:
       - args:
-        - --web.listen-address=0.0.0.0:9100
+        - --web.listen-address=0.0.0.0:9111
         - --path.procfs=/host/proc
         - --path.sysfs=/host/sys
         image: quay.io/prometheus/node-exporter:v0.15.2
         imagePullPolicy: IfNotPresent
         name: node-exporter
         ports:
-        - containerPort: 9100
-          hostPort: 9100
+        - containerPort: 9111
+          hostPort: 9111
           name: metrics
           protocol: TCP
         resources:
@@ -1309,7 +1309,7 @@ data:
                   "renderer": "flot",
                   "seriesOverrides": [
                     {
-                      "alias": "node_memory_SwapFree{instance=\"172.17.0.1:9100\",job=\"prometheus\"}",
+                      "alias": "node_memory_SwapFree{instance=\"172.17.0.1:9111\",job=\"prometheus\"}",
                       "yaxis": 2
                     }
                   ],
@@ -1517,7 +1517,7 @@ data:
                       "yaxis": 1
                     },
                     {
-                      "alias": "{instance=\"172.17.0.1:9100\"}",
+                      "alias": "{instance=\"172.17.0.1:9111\"}",
                       "yaxis": 2
                     },
                     {
@@ -1864,8 +1864,8 @@ data:
                   {
                     "allValue": null,
                     "current": {
-                      "text": "172.16.0.101:9100",
-                      "value": "172.16.0.101:9100"
+                      "text": "172.16.0.101:9111",
+                      "value": "172.16.0.101:9111"
                     },
                     "datasource": "prometheus",
                     "hide": 2,
