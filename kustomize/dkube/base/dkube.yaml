@@ -158,7 +158,7 @@ spec:
           procMount: Default
           runAsUser: 0
         volumeMounts:
-        - mountPath: /var/lib/docker/containers
+        - mountPath: LOG_PATH
           name: varlibdockercontainers
           readOnly: true
         - mountPath: /fluentd/etc/
@@ -173,7 +173,7 @@ spec:
           procMount: Default
           runAsUser: 0
         volumeMounts:
-        - mountPath: /var/lib/docker/containers
+        - mountPath: LOG_PATH
           name: varlibdockercontainers
           readOnly: true
         - mountPath: /fluentd/etc/
@@ -199,7 +199,7 @@ spec:
           name: dkube-log-collector
         name: dkube-log-collector
       - hostPath:
-          path: /var/lib/docker/containers
+          path: LOG_PATH
         name: varlibdockercontainers
       - configMap:
           defaultMode: 420
@@ -247,7 +247,7 @@ spec:
       - image: dkubeAuthImage
         imagePullPolicy: IfNotPresent
         name: sidecar
-        command: ["bash", "-c", "sleep 30; /opt/dkube/d3"]
+        command: ["bash", "-c", "sleep 30; echo 127.0.0.1 dkube-auth-server.dkube.svc.cluster.local >> /etc/hosts; /opt/dkube/d3"]
         ports:
         - containerPort: 3001
           name: authn
