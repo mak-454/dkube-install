@@ -18,18 +18,6 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  annotations:
-    getambassador.io/config: |
-      ---
-        apiVersion: ambassador/v0
-        kind: Mapping
-        name: dkube_minio
-        prefix: /minio/
-        rewrite: /
-        timeout_ms: 600000
-        service: dkube-minio-server:9000
-  labels:
-    ksonnet.io/component: minio
   name: dkube-minio-server
   namespace: dkube
 spec:
