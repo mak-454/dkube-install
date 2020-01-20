@@ -144,7 +144,11 @@ data:
           container ${record.dig("kubernetes", "container_name")}
 
           #td-replica-type and tf-replica-index are useful in Distributed job
-          training_log ${record.dig("kubernetes", "labels", "tf-replica-type")}-${record.dig("kubernetes", "labels", "tf-replica-index")}:  ${record.dig("log")}
+          temp_log ${record.dig("kubernetes", "labels", "tf-replica-type")}-${record.dig("kubernetes", "labels", "tf-replica-index")}:  ${record.dig("log")}
+        
+          #check for datajob log or training job log
+          training_log ${record.dig("kubernetes", "labels", "tf-replica-type") ? record.dig("temp_log") : record.dig("log")}
+
 
           #for trail jobs logs appending trailjobname to logs
           trial_log ${record.dig("kubernetes", "labels", "jobname")}:  ${record.dig("training_log")}
@@ -156,7 +160,7 @@ data:
           message ${record.dig("kubernetes", "labels", "runid") ? record.dig("log") : record.dig("final_log") } 
         </record>
         #removing unwanted and temp fields
-        remove_keys log, stream, docker, kubernetes, final_log, trial_log, training_log, jobuuid, studyuuid, plpath, training_path
+        remove_keys log, stream, docker, kubernetes, final_log, trial_log, training_log, jobuuid, studyuuid, plpath, training_path, temp_log
     </filter>
 
     <match kubernetes_jobs.**>
