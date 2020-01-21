@@ -673,6 +673,9 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  annotations:
+    prometheus.io/port: "9401"
+    prometheus.io/dkube_scrape: "true"
   labels:
     app: dkube-gpu-exporter
     ksonnet.io/component: service
@@ -691,6 +694,9 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  annotations:
+    prometheus.io/port: "24231"
+    prometheus.io/dkube_scrape: "true"
   labels:
     app: dkube-log-processor
     ksonnet.io/component: service
@@ -759,6 +765,9 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  annotations:
+    prometheus.io/port: "9401"
+    prometheus.io/dkube_scrape: "true"
   labels:
     app: dkube-storage-exporter
     ksonnet.io/component: service
@@ -1047,17 +1056,7 @@ spec:
     - destination:
         port:
           number: 9090
-        host: kube-prometheus.dkube.svc.cluster.local
-  - match:
-    - uri:
-        prefix: /dkube/v2/prometheus/alertmanager/api/v1
-    rewrite:
-        uri: /api/v1
-    route:
-    - destination:
-        port:
-          number: 9093
-        host: kube-prometheus-alertmanager.dkube.svc.cluster.local
+        host: dkube-prometheus.dkube.svc.cluster.local
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
