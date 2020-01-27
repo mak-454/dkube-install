@@ -36,6 +36,11 @@ spec:
           value: nfsBasePath
         - name: DKUBE_APISERVER_ROLE
           value: worker
+        - name: NODENAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: spec.nodeName
         image: dkubeApiServerImage
         imagePullPolicy: IfNotPresent
         name: main
