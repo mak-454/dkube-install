@@ -390,8 +390,6 @@ data:
 
 kind: ConfigMap
 metadata:
-  labels:
-    ksonnet.io/component: service
   name: dkube-log-collector
   namespace: dkube
 ---
@@ -753,32 +751,6 @@ subjects:
 apiVersion: v1
 kind: Service
 metadata:
-  annotations:
-    getambassador.io/config: |-
-      ---
-      apiVersion: ambassador/v0
-      kind:  Mapping
-      name:  d3auth-dex
-      prefix: /dex
-      rewrite: /dex
-      timeout_ms: 600000
-      service: dkube-auth-server:5556
-      ---
-      apiVersion: ambassador/v0
-      kind:  Mapping
-      name:  d3auth-login
-      prefix: /dkube/v2/login
-      rewrite: /login
-      timeout_ms: 600000
-      service: dkube-auth-server:3001
-      ---
-      apiVersion: ambassador/v0
-      kind:  Mapping
-      name:  d3auth-logout
-      prefix: /dkube/v2/logout
-      rewrite: /logout
-      timeout_ms: 600000
-      service: dkube-auth-server:3001
   labels:
     app: d3auth
     ksonnet.io/component: service
@@ -820,18 +792,6 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  annotations:
-    getambassador.io/config: |-
-      ---
-      apiVersion: ambassador/v0
-      kind:  Mapping
-      name:  dkube_d3api
-      prefix: /dkube/v2
-      rewrite: /dkube/v2
-      method_regex: true
-      method: 'POST|PUT|DELETE|OPTIONS'
-      timeout_ms: 600000
-      service: dkube-controller-master:5000
   labels:
     app: dkube-controller-master
     ksonnet.io/component: service
@@ -850,17 +810,6 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  annotations:
-    getambassador.io/config: |-
-      ---
-      apiVersion: ambassador/v0
-      kind:  Mapping
-      name:  dkube_d3api_worker
-      prefix: /dkube/v2
-      rewrite: /dkube/v2
-      method: GET
-      timeout_ms: 600000
-      service: dkube-controller-worker:5000
   labels:
     app: dkube-controller-worker
     ksonnet.io/component: service
@@ -878,18 +827,6 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  annotations:
-    getambassador.io/config: |-
-      ---
-      apiVersion: ambassador/v0
-      kind:  Mapping
-      name:  dkube_etcd
-      prefix: /dkube/v2/etcd/
-      rewrite: /
-      timeout_ms: 600000
-      service: dkube-db-server:2379
-  labels:
-    ksonnet.io/component: service
   name: dkube-db-server
   namespace: dkube
 spec:
@@ -904,22 +841,6 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  annotations:
-    getambassador.io/config: |-
-      ---
-      apiVersion: ambassador/v0
-      kind:  Mapping
-      name:  dkube_docs
-      prefix: /docs
-      rewrite: /docs
-      timeout_ms: 600000
-      service: dkube-docs:8888
-      cors:
-       origins: "*"
-       methods: "*"
-       headers: "*"
-  labels:
-    ksonnet.io/component: service
   name: dkube-docs
   namespace: dkube
 spec:
@@ -935,35 +856,6 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  annotations:
-    getambassador.io/config: |-
-      ---
-      apiVersion: ambassador/v0
-      kind:  Mapping
-      name:  dkube_downloader
-      use_websocket: true
-      prefix: /dkube/v2/ext
-      rewrite: /dkube/v2
-      timeout_ms: 0
-      service: dkube-downloader:9401
-      cors:
-       origins: "*"
-       methods: "*"
-       headers: "*"
-      ---
-      apiVersion: ambassador/v0
-      kind:  Mapping
-      name:  dkubepljobs
-      prefix: /dkube/pipeline/logs/
-      rewrite: /dkube/v2/kubeflow/
-      timeout_ms: 600000
-      service: dkube-downloader:9401
-      cors:
-       origins: "*"
-       methods: "*"
-       headers: "*"
-  labels:
-    ksonnet.io/component: service
   name: dkube-downloader
   namespace: dkube
 spec:
@@ -1020,19 +912,6 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  annotations:
-    getambassador.io/config: |-
-      ---
-      apiVersion: ambassador/v0
-      kind:  Mapping
-      name:  dfabproxy
-      use_websocket: true
-      timeout_ms: 600000
-      prefix: /dkube/v2/operator
-      rewrite: /dkube/v2/operator
-      service: dkube-operator-api-proxy:8000
-  labels:
-    ksonnet.io/component: service
   name: dkube-operator-api-proxy
   namespace: dkube
 spec:
@@ -1049,17 +928,6 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  annotations:
-    getambassador.io/config: |-
-      ---
-      apiVersion: ambassador/v0
-      kind:  Mapping
-      name:  dkube_monitoring
-      prefix: /dkube/grafana/
-      rewrite: /
-      service: dkube-grafana.dkube:80
-      timeout_ms: 600000
-      use_websocket: true
   labels:
     app: dkube-prometheus-grafana
     ksonnet.io/component: service
@@ -1079,120 +947,6 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  annotations:
-    getambassador.io/config: |-
-      ---
-      apiVersion: ambassador/v0
-      kind:  Mapping
-      name:  "prometheus"
-      timeout_ms: 600000
-      use_websocket: true
-      prefix: "/dkube/v2/prometheus/api/v1"
-      rewrite: "/api/v1"
-      service: "dkube-prometheus.dkube:9090"
-      cors:
-       origins: "*"
-       methods: "*"
-       headers: "*"
-  labels:
-    ksonnet.io/component: service
-  name: dkube-prometheus-mapping-service
-  namespace: dkube
-spec:
-  clusterIP: None
-  sessionAffinity: None
-  type: ClusterIP
----
-apiVersion: v1
-kind: Service
-metadata:
-  annotations:
-    getambassador.io/config: |
-      ---
-      apiVersion: ambassador/v0
-      kind: Module
-      name: tls
-      config:
-        server:
-          enabled: True
-          secret: dkube-certificate-secret
-          alpn_protocols: h2
-      ---
-      apiVersion: ambassador/v1
-      kind:  AuthService
-      name:  d3-auth
-      auth_service: dkube-auth-server:3001
-      allowed_request_headers:
-      - "mode"
-      - "d3-license"
-      allowed_authorization_headers:
-      - "d3-uname"
-      - "d3-role"
-  labels:
-    ksonnet.io/component: service
-    service: dkube-proxy
-  name: dkube-proxy
-  namespace: dkube
-spec:
-  externalTrafficPolicy: Cluster
-  ports:
-  - name: ambassador
-    nodePort: 32222
-    port: 443
-    protocol: TCP
-    targetPort: 443
-  selector:
-    service: dkube-proxy
-  type: NodePort
----
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    ksonnet.io/component: service
-    service: dkube-proxy-admin
-  name: dkube-proxy-admin
-  namespace: dkube
-spec:
-  ports:
-  - name: ambassador-admin
-    port: 8877
-    targetPort: 8877
-  selector:
-    service: dkube-proxy
-  type: NodePort
----
-apiVersion: v1
-kind: Service
-metadata:
-  annotations:
-    getambassador.io/config: |-
-      ---
-      apiVersion: ambassador/v0
-      kind:  Mapping
-      name:  dkube_webapp
-      prefix: /inference
-      rewrite: /inference
-      timeout_ms: 600000
-      service: dkube-serving:8000
-      cors:
-       origins: "*"
-       methods: "*"
-       headers: "*"
-      ---
-      apiVersion: ambassador/v0
-      kind:  Mapping
-      name:  dkube_webapp_predict
-      prefix: /predict
-      rewrite: /predict
-      timeout_ms: 600000
-      service: dkube-serving:8000
-      cors:
-       origins: "*"
-       methods: "*"
-       headers: "*"
-  labels:
-    ksonnet.io/component: service
   name: dkube-serving
   namespace: dkube
 spec:
@@ -1229,16 +983,6 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  annotations:
-    getambassador.io/config: |-
-      ---
-      apiVersion: ambassador/v0
-      kind:  Mapping
-      name:  dkube_ui
-      prefix: /
-      rewrite: /
-      service: dkube-ui:3000
-      timeout_ms: 60000
   labels:
     ksonnet.io/component: service
     service: dkube-ui
@@ -1253,71 +997,430 @@ spec:
     app: dkube-ui
   type: ClusterIP
 ---
-apiVersion: v1
-kind: Service
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
 metadata:
-  annotations:
-    getambassador.io/config: |-
-      ---
-      apiVersion: ambassador/v0
-      kind:  Mapping
-      name: argoui-mapping
-      prefix: "/argo/logs/"
-      rewrite: "/api/logs/"
-      timeout_ms: 300000
-      service: "argo-ui.kubeflow:80"
-      use_websocket: true
-  labels:
-    ksonnet.io/component: service
-  name: kf-argo-ui-mapping-service
+  name: dkube-authn
   namespace: dkube
 spec:
-  clusterIP: None
-  sessionAffinity: None
-  type: ClusterIP
+  filters:
+  - filterConfig:
+      httpService:
+        authorizationRequest:
+          allowedHeaders:
+            patterns:
+            - exact: cookie
+            - exact: mode
+            - exact: d3-license
+            - exact: d3-uname
+            - exact: d3-role
+        authorizationResponse:
+          allowedUpstreamHeaders:
+            patterns:
+            - exact: kubeflow-userid
+            - exact: mode
+            - exact: d3-license
+            - exact: d3-uname
+            - exact: d3-role
+        serverUri:
+          cluster: outbound|3001||dkube-auth-server.dkube.svc.cluster.local
+          failureModeAllow: false
+          timeout: 10s
+          uri: http://dkube-auth-server.dkube.svc.cluster.local
+      statusOnError:
+        code: GatewayTimeout
+    filterName: envoy.ext_authz
+    filterType: HTTP
+    insertPosition:
+      index: FIRST
+    listenerMatch:
+      listenerType: GATEWAY
+  workloadLabels:
+    dkube: ingressgateway
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  annotations:
-    getambassador.io/config: |-
-      ---
-      apiVersion: ambassador/v0
-      kind:  Mapping
-      name:  "katib"
-      timeout_ms: 600000
-      use_websocket: true
-      prefix: "/katib"
-      rewrite: "/katib"
-      service: "katib-ui.kubeflow:80"
-  labels:
-    ksonnet.io/component: service
-  name: kf-katib-mapping-service
+  name: dkube-proxy
   namespace: dkube
+  labels:
+    dkube: ingressgateway
 spec:
-  clusterIP: None
-  sessionAffinity: None
-  type: ClusterIP
+  type: LoadBalancer
+  selector:
+    dkube: ingressgateway
+  ports:
+    -
+      name: https
+      nodePort: 32222
+      port: 443
 ---
-apiVersion: v1
-kind: Service
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
 metadata:
-  annotations:
-    getambassador.io/config: |-
-      ---
-      apiVersion: ambassador/v0
-      kind:  Mapping
-      name: pipelineui-mapping
-      prefix: /pipeline
-      rewrite: /pipeline
-      timeout_ms: 300000
-      service: ml-pipeline-ui.kubeflow
-      use_websocket: true
-  labels:
-    app: ml-pipeline-ui
-    ksonnet.io/component: service
-  name: kf-pipeline-ui-mapping-service
+  name: dkube-istio-gateway
   namespace: dkube
 spec:
-  clusterIP: None
-  type: ClusterIP
+  selector:
+    dkube: ingressgateway
+  servers:
+  - port:
+      number: 443
+      name: https
+      protocol: HTTPS
+    tls:
+      mode: SIMPLE
+      serverCertificate: /etc/istio/ingressgateway-certs/tls.crt
+      privateKey: /etc/istio/ingressgateway-certs/tls.key
+    hosts:
+    - "*"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: dkube-auth-server
+  namespace: dkube
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - dkube-istio-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /dex
+    route:
+    - destination:
+        port:
+          number: 5556
+        host: dkube-auth-server
+  - match:
+    - uri:
+        prefix: /dkube/v2/login
+    rewrite:
+        uri: /login
+    route:
+    - destination:
+        port:
+          number: 3001
+        host: dkube-auth-server
+  - match:
+    - uri:
+        prefix: /dkube/v2/logout
+    rewrite:
+        uri: /logout
+    route:
+    - destination:
+        port:
+          number: 3001
+        host: dkube-auth-server
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: dkube-db-server
+  namespace: dkube
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - dkube-istio-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /dkube/v2/etcd/
+    rewrite:
+        uri: /
+    route:
+    - destination:
+        port:
+          number: 2379
+        host: dkube-db-server
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: dkube-docs
+  namespace: dkube
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - dkube-istio-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /docs
+    rewrite:
+        uri: /docs
+    route:
+    - destination:
+        port:
+          number: 8888
+        host: dkube-docs
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: dkube-downloader
+  namespace: dkube
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - dkube-istio-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /dkube/v2/ext
+    rewrite:
+        uri: /dkube/v2
+    route:
+    - destination:
+        port:
+          number: 9401
+        host: dkube-downloader
+  - match:
+    - uri:
+        prefix: /dkube/pipeline/logs/
+    rewrite:
+        uri: /dkube/v2/kubeflow/
+    route:
+    - destination:
+        port:
+          number: 9401
+        host: dkube-downloader
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: dkube-operator-api-proxy
+  namespace: dkube
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - dkube-istio-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /dkube/v2/operator
+    route:
+    - destination:
+        port:
+          number: 8000
+        host: dkube-operator-api-proxy
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: dkube-prometheus-grafana
+  namespace: dkube
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - dkube-istio-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /dkube/grafana/
+    rewrite:
+        uri: /
+    route:
+    - destination:
+        port:
+          number: 80
+        host: dkube-grafana
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: dkube-prometheus
+  namespace: dkube
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - dkube-istio-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /dkube/v2/prometheus/api/v1
+    rewrite:
+        uri: /api/v1
+    route:
+    - destination:
+        port:
+          number: 9090
+        host: dkube-prometheus.dkube.svc.cluster.local
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: dkube-serving
+  namespace: dkube
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - dkube-istio-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /inference
+    route:
+    - destination:
+        port:
+          number: 8000
+        host: dkube-serving
+  - match:
+    - uri:
+        prefix: /predict
+    route:
+    - destination:
+        port:
+          number: 8000
+        host: dkube-serving
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: dkube-ui
+  namespace: dkube
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - dkube-istio-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        port:
+          number: 3000
+        host: dkube-ui
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: kf-argo-ui
+  namespace: dkube
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - dkube-istio-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /argo/logs/
+    rewrite:
+        uri: /api/logs/
+    route:
+    - destination:
+        port:
+          number: 80
+        host: argo-ui.kubeflow.svc.cluster.local
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: kf-katib
+  namespace: dkube
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - dkube-istio-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /katib
+    route:
+    - destination:
+        port:
+          number: 80
+        host: katib-ui.kubeflow.svc.cluster.local
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: kf-pipeline-ui
+  namespace: dkube
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - dkube-istio-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /pipeline
+    route:
+    - destination:
+        port:
+          number: 80
+        host: ml-pipeline-ui.kubeflow.svc.cluster.local
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: dkube-installer
+  namespace: dkube
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - dkube-istio-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /installer
+    rewrite:
+        uri: /ui
+    route:
+    - destination:
+        port:
+          number: 8888
+        host: dkube-installer-service
+  - match:
+    - uri:
+        prefix: /report
+    route:
+    - destination:
+        port:
+          number: 8888
+        host: dkube-installer-service
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: dkube-controller
+  namespace: dkube
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - dkube-istio-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /dkube/v2/controller
+      method:
+        exact: GET
+    route:
+    - destination:
+        port:
+          number: 5000
+        host: dkube-controller-worker
+  - match:
+    - uri:
+        prefix: /dkube/v2/controller
+    route:
+    - destination:
+        port:
+          number: 5000
+        host: dkube-controller-master
