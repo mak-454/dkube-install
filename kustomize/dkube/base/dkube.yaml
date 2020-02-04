@@ -34,6 +34,8 @@ spec:
           value: nfsServer
         - name: NFS_BASE_PATH
           value: nfsBasePath
+        - name: CEPH_SERVER
+          value: 'cephServer'
         - name: DKUBE_APISERVER_ROLE
           value: worker
         image: dkubeApiServerImage
@@ -74,13 +76,19 @@ spec:
       serviceAccountName: dkube
       volumes:
       - name: store
-        nfs:
-          path: nfsBasePath/dkube
-          server: nfsServer
+        cephfs:
+          monitors: cephServer
+          path: /dkube
+          user: admin
+          secretRef:
+            name: ceph-secret
       - name: dkube-logs
-        nfs:
-          path: nfsBasePath/dkube/system/logs/dkube
-          server: nfsServer
+        cephfs:
+          monitors: cephServer
+          path: /dkube/system/logs/dkube
+          user: admin
+          secretRef:
+            name: ceph-secret
       - hostPath:
           path: /var/run/docker.sock
         name: docker
@@ -268,9 +276,12 @@ spec:
           name: dkube-auth-config
         name: auth-cm
       - name: dkube-logs
-        nfs:
-          path: nfsBasePath/dkube/system/logs/dkube
-          server: nfsServer
+        cephfs:
+          monitors: cephServer
+          path: /dkube/system/logs/dkube
+          user: admin
+          secretRef:
+            name: ceph-secret
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -490,9 +501,12 @@ spec:
       terminationGracePeriodSeconds: 30
       volumes:
       - name: storage
-        nfs:
-          path: nfsBasePath/
-          server: nfsServer
+        cephfs:
+          monitors: cephServer
+          path: /
+          user: admin
+          secretRef:
+            name: ceph-secret
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -583,8 +597,15 @@ spec:
           value: nfsServer
         - name: NFS_BASE_PATH
           value: nfsBasePath
+        - name: CEPH_SERVER
+          value: 'cephServer'
         - name: DKUBE_APISERVER_ROLE
           value: master
+        - name: CEPH_KEYRING
+          valueFrom:
+            secretKeyRef:
+              name: rook-ceph-admin-keyring
+              key: keyring
         image: dkubeApiServerImage
         imagePullPolicy: IfNotPresent
         name: main
@@ -618,13 +639,19 @@ spec:
       serviceAccountName: dkube
       volumes:
       - name: store
-        nfs:
-          path: nfsBasePath/dkube
-          server: nfsServer
+        cephfs:
+          monitors: cephServer
+          path: /dkube
+          user: admin
+          secretRef:
+            name: ceph-secret
       - name: dkube-logs
-        nfs:
-          path: nfsBasePath/dkube/system/logs/dkube
-          server: nfsServer
+        cephfs:
+          monitors: cephServer
+          path: /dkube/system/logs/dkube
+          user: admin
+          secretRef:
+            name: ceph-secret
       - hostPath:
           path: /var/run/docker.sock
         name: docker
