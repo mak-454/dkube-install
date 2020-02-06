@@ -898,8 +898,7 @@ spec:
     protocol: TCP
     targetPort: 2379
   selector:
-    app: etcd
-    etcd_cluster: etcd-cluster
+    app: dkube-db-server
   type: ClusterIP
 ---
 apiVersion: v1
