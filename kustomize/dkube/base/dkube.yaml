@@ -36,6 +36,11 @@ spec:
           value: nfsBasePath
         - name: CEPH_SERVER
           value: 'cephServer'
+        - name: CEPH_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: ceph-secret
+              key: key
         - name: DKUBE_APISERVER_ROLE
           value: worker
         image: dkubeApiServerImage
@@ -601,11 +606,11 @@ spec:
           value: 'cephServer'
         - name: DKUBE_APISERVER_ROLE
           value: master
-        - name: CEPH_KEYRING
+        - name: CEPH_SECRET
           valueFrom:
             secretKeyRef:
-              name: rook-ceph-admin-keyring
-              key: keyring
+              name: ceph-secret
+              key: key
         image: dkubeApiServerImage
         imagePullPolicy: IfNotPresent
         name: main
