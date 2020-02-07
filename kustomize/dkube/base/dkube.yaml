@@ -134,6 +134,7 @@ spec:
         volumeMounts:
         - mountPath: /usr/local/nvidia/lib64
           name: nvidia-lib
+      serviceAccountName: dkube
       dnsConfig:
         options:
         - name: single-request-reopen
