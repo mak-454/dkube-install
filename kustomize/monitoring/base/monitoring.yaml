@@ -3836,43 +3836,13 @@ spec:
         - containerPort: 8080
           name: http-metrics
           protocol: TCP
-        volumeMounts:
-        - mountPath: /rootfs:ro
-          name: rootfs
-        - mountPath: /var/run:rw
-          name: run
-        - mountPath: /sys/fs/cgroup/cpuacct,cpu:ro
-          name: sys
-        - mountPath: /sys/fs/cgroup/memory:ro
-          name: sys-mem
-        - mountPath: /var/lib/docker:rw
-          name: docker
+        volumeMounts: cadvVolumeMounts
       dnsConfig:
         options:
         - name: single-request-reopen
         - name: timeout
           value: "30"
-      volumes:
-      - hostPath:
-          path: /
-          type: ""
-        name: rootfs
-      - hostPath:
-          path: /var/run
-          type: ""
-        name: run
-      - hostPath:
-          path: /sys/fs/cgroup/cpu,cpuacct
-          type: ""
-        name: sys
-      - hostPath:
-          path: /sys/fs/cgroup/memory
-          type: ""
-        name: sys-mem
-      - hostPath:
-          path: /var/lib/docker/
-          type: ""
-        name: docker
+      volumes: cadvVolumes
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
