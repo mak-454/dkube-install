@@ -36,6 +36,10 @@ spec:
           value: nfsBasePath
         - name: DKUBE_APISERVER_ROLE
           value: worker
+        - name: DKUBE_CLUSTER
+          value: dkubeClusterType
+        - name: MODEL_REGISTRY
+          value: modelRegistry
         image: dkubeApiServerImage
         imagePullPolicy: IfNotPresent
         name: main
@@ -532,6 +536,10 @@ spec:
           value: nfsBasePath
         - name: DKUBE_APISERVER_ROLE
           value: master
+        - name: DKUBE_CLUSTER
+          value: dkubeClusterType
+        - name: MODEL_REGISTRY
+          value: modelRegistry
         image: dkubeApiServerImage
         imagePullPolicy: IfNotPresent
         name: main
