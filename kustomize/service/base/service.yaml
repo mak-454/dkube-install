@@ -178,7 +178,7 @@ data:
          message_key message
          add_newline false
        </format>
-       <buffer username, finalid, container, fpath>
+       <buffer time, username, finalid, container, fpath>
          @type file
          path /var/log/td-agent/jobs/${fpath}/${username}/${finalid}/${container}
          timekey 10s           
@@ -188,8 +188,8 @@ data:
          flush_thread_count 8
          retry_forever true
          overflow_action throw_exception
-         retry_type exponential_backoff
-         retry_exponential_backoff_base 2
+         retry_type periodic
+         retry_wait 10s
          flush_mode immediate
          flush_at_shutdown true
          queue_limit_length 10000
