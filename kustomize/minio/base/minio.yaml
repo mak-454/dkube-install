@@ -18,18 +18,6 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  annotations:
-    getambassador.io/config: |
-      ---
-        apiVersion: ambassador/v0
-        kind: Mapping
-        name: dkube_minio
-        prefix: /minio/
-        rewrite: /
-        timeout_ms: 600000
-        service: dkube-minio-server:9000
-  labels:
-    ksonnet.io/component: minio
   name: dkube-minio-server
   namespace: dkube
 spec:
@@ -41,6 +29,28 @@ spec:
   selector:
     app: minio
   type: NodePort
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: dkube-minio-server
+  namespace: dkube
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - dkube-istio-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /minio/
+    rewrite:
+        uri: /
+    route:
+    - destination:
+        port:
+          number: 9000
+        host: dkube-minio-server
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
