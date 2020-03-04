@@ -128,6 +128,8 @@ spec:
         volumeMounts:
         - mountPath: /usr/local/nvidia/lib64
           name: nvidia-lib
+        - mountPath: /var/run/docker.sock
+          name: docker
       serviceAccountName: dkube
       dnsConfig:
         options:
@@ -140,6 +142,10 @@ spec:
       - hostPath:
           path: /usr/lib64/nvidia
         name: nvidia-lib
+      - hostPath:
+          path: /var/run/docker.sock
+        name: docker
+
 ---
 apiVersion: extensions/v1beta1
 kind: DaemonSet
@@ -166,7 +172,7 @@ spec:
           procMount: Default
           runAsUser: 0
         volumeMounts:
-        - mountPath: /var/lib/docker/containers
+        - mountPath: LOG_PATH
           name: varlibdockercontainers
           readOnly: true
         - mountPath: /fluentd/etc/
@@ -181,7 +187,7 @@ spec:
           procMount: Default
           runAsUser: 0
         volumeMounts:
-        - mountPath: /var/lib/docker/containers
+        - mountPath: LOG_PATH
           name: varlibdockercontainers
           readOnly: true
         - mountPath: /fluentd/etc/
@@ -207,7 +213,7 @@ spec:
           name: dkube-log-collector
         name: dkube-log-collector
       - hostPath:
-          path: /var/lib/docker/containers
+          path: LOG_PATH
         name: varlibdockercontainers
       - configMap:
           defaultMode: 420
