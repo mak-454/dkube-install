@@ -125,14 +125,13 @@ spec:
         image: dkubeExtImage
         imagePullPolicy: IfNotPresent
         name: main
-        securityContext:
-          runAsUser: 0
         ports:
         - containerPort: 9401
           name: http-metrics
           protocol: TCP
         securityContext:
           privileged: true
+          runAsUser: 0
         volumeMounts:
         - mountPath: /usr/local/nvidia/lib64
           name: nvidia-lib
