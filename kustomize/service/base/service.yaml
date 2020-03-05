@@ -52,7 +52,7 @@ subjects:
 apiVersion: v1
 data:
   config.yaml: |
-    issuer: http://dkube-auth-server.dkube.svc.cluster.local:5556/dex
+    issuer: http://localhost:5556/dex
     storage:
       type: kubernetes
       config:

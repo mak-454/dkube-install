@@ -12,8 +12,8 @@ spec:
   resources:
     requests:
       storage: 75Gi
-  storageClassName: StorageClass
-  volumeName: StoragePV
+  storageClassName: ""
+  volumeName: dkube-minio-pv
 ---
 apiVersion: v1
 kind: Service
