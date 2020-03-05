@@ -804,6 +804,28 @@ spec:
     app: dkube-ui
   type: ClusterIP
 ---
+apiVersion: authentication.istio.io/v1alpha1
+kind: MeshPolicy
+metadata:
+  labels:
+    app: security
+    chart: security
+    heritage: Tiller
+    release: istio
+  name: default
+spec:
+  origins:
+  - jwt:
+      issuer: DKube
+      jwksUri: http://dkube-auth-server.dkube.svc.cluster.local:3001/keys
+  - jwt:
+      issuer: http://dkube-auth-server.dkube.svc.cluster.local:5556/dex
+      jwksUri: http://dkube-auth-server.dkube.svc.cluster.local:5556/dex/keys
+  peers:
+  - mtls:
+      mode: PERMISSIVE
+  principalBinding: USE_ORIGIN
+---
 apiVersion: networking.istio.io/v1alpha3
 kind: EnvoyFilter
 metadata:
