@@ -1231,3 +1231,12 @@ spec:
         port:
           number: 5000
         host: dkube-controller-master
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dkube-minio-server
+  namespace: dkube
+spec:
+  externalName: dkube-minio-server.dkube-infra.svc.cluster.local
+  type: ExternalName
