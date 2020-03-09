@@ -85,19 +85,13 @@ spec:
       serviceAccountName: dkube
       volumes:
       - name: store
-        cephfs:
-          monitors: cephMonitors
-          path: /dkube
-          user: admin
-          secretRef:
-            name: ceph-secret
+        nfs:
+          path: nfsBasePath/dkube
+          server: nfsServer
       - name: dkube-logs
-        cephfs:
-          monitors: cephMonitors
-          path: /dkube/system/logs/dkube
-          user: admin
-          secretRef:
-            name: ceph-secret
+        nfs:
+          path: nfsBasePath/dkube/system/logs/dkube
+          server: nfsServer
       - hostPath:
           path: /var/run/docker.sock
         name: docker
@@ -293,12 +287,9 @@ spec:
           name: dkube-auth-config
         name: auth-cm
       - name: dkube-logs
-        cephfs:
-          monitors: cephMonitors
-          path: /dkube/system/logs/dkube
-          user: admin
-          secretRef:
-            name: ceph-secret
+        nfs:
+          path: nfsBasePath/dkube/system/logs/dkube
+          server: nfsServer
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -465,12 +456,9 @@ spec:
       terminationGracePeriodSeconds: 30
       volumes:
       - name: storage
-        cephfs:
-          monitors: cephMonitors
-          path: /
-          user: admin
-          secretRef:
-            name: ceph-secret
+        nfs:
+          path: nfsBasePath/
+          server: nfsServer
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -607,19 +595,13 @@ spec:
       serviceAccountName: dkube
       volumes:
       - name: store
-        cephfs:
-          monitors: cephMonitors
-          path: /dkube
-          user: admin
-          secretRef:
-            name: ceph-secret
+        nfs:
+          path: nfsBasePath/dkube
+          server: nfsServer
       - name: dkube-logs
-        cephfs:
-          monitors: cephMonitors
-          path: /dkube/system/logs/dkube
-          user: admin
-          secretRef:
-            name: ceph-secret
+        nfs:
+          path: nfsBasePath/dkube/system/logs/dkube
+          server: nfsServer
       - hostPath:
           path: /var/run/docker.sock
         name: docker
