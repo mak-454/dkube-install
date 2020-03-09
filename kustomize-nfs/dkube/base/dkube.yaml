@@ -43,6 +43,10 @@ spec:
               key: DKUBE_STORAGE_PROVIDER
         - name: DKUBE_APISERVER_ROLE
           value: worker
+        - name: DKUBE_CLUSTER
+          value: dkubeClusterType
+        - name: MODEL_REGISTRY
+          value: modelRegistry
         image: dkubeApiServerImage
         imagePullPolicy: IfNotPresent
         name: main
@@ -554,6 +558,10 @@ spec:
             configMapKeyRef:
               name: dkube-installer
               key: DKUBE_STORAGE_PROVIDER
+        - name: DKUBE_CLUSTER
+          value: dkubeClusterType
+        - name: MODEL_REGISTRY
+          value: modelRegistry
         image: dkubeApiServerImage
         imagePullPolicy: IfNotPresent
         name: main
