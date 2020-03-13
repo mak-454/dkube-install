@@ -113,6 +113,8 @@ spec:
       labels:
         app: dkube-ext
     spec:
+      nodeSelector:
+        dkube.ai/gpu-accelerator: true
       containers:
       - env:
         - name: MYNODENAME
