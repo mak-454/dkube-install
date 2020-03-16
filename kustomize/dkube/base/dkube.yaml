@@ -119,8 +119,13 @@ spec:
       labels:
         app: dkube-ext
     spec:
-      nodeSelector:
-        dkube.ai/gpu-accelerator: "true"
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: Accelerator
+                operator: Exists
       containers:
       - env:
         - name: MYNODENAME
