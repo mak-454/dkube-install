@@ -698,27 +698,6 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  annotations:
-    prometheus.io/port: "24231"
-    prometheus.io/dkube_scrape: "true"
-  labels:
-    app: dkube-log-processor
-    ksonnet.io/component: service
-  name: dkube-log-processor
-  namespace: dkube
-spec:
-  ports:
-  - name: dkube-log-metrics
-    port: 24231
-    protocol: TCP
-    targetPort: 24231
-  selector:
-    k8s-app: dkube-metric-collector
-  type: ClusterIP
----
-apiVersion: v1
-kind: Service
-metadata:
   name: dkube-operator-api-proxy
   namespace: dkube
 spec:
@@ -731,6 +710,25 @@ spec:
     app: dkube-operator-proxy
   sessionAffinity: None
   type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    prometheus.io/dkube_scrape: "true"
+    prometheus.io/port: "9401"
+  labels:
+    app: dkube-pushgateway
+  name: dkube-metrics-pushgateway
+  namespace: dkube
+spec:
+  ports:
+  - name: http-metrics
+    port: 9401
+    protocol: TCP
+    targetPort: 9401
+  selector:
+    app: dkube-pushgateway
 ---
 apiVersion: v1
 kind: Service
