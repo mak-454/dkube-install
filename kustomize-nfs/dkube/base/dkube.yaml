@@ -114,7 +114,7 @@ spec:
         app: dkube-ext
     spec:
       nodeSelector:
-        dkube.ai/gpu-accelerator: true
+        dkube.ai/gpu-accelerator: "true"
       containers:
       - env:
         - name: MYNODENAME
