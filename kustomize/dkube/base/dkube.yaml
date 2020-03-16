@@ -84,14 +84,14 @@ spec:
         cephfs:
           monitors: cephMonitors
           path: /dkube
-          user: admin
+          user: cephUser
           secretRef:
             name: ceph-secret
       - name: dkube-logs
         cephfs:
           monitors: cephMonitors
           path: /dkube/system/logs/dkube
-          user: admin
+          user: cephUser
           secretRef:
             name: ceph-secret
       - hostPath:
@@ -285,7 +285,7 @@ spec:
         cephfs:
           monitors: cephMonitors
           path: /dkube/system/logs/dkube
-          user: admin
+          user: cephUser
           secretRef:
             name: ceph-secret
 ---
@@ -510,7 +510,7 @@ spec:
         cephfs:
           monitors: cephMonitors
           path: /
-          user: admin
+          user: cephUser
           secretRef:
             name: ceph-secret
 ---
@@ -648,14 +648,14 @@ spec:
         cephfs:
           monitors: cephMonitors
           path: /dkube
-          user: admin
+          user: cephUser
           secretRef:
             name: ceph-secret
       - name: dkube-logs
         cephfs:
           monitors: cephMonitors
           path: /dkube/system/logs/dkube
-          user: admin
+          user: cephUser
           secretRef:
             name: ceph-secret
       - hostPath:
