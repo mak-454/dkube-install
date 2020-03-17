@@ -166,7 +166,7 @@ spec:
           procMount: Default
           runAsUser: 0
         volumeMounts:
-        - mountPath: /var/lib/docker/containers
+        - mountPath: LOG_PATH
           name: varlibdockercontainers
           readOnly: true
         - mountPath: /fluentd/etc/
@@ -181,7 +181,7 @@ spec:
           procMount: Default
           runAsUser: 0
         volumeMounts:
-        - mountPath: /var/lib/docker/containers
+        - mountPath: LOG_PATH
           name: varlibdockercontainers
           readOnly: true
         - mountPath: /fluentd/etc/
@@ -207,7 +207,7 @@ spec:
           name: dkube-log-collector
         name: dkube-log-collector
       - hostPath:
-          path: /var/lib/docker/containers
+          path: LOG_PATH
         name: varlibdockercontainers
       - configMap:
           defaultMode: 420
