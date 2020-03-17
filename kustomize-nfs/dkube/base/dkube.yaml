@@ -373,7 +373,7 @@ kind: Deployment
 metadata:
   labels:
     app: dkube-pushgateway
-  name: dkube-metric-pushgateway-verTag
+  name: dkube-metrics-pushgateway-verTag
   namespace: dkube
 spec:
   replicas: 1
