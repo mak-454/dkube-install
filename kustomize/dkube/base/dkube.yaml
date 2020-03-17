@@ -178,7 +178,6 @@ spec:
       app: dkube-pushgateway
   template:
     metadata:
-      creationTimestamp: null
       labels:
         app: dkube-pushgateway
     spec:
