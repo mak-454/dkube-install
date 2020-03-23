@@ -804,6 +804,62 @@ spec:
     app: dkube-ui
   type: ClusterIP
 ---
+apiVersion: authentication.istio.io/v1alpha1
+kind: MeshPolicy
+metadata:
+  labels:
+    app: security
+    chart: security
+    heritage: Tiller
+    release: istio
+  name: default
+spec:
+  originIsOptional: false
+  origins:
+  - jwt:
+      issuer: http://localhost:5556/dex
+      jwksUri: http://dkube-auth-server.dkube.svc.cluster.local:5556/dex/keys
+      triggerRules:
+      - excludedPaths:
+        - exact: /
+        - prefix: /dex
+        - prefix: /pipeline
+        - prefix: /dkube/pipeline
+        - prefix: /static
+        - prefix: /callback
+        - prefix: /favicon
+        - prefix: /dkube/v2/login
+        - prefix: /dkube/v2/ext
+        - prefix: /dkube/v2/etcd
+        - prefix: /dkube/v2/prometheus
+        - prefix: /dkube/v2/controller/dlsupport
+        - prefix: /dkube/v2/controller/notify
+        - prefix: /dkube/v2/controller/init
+        - prefix: /dkube/v2/controller/dkubeinfo
+        - suffix: /custom
+  - jwt:
+      issuer: DKube
+      jwksUri: http://dkube-auth-server.dkube.svc.cluster.local:3001/keys
+      triggerRules:
+      - excludedPaths:
+        - exact: /
+        - prefix: /dex
+        - prefix: /pipeline
+        - prefix: /dkube/pipeline
+        - prefix: /static
+        - prefix: /callback
+        - prefix: /favicon
+        - prefix: /dkube/v2/login
+        - prefix: /dkube/v2/ext
+        - prefix: /dkube/v2/etcd
+        - prefix: /dkube/v2/prometheus
+        - prefix: /dkube/v2/controller/dlsupport
+        - prefix: /dkube/v2/controller/notify
+        - prefix: /dkube/v2/controller/init
+        - prefix: /dkube/v2/controller/dkubeinfo
+        - suffix: /custom
+  principalBinding: USE_ORIGIN
+---
 apiVersion: networking.istio.io/v1alpha3
 kind: EnvoyFilter
 metadata:
