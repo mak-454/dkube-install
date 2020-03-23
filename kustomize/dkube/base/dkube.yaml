@@ -131,9 +131,12 @@ spec:
           protocol: TCP
         securityContext:
           privileged: true
+          runAsUser: 0
         volumeMounts:
         - mountPath: /usr/local/nvidia/lib64
           name: nvidia-lib
+        - mountPath: /var/run/docker.sock
+          name: docker
       serviceAccountName: dkube
       dnsConfig:
         options:
@@ -146,6 +149,10 @@ spec:
       - hostPath:
           path: /usr/lib64/nvidia
         name: nvidia-lib
+      - hostPath:
+          path: /var/run/docker.sock
+        name: docker
+
 ---
 apiVersion: extensions/v1beta1
 kind: DaemonSet
