@@ -273,6 +273,9 @@ spec:
         imagePullPolicy: IfNotPresent
         name: sidecar
         command: ["bash", "-c", "sleep 30; /opt/dkube/d3"]
+        env:
+        - name: DKUBE_CLUSTER
+          value: dkubeClusterType
         ports:
         - containerPort: 3001
           name: authn
