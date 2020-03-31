@@ -118,10 +118,10 @@ spec:
         - --configmap
         - dkube-workflow-controller-configmap
         - --executor-image
-        - argoproj/argoexec:v2.3.0
+        - argoImage
         command:
         - workflow-controller
-        image: argoproj/workflow-controller:v2.3.0
+        image: workflowImage
         name: workflow-controller
       dnsConfig:
         options:
