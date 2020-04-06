@@ -829,6 +829,7 @@ spec:
         - prefix: /callback
         - prefix: /favicon
         - prefix: /dkube/v2/login
+        - prefix: /dkube/v2/logout
         - prefix: /dkube/v2/ext
         - prefix: /dkube/v2/etcd
         - prefix: /dkube/v2/prometheus
@@ -851,6 +852,7 @@ spec:
         - prefix: /callback
         - prefix: /favicon
         - prefix: /dkube/v2/login
+        - prefix: /dkube/v2/logout
         - prefix: /dkube/v2/ext
         - prefix: /dkube/v2/etcd
         - prefix: /dkube/v2/prometheus
