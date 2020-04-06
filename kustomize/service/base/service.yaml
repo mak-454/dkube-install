@@ -838,7 +838,7 @@ spec:
         - prefix: /dkube/v2/controller/init
         - prefix: /dkube/v2/controller/dkubeinfo
         - suffix: /custom
-        - regex: .*/nb/.*|.*/nb/lab.*|.*/tb/.*|.*/inference|.*/font-roboto/.*|.*/installer|.*/report|.*/katib.*|.*/rs.*|.*/docs/.*
+        - regex: .*/nb/.*|.*/nb/lab.*|.*/tb/.*|.*/inference|.*/font-roboto/.*|.*/installer|.*/report|.*/katib.*|.*/rs.*|.*/docs/.*|.*/healthz
   - jwt:
       issuer: DKube
       jwksUri: http://dkube-auth-server.dkube.svc.cluster.local:3001/keys
@@ -861,7 +861,7 @@ spec:
         - prefix: /dkube/v2/controller/init
         - prefix: /dkube/v2/controller/dkubeinfo
         - suffix: /custom
-        - regex: .*/nb/.*|.*/nb/lab.*|.*/tb/.*|.*/inference|.*/font-roboto/.*|.*/installer|.*/report|.*/katib.*|.*/rs.*|.*/docs/.*
+        - regex: .*/nb/.*|.*/nb/lab.*|.*/tb/.*|.*/inference|.*/font-roboto/.*|.*/installer|.*/report|.*/katib.*|.*/rs.*|.*/docs/.*|.*/healthz
   principalBinding: USE_ORIGIN
 ---
 apiVersion: networking.istio.io/v1alpha3
