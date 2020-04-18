@@ -787,39 +787,6 @@ spec:
     app: dkube-storage-exporter
   type: ClusterIP
 ---
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    ksonnet.io/component: service
-    service: dkube-ui
-  name: dkube-ui
-  namespace: dkube
-spec:
-  ports:
-  - name: ui
-    port: 3000
-    targetPort: 3000
-  selector:
-    app: dkube-ui
-  type: ClusterIP
----
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    service: dkube-ui-serving
-  name: dkube-ui-serving
-  namespace: dkube
-spec:
-  ports:
-  - name: ui
-    port: 3000
-    targetPort: 3000
-  selector:
-    app: dkube-ui-serving
-  type: ClusterIP
----
 apiVersion: authentication.istio.io/v1alpha1
 kind: MeshPolicy
 metadata:
@@ -1167,34 +1134,6 @@ spec:
         port:
           number: 8000
         host: dkube-serving
----
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: dkube-ui
-  namespace: dkube
-spec:
-  hosts:
-  - "*"
-  gateways:
-  - dkube-istio-gateway
-  http:
-  - match:
-    - uri:
-        prefix: /serving
-    route:
-    - destination:
-        port:
-          number: 3000
-        host: dkube-ui-serving
-  - match:
-    - uri:
-        prefix: /
-    route:
-    - destination:
-        port:
-          number: 3000
-        host: dkube-ui
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService

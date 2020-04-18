@@ -3,18 +3,17 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   labels:
-    app: dkube-ui
-    ksonnet.io/component: dkube-ui
-  name: dkube-ui-verTag
+    app: dkube-ui-serving
+  name: dkube-ui-serving-verTag
   namespace: dkube
 spec:
   selector:
     matchLabels:
-      app: dkube-ui
+      app: dkube-ui-serving
   template:
     metadata:
       labels:
-        app: dkube-ui
+        app: dkube-ui-serving
     spec:
       containers:
       - command:
@@ -24,7 +23,7 @@ spec:
           \   ret1=$? \n    nc dkube-controller-master.dkube 5000 -zv -w 5\n    ret2=$?
           \n    if (( ret1 == 0 && ret2 == 0 )); then\n        break   \n    fi      \n
           \   sleep 5\ndone\nbash /entrypoint.sh\n"
-        image: dkubeUIImage
+        image: dkubeUIServingImage
         imagePullPolicy: IfNotPresent
         name: main
         ports:
@@ -46,7 +45,7 @@ metadata:
   labels:
     ksonnet.io/component: service
     service: dkube-ui
-  name: dkube-ui
+  name: dkube-ui-serving
   namespace: dkube
 spec:
   ports:
@@ -54,13 +53,13 @@ spec:
     port: 3000
     targetPort: 3000
   selector:
-    app: dkube-ui
+    app: dkube-ui-serving
   type: ClusterIP
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: dkube-ui
+  name: dkube-ui-serving
   namespace: dkube
 spec:
   hosts:
@@ -70,10 +69,9 @@ spec:
   http:
   - match:
     - uri:
-        prefix: /
+        prefix: /serving
     route:
     - destination:
         port:
           number: 3000
-        host: dkube-ui
----
+        host: dkube-ui-serving
