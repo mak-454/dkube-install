@@ -39,3 +39,43 @@ spec:
       imagePullSecrets:
       - name: dkubeDockerSecret
       nodeSelector: NODE_SELECTOR
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: dkube-ui-serving
+  name: dkube-ui-serving-verTag
+  namespace: dkube
+spec:
+  selector:
+    matchLabels:
+      app: dkube-ui-serving
+  template:
+    metadata:
+      labels:
+        app: dkube-ui-serving
+    spec:
+      containers:
+      - command:
+        - bash
+        - -c
+        - "while true;\ndo\n    nc dkube-operator-api-proxy.dkube 8000 -zv -w 5\n
+          \   ret1=$? \n    nc dkube-controller-master.dkube 5000 -zv -w 5\n    ret2=$?
+          \n    if (( ret1 == 0 && ret2 == 0 )); then\n        break   \n    fi      \n
+          \   sleep 5\ndone\nbash /entrypoint.sh\n"
+        image: dkubeUIServingImage
+        imagePullPolicy: IfNotPresent
+        name: main
+        ports:
+        - containerPort: 3000
+          name: ui
+          protocol: TCP
+      dnsConfig:
+        options:
+        - name: single-request-reopen
+        - name: timeout
+          value: "30"
+      imagePullSecrets:
+      - name: dkubeDockerSecret
+      nodeSelector: NODE_SELECTOR

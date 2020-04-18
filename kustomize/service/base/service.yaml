@@ -804,6 +804,22 @@ spec:
     app: dkube-ui
   type: ClusterIP
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service: dkube-ui-serving
+  name: dkube-ui-serving
+  namespace: dkube
+spec:
+  ports:
+  - name: ui
+    port: 3000
+    targetPort: 3000
+  selector:
+    app: dkube-ui-serving
+  type: ClusterIP
+---
 apiVersion: authentication.istio.io/v1alpha1
 kind: MeshPolicy
 metadata:
@@ -822,6 +838,7 @@ spec:
       triggerRules:
       - excludedPaths:
         - exact: /
+        - prefix: /serving
         - prefix: /dex
         - prefix: /pipeline
         - prefix: /dkube/pipeline
@@ -845,6 +862,7 @@ spec:
       triggerRules:
       - excludedPaths:
         - exact: /
+        - prefix: /serving
         - prefix: /dex
         - prefix: /pipeline
         - prefix: /dkube/pipeline
@@ -1161,6 +1179,14 @@ spec:
   gateways:
   - dkube-istio-gateway
   http:
+  - match:
+    - uri:
+        prefix: /serving
+    route:
+    - destination:
+        port:
+          number: 3000
+        host: dkube-ui-serving
   - match:
     - uri:
         prefix: /
