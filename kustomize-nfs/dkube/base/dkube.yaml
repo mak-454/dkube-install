@@ -113,6 +113,13 @@ spec:
       labels:
         app: dkube-ext
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: Accelerator
+                operator: Exists
       containers:
       - env:
         - name: MYNODENAME
@@ -363,6 +370,38 @@ spec:
       imagePullSecrets:
       - name: dkubeDockerSecret
       nodeSelector: NODE_SELECTOR
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: dkube-pushgateway
+  name: dkube-metrics-pushgateway-verTag
+  namespace: dkube
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dkube-pushgateway
+  template:
+    metadata:
+      labels:
+        app: dkube-pushgateway
+    spec:
+      containers:
+      - image: pushgatewayImage
+        imagePullPolicy: IfNotPresent
+        name: main
+        ports:
+        - containerPort: 9401
+          name: http-metrics
+          protocol: TCP
+        resources: {}
+        securityContext:
+          privileged: true
+          runAsUser: 0
+      imagePullSecrets:
+      - name: dkubeDockerSecret
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
