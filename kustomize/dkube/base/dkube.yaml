@@ -327,7 +327,7 @@ spec:
         - --data-dir=/var/lib/etcd
         - --force-new-cluster
         - --election-timeout=30000
-        image: k8s.gcr.io/etcd-amd64:3.1.12
+        image: dkubeDBImage
         imagePullPolicy: IfNotPresent
         name: main
         volumeMounts:
@@ -735,7 +735,7 @@ spec:
               fieldPath: metadata.namespace
         - name: ISTIO_META_ROUTER_MODE
           value: sni-dnat
-        image: docker.io/istio/proxyv2:1.1.6
+        image: dkubeProxyImage
         imagePullPolicy: IfNotPresent
         name: istio-proxy
         ports:
