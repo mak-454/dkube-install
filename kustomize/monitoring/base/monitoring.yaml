@@ -384,6 +384,23 @@ spec:
   type: ClusterIP
 
 ---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    ksonnet.io/component: monitoring
+  name: dkube-prometheus-pvc
+  namespace: dkube
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 50Gi
+  storageClassName: ""
+  volumeName: dkube-prometheus-pv
+
+---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -554,7 +571,8 @@ spec:
             name: dkube-prometheus-config
   
         - name: prometheus-storage-volume
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: dkube-prometheus-pvc
 
 ---
 apiVersion: v1
