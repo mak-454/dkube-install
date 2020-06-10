@@ -48,6 +48,7 @@ spec:
         - name: MODEL_REGISTRY
           value: modelRegistry
         image: dkubeApiServerImage
+        command: ["d3api"]
         imagePullPolicy: IfNotPresent
         name: main
         ports:
@@ -67,6 +68,7 @@ spec:
         - mountPath: /var/log/dkube
           name: dkube-logs
       - image: dkubeDownloaderImage
+        command: ["d3downloader"]
         imagePullPolicy: IfNotPresent
         name: sidecar
         securityContext:
@@ -253,7 +255,7 @@ spec:
     spec:
       containers:
       - command:
-        - /opt/dkube/dex
+        - /opt/dkube/dex-server
         - serve
         - /etc/dex/cfg/config.yaml
         image: dkubeAuthImage
@@ -272,7 +274,7 @@ spec:
       - image: dkubeAuthImage
         imagePullPolicy: IfNotPresent
         name: sidecar
-        command: ["bash", "-c", "sleep 30; /opt/dkube/d3"]
+        command: ["bash", "-c", "sleep 30; /usr/local/bin/d3auth"]
         env:
         - name: DKUBE_CLUSTER
           value: dkubeClusterType
@@ -401,6 +403,7 @@ spec:
     spec:
       containers:
       - image: dfabProxyImage
+        command: ["gunicorn", "--workers=2", "-k", "gthread", "--threads", "4", "server:APP", "--bind", "0.0.0.0:8000"]
         imagePullPolicy: IfNotPresent
         name: main
         terminationMessagePath: /dev/termination-log
@@ -448,6 +451,7 @@ spec:
         - name: DKUBE_STORAGE_PATH
           value: /opt/dkube-storage
         image: storageExporterImage
+        command: ["d3storagexporter"]
         imagePullPolicy: IfNotPresent
         name: main
         terminationMessagePath: /dev/termination-log
@@ -500,6 +504,7 @@ spec:
           value: dkube
         image: dkubeWatcherImage
         imagePullPolicy: IfNotPresent
+        command: ["d3watcher"]
         name: main
         securityContext:
           procMount: Default
@@ -579,6 +584,7 @@ spec:
         - name: MODEL_REGISTRY
           value: modelRegistry
         image: dkubeApiServerImage
+        command: ["d3api"]
         imagePullPolicy: IfNotPresent
         name: main
         ports:
