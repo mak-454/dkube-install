@@ -249,7 +249,7 @@ spec:
     spec:
       containers:
       - command:
-        - /opt/dkube/dex-server
+        - dex
         - serve
         - /etc/dex/cfg/config.yaml
         image: dkubeAuthImage
