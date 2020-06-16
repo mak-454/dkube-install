@@ -735,7 +735,7 @@ spec:
               fieldPath: metadata.namespace
         - name: ISTIO_META_ROUTER_MODE
           value: sni-dnat
-        image: docker.io/istio/proxyv2:1.1.6
+        image: docker.io/istio/proxyv2:1.5.4
         imagePullPolicy: IfNotPresent
         name: istio-proxy
         ports:
