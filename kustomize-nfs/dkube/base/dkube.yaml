@@ -664,6 +664,8 @@ spec:
         - router
         - --domain
         - $(POD_NAMESPACE).svc.cluster.local
+        - --proxyLogLevel=warning
+        - --proxyComponentLogLevel=misc:error
         - --log_output_level=default:info
         - --drainDuration
         - 45s
@@ -672,7 +674,7 @@ spec:
         - --connectTimeout
         - 10s
         - --serviceCluster
-        - dkube-proxy
+        - dkube-ingressgateway-verTag
         - --zipkinAddress
         - zipkin.istio-system:9411
         - --proxyAdminPort
@@ -682,8 +684,22 @@ spec:
         - --controlPlaneAuthPolicy
         - NONE
         - --discoveryAddress
-        - istio-pilot.istio-system:15010
+        - istio-pilot.istio-system.svc:15012
+        - --trust-domain=cluster.local
         env:
+        - name: JWT_POLICY
+          value: first-party-jwt
+        - name: PILOT_CERT_PROVIDER
+          value: istiod
+        - name: ISTIO_META_USER_SDS
+          value: "true"
+        - name: CA_ADDR
+          value: istio-pilot.istio-system.svc:15012
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: spec.nodeName
         - name: POD_NAME
           valueFrom:
             fieldRef:
@@ -704,6 +720,19 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
+        - name: SERVICE_ACCOUNT
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: spec.serviceAccountName
+        - name: ISTIO_META_WORKLOAD_NAME
+          value: dkube-ingressgateway-verTag
+        - name: ISTIO_META_OWNER
+          value: kubernetes://apis/apps/v1/namespaces/dkube/deployments/dkube-ingressgateway-verTag
+        - name: ISTIO_META_MESH_ID
+          value: cluster.local
+        - name: ISTIO_AUTO_MTLS_ENABLED
+          value: "true"
         - name: ISTIO_META_POD_NAME
           valueFrom:
             fieldRef:
@@ -716,11 +745,40 @@ spec:
               fieldPath: metadata.namespace
         - name: ISTIO_META_ROUTER_MODE
           value: sni-dnat
+        - name: ISTIO_META_CLUSTER_ID
+          value: Kubernetes
         image: docker.io/istio/proxyv2:1.5.4
         imagePullPolicy: IfNotPresent
         name: istio-proxy
         ports:
+        - containerPort: 15020
+          protocol: TCP
+        - containerPort: 80
+          protocol: TCP
         - containerPort: 443
+          protocol: TCP
+        - containerPort: 15029
+          protocol: TCP
+        - containerPort: 15030
+          protocol: TCP
+        - containerPort: 15031
+          protocol: TCP
+        - containerPort: 15032
+          protocol: TCP
+        - containerPort: 15443
+          protocol: TCP
+        - containerPort: 31400
+          protocol: TCP
+        - containerPort: 15011
+          protocol: TCP
+        - containerPort: 15012
+          protocol: TCP
+        - containerPort: 8060
+          protocol: TCP
+        - containerPort: 853
+          protocol: TCP
+        - containerPort: 15090
+          name: http-envoy-prom
           protocol: TCP
         readinessProbe:
           failureThreshold: 30
@@ -732,10 +790,22 @@ spec:
           periodSeconds: 2
           successThreshold: 1
           timeoutSeconds: 1
+        resources:
+          limits:
+            cpu: "2"
+            memory: 1Gi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
         volumeMounts:
-        - mountPath: /etc/certs
-          name: istio-certs
-          readOnly: true
+        - mountPath: /var/run/secrets/istio
+          name: istiod-ca-cert
+        - mountPath: /var/run/ingress_gateway
+          name: ingressgatewaysdsudspath
+        - mountPath: /etc/istio/pod
+          name: podinfo
         - mountPath: /etc/istio/ingressgateway-certs
           name: ingressgateway-certs
           readOnly: true
@@ -744,11 +814,24 @@ spec:
           readOnly: true
       serviceAccountName: dkube
       volumes:
-      - name: istio-certs
-        secret:
+      - configMap:
           defaultMode: 420
-          optional: true
-          secretName: istio.istio-ingressgateway-service-account
+          name: istio-ca-root-cert
+        name: istiod-ca-cert
+      - downwardAPI:
+          defaultMode: 420
+          items:
+          - fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.labels
+            path: labels
+          - fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.annotations
+            path: annotations
+        name: podinfo
+      - emptyDir: {}
+        name: ingressgatewaysdsudspath
       - name: ingressgateway-certs
         secret:
           defaultMode: 420
