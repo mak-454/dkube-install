@@ -69,8 +69,8 @@ data:
     telemetry:
       http: 0.0.0.0:5558
     expiry:
-      idTokens: "72h"
-      signingKeys: "72h"
+      idTokens: "2m"
+      signingKeys: "2m"
     staticClients:
     - id: dkube
       redirectURIs:
