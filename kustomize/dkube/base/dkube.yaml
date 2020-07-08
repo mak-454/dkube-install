@@ -636,6 +636,9 @@ metadata:
   name: dkube-ingressgateway-verTag
   namespace: dkube
 spec:
+  selector:
+    matchLabels:
+      dkube: ingressgateway
   template:
     metadata:
       annotations:
