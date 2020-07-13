@@ -1,5 +1,5 @@
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   labels:
@@ -96,7 +96,7 @@ spec:
           path: /var/run/docker.sock
         name: docker
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   labels:
@@ -152,7 +152,7 @@ spec:
         name: docker
 
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   labels:
@@ -225,7 +225,7 @@ spec:
           name: dkube-metric-collector
         name: dkube-metric-collector
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -294,7 +294,7 @@ spec:
           path: nfsBasePath/dkube/system/logs/dkube
           server: nfsServer
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -334,7 +334,7 @@ spec:
         persistentVolumeClaim:
           claimName: dkube-db-pvc
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -364,7 +364,7 @@ spec:
       - name: dkubeDockerSecret
       nodeSelector: NODE_SELECTOR
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -408,7 +408,7 @@ spec:
       schedulerName: default-scheduler
       terminationGracePeriodSeconds: 30
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -463,7 +463,7 @@ spec:
           path: nfsBasePath/
           server: nfsServer
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -609,7 +609,7 @@ spec:
           path: /var/run/docker.sock
         name: docker
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:

@@ -168,7 +168,7 @@ spec:
   type: ClusterIP
 
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   labels:
@@ -235,7 +235,7 @@ spec:
           path: /sys
           type: ""
         name: sys
-  templateGeneration: 1
+  # templateGeneration: 1
   updateStrategy:
     type: OnDelete
 
@@ -401,7 +401,7 @@ spec:
   volumeName: dkube-prometheus-pv
 
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -525,7 +525,7 @@ spec:
   type: ClusterIP
 
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -3830,7 +3830,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 # ---
-# apiVersion: extensions/v1beta1
+# apiVersion: apps/v1
 # kind: DaemonSet
 # metadata:
 #   labels:
@@ -3862,7 +3862,7 @@ spec:
 #           value: "30"
 #       volumes: cadvVolumes
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
