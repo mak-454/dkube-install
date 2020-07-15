@@ -4,17 +4,19 @@ kind: Deployment
 metadata:
   labels:
     app: dkube-ui
-    ksonnet.io/component: dkube-ui
+    version: verTag
   name: dkube-ui-verTag
   namespace: dkube
 spec:
   selector:
     matchLabels:
       app: dkube-ui
+      version: verTag
   template:
     metadata:
       labels:
         app: dkube-ui
+        version: verTag
     spec:
       containers:
       - command:

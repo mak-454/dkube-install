@@ -4,17 +4,19 @@ kind: DaemonSet
 metadata:
   labels:
     app: dkube-controller-worker
-    ksonnet.io/component: dkube
+    version: verTag
   name: dkube-controller-worker-verTag
   namespace: dkube
 spec:
   selector:
     matchLabels:
       app: dkube-controller-worker
+      version: verTag
   template:
     metadata:
       labels:
         app: dkube-controller-worker
+        version: verTag
     spec:
       containers:
       - env:
@@ -101,17 +103,19 @@ kind: DaemonSet
 metadata:
   labels:
     app: dkube-ext
-    ksonnet.io/component: dkube
+    version: verTag
   name: dkube-exporter-verTag
   namespace: dkube
 spec:
   selector:
     matchLabels:
       app: dkube-ext
+      version: verTag
   template:
     metadata:
       labels:
         app: dkube-ext
+        version: verTag
     spec:
       containers:
       - env:
@@ -150,24 +154,25 @@ spec:
       - hostPath:
           path: /var/run/docker.sock
         name: docker
-
 ---
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   labels:
     k8s-app: dkube-metric-collector
-    ksonnet.io/component: dkube
+    version: verTag
   name: dkube-log-processor-verTag
   namespace: dkube
 spec:
   selector:
     matchLabels:
       k8s-app: dkube-metric-collector
+      version: verTag
   template:
     metadata:
       labels:
         k8s-app: dkube-metric-collector
+        version: verTag
     spec:
       containers:
       - image: fluentdImage
@@ -230,7 +235,7 @@ kind: Deployment
 metadata:
   labels:
     app: dkube-auth
-    ksonnet.io/component: dkube
+    version: verTag
   name: dkube-auth-server-verTag
   namespace: dkube
 spec:
@@ -238,10 +243,12 @@ spec:
   selector:
     matchLabels:
       app: dkube-auth
+      version: verTag
   template:
     metadata:
       labels:
         app: dkube-auth
+        version: verTag
       name: d3auth
       namespace: dkube
     spec:
@@ -298,17 +305,19 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    ksonnet.io/component: dkube
+    version: verTag
   name: dkube-db-server-verTag
   namespace: dkube
 spec:
   selector:
     matchLabels:
       app: dkube-db-server
+      version: verTag
   template:
     metadata:
       labels:
         app: dkube-db-server
+        version: verTag
     spec:
       containers:
       - command:
@@ -317,6 +326,7 @@ spec:
         - --advertise-client-urls=http://0.0.0.0:2379
         - --data-dir=/var/lib/etcd
         - --force-new-cluster
+        - --election-timeout=30000
         image: k8s.gcr.io/etcd-amd64:3.1.12
         imagePullPolicy: IfNotPresent
         name: main
@@ -339,7 +349,7 @@ kind: Deployment
 metadata:
   labels:
     app: dkube-tools
-    ksonnet.io/component: dkube
+    version: verTag
   name: dkube-inf-doc-server-verTag
   namespace: dkube
 spec:
@@ -347,10 +357,12 @@ spec:
   selector:
     matchLabels:
       app: dkube-tools
+      version: verTag
   template:
     metadata:
       labels:
         app: dkube-tools
+        version: verTag
     spec:
       containers:
       - image: dkubeInferenceImage
@@ -369,7 +381,7 @@ kind: Deployment
 metadata:
   labels:
     app: dkube-operator-proxy
-    ksonnet.io/component: dkube
+    version: verTag
   name: dkube-operator-api-proxy-verTag
   namespace: dkube
 spec:
@@ -379,6 +391,7 @@ spec:
   selector:
     matchLabels:
       app: dkube-operator-proxy
+      version: verTag
   strategy:
     rollingUpdate:
       maxSurge: 25%
@@ -388,6 +401,7 @@ spec:
     metadata:
       labels:
         app: dkube-operator-proxy
+        version: verTag
     spec:
       containers:
       - image: dfabProxyImage
@@ -413,7 +427,7 @@ kind: Deployment
 metadata:
   labels:
     app: dkube-storage-exporter
-    ksonnet.io/component: dkube
+    version: verTag
   name: dkube-storage-exporter-verTag
   namespace: dkube
 spec:
@@ -423,6 +437,7 @@ spec:
   selector:
     matchLabels:
       app: dkube-storage-exporter
+      version: verTag
   strategy:
     rollingUpdate:
       maxSurge: 25%
@@ -432,6 +447,7 @@ spec:
     metadata:
       labels:
         app: dkube-storage-exporter
+        version: verTag
     spec:
       containers:
       - env:
@@ -468,7 +484,7 @@ kind: Deployment
 metadata:
   labels:
     app: dkube-d3watcher
-    ksonnet.io/component: dkube
+    version: verTag
   name: dkube-watcher-verTag
   namespace: dkube
 spec:
@@ -476,10 +492,12 @@ spec:
   selector:
     matchLabels:
       app: dkube-d3watcher
+      version: verTag
   template:
     metadata:
       labels:
         app: dkube-d3watcher
+        version: verTag
     spec:
       containers:
       - env:
@@ -514,250 +532,3 @@ spec:
           path: /var/log/dkube
           type: DirectoryOrCreate
         name: dkube-logs-host
----
-apiVersion: apps/v1
-kind: StatefulSet
-metadata:
-  labels:
-    app: dkube-controller-master
-    ksonnet.io/component: dkube
-  name: dkube-controller-master-verTag
-  namespace: dkube
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: dkube-controller-master
-  serviceName: dkube-controller-master-headless
-  template:
-    metadata:
-      labels:
-        app: dkube-controller-master
-    spec:
-      containers:
-      - env:
-        - name: DKUBE_MOUNT_PATH
-          value: /home/dkube/d3s
-        - name: DKUBE_REGISTRY
-          value: dkubeRegistryPath
-        - name: DKUBE_REGISTRY_UNAME
-          value: dkubeRegistryUname
-        - name: DKUBE_REGISTRY_PASSWD
-          value: dkubeRegistryPasswd
-        - name: DKUBE_SERVICE_ACCOUNT
-          value: dkube
-        - name: RDMA_ENABLED
-          value: "false"
-        - name: NFS_SERVER
-          value: nfsServer
-        - name: NFS_BASE_PATH
-          value: nfsBasePath
-        - name: DKUBE_APISERVER_ROLE
-          value: master
-        - name: CEPH_MONITORS
-          value: 'cephMonitors'
-        - name: DKUBE_STORAGE_PROVIDER
-          valueFrom:
-            configMapKeyRef:
-              name: dkube-installer
-              key: DKUBE_STORAGE_PROVIDER
-        - name: DKUBE_CLUSTER
-          value: dkubeClusterType
-        - name: MODEL_REGISTRY
-          value: modelRegistry
-        image: dkubeApiServerImage
-        imagePullPolicy: IfNotPresent
-        name: main
-        ports:
-        - containerPort: 5000
-          name: dkube-d3api
-          protocol: TCP
-        securityContext:
-          procMount: Default
-          runAsUser: 0
-        terminationMessagePath: /dev/termination-log
-        terminationMessagePolicy: File
-        volumeMounts:
-        - mountPath: /home/dkube/d3s
-          name: store
-        - mountPath: /var/run/docker.sock
-          name: docker
-        - mountPath: /var/log/dkube
-          name: dkube-logs
-      dnsConfig:
-        options:
-        - name: single-request-reopen
-        - name: timeout
-          value: "30"
-      dnsPolicy: ClusterFirst
-      imagePullSecrets:
-      - name: dkubeDockerSecret
-      nodeSelector: NODE_SELECTOR
-      restartPolicy: Always
-      serviceAccount: dkube
-      serviceAccountName: dkube
-      volumes:
-      - name: store
-        nfs:
-          path: nfsBasePath/dkube
-          server: nfsServer
-      - name: dkube-logs
-        nfs:
-          path: nfsBasePath/dkube/system/logs/dkube
-          server: nfsServer
-      - hostPath:
-          path: /var/run/docker.sock
-        name: docker
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  labels:
-    dkube: ingressgateway
-  name: dkube-ingressgateway-verTag
-  namespace: dkube
-spec:
-  selector:
-    matchLabels:
-      dkube: ingressgateway
-  template:
-    metadata:
-      annotations:
-        sidecar.istio.io/inject: "false"
-      labels:
-        dkube: ingressgateway
-        service: dkube-proxy
-    spec:
-      affinity:
-        nodeAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-          - preference:
-              matchExpressions:
-              - key: beta.kubernetes.io/arch
-                operator: In
-                values:
-                - amd64
-            weight: 2
-          - preference:
-              matchExpressions:
-              - key: beta.kubernetes.io/arch
-                operator: In
-                values:
-                - ppc64le
-            weight: 2
-          - preference:
-              matchExpressions:
-              - key: beta.kubernetes.io/arch
-                operator: In
-                values:
-                - s390x
-            weight: 2
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-            - matchExpressions:
-              - key: beta.kubernetes.io/arch
-                operator: In
-                values:
-                - amd64
-                - ppc64le
-                - s390x
-      containers:
-      - args:
-        - proxy
-        - router
-        - --domain
-        - $(POD_NAMESPACE).svc.cluster.local
-        - --log_output_level=default:info
-        - --drainDuration
-        - 45s
-        - --parentShutdownDuration
-        - 1m0s
-        - --connectTimeout
-        - 10s
-        - --serviceCluster
-        - dkube-proxy
-        - --zipkinAddress
-        - zipkin.istio-system:9411
-        - --proxyAdminPort
-        - "15000"
-        - --statusPort
-        - "15020"
-        - --controlPlaneAuthPolicy
-        - NONE
-        - --discoveryAddress
-        - istio-pilot.istio-system:15010
-        env:
-        - name: POD_NAME
-          valueFrom:
-            fieldRef:
-              apiVersion: v1
-              fieldPath: metadata.name
-        - name: POD_NAMESPACE
-          valueFrom:
-            fieldRef:
-              apiVersion: v1
-              fieldPath: metadata.namespace
-        - name: INSTANCE_IP
-          valueFrom:
-            fieldRef:
-              apiVersion: v1
-              fieldPath: status.podIP
-        - name: HOST_IP
-          valueFrom:
-            fieldRef:
-              apiVersion: v1
-              fieldPath: status.hostIP
-        - name: ISTIO_META_POD_NAME
-          valueFrom:
-            fieldRef:
-              apiVersion: v1
-              fieldPath: metadata.name
-        - name: ISTIO_META_CONFIG_NAMESPACE
-          valueFrom:
-            fieldRef:
-              apiVersion: v1
-              fieldPath: metadata.namespace
-        - name: ISTIO_META_ROUTER_MODE
-          value: sni-dnat
-        image: docker.io/istio/proxyv2:1.1.6
-        imagePullPolicy: IfNotPresent
-        name: istio-proxy
-        ports:
-        - containerPort: 443
-          protocol: TCP
-        readinessProbe:
-          failureThreshold: 30
-          httpGet:
-            path: /healthz/ready
-            port: 15020
-            scheme: HTTP
-          initialDelaySeconds: 1
-          periodSeconds: 2
-          successThreshold: 1
-          timeoutSeconds: 1
-        volumeMounts:
-        - mountPath: /etc/certs
-          name: istio-certs
-          readOnly: true
-        - mountPath: /etc/istio/ingressgateway-certs
-          name: ingressgateway-certs
-          readOnly: true
-        - mountPath: /etc/istio/ingressgateway-ca-certs
-          name: ingressgateway-ca-certs
-          readOnly: true
-      serviceAccountName: dkube
-      volumes:
-      - name: istio-certs
-        secret:
-          defaultMode: 420
-          optional: true
-          secretName: istio.istio-ingressgateway-service-account
-      - name: ingressgateway-certs
-        secret:
-          defaultMode: 420
-          secretName: dkube-certificate-secret
-      - name: ingressgateway-ca-certs
-        secret:
-          defaultMode: 420
-          optional: true
-          secretName: istio-ingressgateway-ca-certs
