@@ -185,6 +185,8 @@ spec:
       labels:
         app: dkube-node-exporter
     spec:
+      tolerations:
+        - operator: "Exists"
       containers:
       - args:
         - --web.listen-address=0.0.0.0:9111
@@ -3846,6 +3848,8 @@ spec:
 #       labels:
 #         app: pod-exporter
 #     spec:
+#       tolerations:
+#         - operator: "Exists"
 #       containers:
 #       - image: google/cadvisor:latest
 #         imagePullPolicy: IfNotPresent
