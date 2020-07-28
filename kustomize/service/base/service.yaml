@@ -1240,7 +1240,7 @@ spec:
       uri:
         prefix: /pipeline/apis/v1beta1/experiments
     rewrite:
-      uri: /dkube/v2/controller/pipeline/apis/v1beta1/experiments
+      uri: /pipeline/apis/v1beta1/experiments
     route:
     - destination:
         host: dkube-controller-master
@@ -1252,7 +1252,7 @@ spec:
       uri:
         prefix: /pipeline/apis/v1beta1/pipelines
     rewrite:
-      uri: /dkube/v2/controller/pipeline/apis/v1beta1/pipelines
+      uri: /pipeline/apis/v1beta1/pipelines
     route:
     - destination:
         host: dkube-controller-master
@@ -1264,7 +1264,7 @@ spec:
       uri:
         prefix: /pipeline/apis/v1beta1/runs
     rewrite:
-      uri: /dkube/v2/controller/pipeline/apis/v1beta1/runs
+      uri: /pipeline/apis/v1beta1/runs
     route:
     - destination:
         host: dkube-controller-master
