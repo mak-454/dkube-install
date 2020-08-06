@@ -593,10 +593,6 @@ spec:
     port: 5000
     protocol: TCP
     targetPort: 5000
-  - name: dkube-d3pl
-    port: 5001
-    protocol: TCP
-    targetPort: 5001
   selector:
     app: dkube-controller-master
   type: ClusterIP
@@ -615,6 +611,10 @@ spec:
     port: 5000
     protocol: TCP
     targetPort: 5000
+  - name: dkube-d3pl
+    port: 5001
+    protocol: TCP
+    targetPort: 5001
   selector:
     app: dkube-controller-master
   type: ClusterIP
