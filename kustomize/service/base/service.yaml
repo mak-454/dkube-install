@@ -828,6 +828,7 @@ spec:
       - excludedPaths:
         - exact: /
         - prefix: /dex
+        - prefix: /pipeline
         - prefix: /dkube/pipeline
         - prefix: /static
         - prefix: /callback
@@ -850,6 +851,7 @@ spec:
       - excludedPaths:
         - exact: /
         - prefix: /dex
+        - prefix: /pipeline
         - prefix: /dkube/pipeline
         - prefix: /static
         - prefix: /callback
