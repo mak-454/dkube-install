@@ -593,6 +593,10 @@ spec:
     port: 5000
     protocol: TCP
     targetPort: 5000
+  - name: dkube-d3pl
+    port: 5001
+    protocol: TCP
+    targetPort: 5001
   selector:
     app: dkube-controller-master
   type: ClusterIP
@@ -824,7 +828,6 @@ spec:
       - excludedPaths:
         - exact: /
         - prefix: /dex
-        - prefix: /pipeline
         - prefix: /dkube/pipeline
         - prefix: /static
         - prefix: /callback
@@ -847,7 +850,6 @@ spec:
       - excludedPaths:
         - exact: /
         - prefix: /dex
-        - prefix: /pipeline
         - prefix: /dkube/pipeline
         - prefix: /static
         - prefix: /callback
@@ -1225,13 +1227,43 @@ spec:
   - dkube-istio-gateway
   http:
   - match:
+    - method:
+        regex: POST|DELETE
+      uri:
+        prefix: /pipeline/apis/v1beta1/experiments
+    route:
+    - destination:
+        host: dkube-controller-master
+        port:
+          number: 5001
+  - match:
+    - method:
+        regex: POST|DELETE
+      uri:
+        prefix: /pipeline/apis/v1beta1/pipeline
+    route:
+    - destination:
+        host: dkube-controller-master
+        port:
+          number: 5001
+  - match:
+    - method:
+        regex: POST|DELETE
+      uri:
+        prefix: /pipeline/apis/v1beta1/runs
+    route:
+    - destination:
+        host: dkube-controller-master
+        port:
+          number: 5001
+  - match:
     - uri:
         prefix: /pipeline
     route:
     - destination:
+        host: ml-pipeline-ui.kubeflow.svc.cluster.local
         port:
           number: 80
-        host: ml-pipeline-ui.kubeflow.svc.cluster.local
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
