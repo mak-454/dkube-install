@@ -253,9 +253,7 @@ spec:
     spec:
       containers:
       - command:
-        - /opt/dkube/dex
-        - serve
-        - /etc/dex/cfg/config.yaml
+        - /opt/dkube/startup
         image: dkubeAuthImage
         imagePullPolicy: IfNotPresent
         name: main
@@ -266,9 +264,6 @@ spec:
         securityContext:
           procMount: Default
           runAsUser: 0
-        volumeMounts:
-        - mountPath: /etc/dex/cfg
-          name: auth-cm
       - image: dkubeAuthImage
         imagePullPolicy: IfNotPresent
         name: sidecar
@@ -291,10 +286,6 @@ spec:
       serviceAccount: dkube
       serviceAccountName: dkube
       volumes:
-      - configMap:
-          defaultMode: 420
-          name: dkube-auth-config
-        name: auth-cm
       - name: dkube-logs
         cephfs:
           monitors: cephMonitors
