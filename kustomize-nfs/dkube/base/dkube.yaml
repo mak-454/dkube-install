@@ -16,6 +16,8 @@ spec:
       labels:
         app: dkube-controller-worker
     spec:
+      tolerations:
+        - operator: "Exists"
       containers:
       - env:
         - name: DKUBE_MOUNT_PATH
@@ -113,6 +115,8 @@ spec:
       labels:
         app: dkube-ext
     spec:
+      tolerations:
+        - operator: "Exists"
       containers:
       - env:
         - name: MYNODENAME
@@ -169,6 +173,8 @@ spec:
       labels:
         k8s-app: dkube-metric-collector
     spec:
+      tolerations:
+        - operator: "Exists"
       containers:
       - image: fluentdImage
         imagePullPolicy: IfNotPresent
