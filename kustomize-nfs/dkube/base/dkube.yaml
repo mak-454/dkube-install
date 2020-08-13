@@ -317,6 +317,16 @@ spec:
         image: k8s.gcr.io/etcd-amd64:3.1.12
         imagePullPolicy: IfNotPresent
         name: main
+        livenessProbe:
+          exec:
+            command:
+            - etcdctl
+            - cluster-health
+          failureThreshold: 3
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
         volumeMounts:
         - mountPath: /var/lib/etcd
           name: etcd-data
