@@ -615,6 +615,10 @@ spec:
     port: 5001
     protocol: TCP
     targetPort: 5001
+  - name: dkube-d3mlflow
+    port: 5002
+    protocol: TCP
+    targetPort: 5002
   selector:
     app: dkube-controller-master
   type: ClusterIP
