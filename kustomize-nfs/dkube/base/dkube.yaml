@@ -68,6 +68,8 @@ spec:
           name: docker
         - mountPath: /var/log/dkube
           name: dkube-logs
+        - mountPath: /etc/dkube/dkube_platform_cfg
+          name: pc
       - image: dkubeDownloaderImage
         imagePullPolicy: IfNotPresent
         name: sidecar
@@ -97,6 +99,9 @@ spec:
       - hostPath:
           path: /var/run/docker.sock
         name: docker
+      - configMap:
+          name: dkube-platform-cfg
+        name: pc
 ---
 apiVersion: apps/v1
 kind: DaemonSet
@@ -591,6 +596,8 @@ spec:
           name: docker
         - mountPath: /var/log/dkube
           name: dkube-logs
+        - mountPath: /etc/dkube/dkube_platform_cfg
+          name: pc
       dnsConfig:
         options:
         - name: single-request-reopen
@@ -615,6 +622,9 @@ spec:
       - hostPath:
           path: /var/run/docker.sock
         name: docker
+      - configMap:
+          name: dkube-platform-cfg
+        name: pc
 ---
 apiVersion: apps/v1
 kind: Deployment
