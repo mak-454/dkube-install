@@ -570,6 +570,19 @@ spec:
         securityContext:
           procMount: Default
           runAsUser: 0
+      - image: dkubeMlFlowServerImage
+        imagePullPolicy: IfNotPresent
+        name: d3mlflow
+        ports:
+        - containerPort: 5002
+          name: dkube-d3mlflow
+          protocol: TCP
+        securityContext:
+          procMount: Default
+          runAsUser: 0
+        volumeMounts:
+        - mountPath: /dkube
+          name: store
       - env:
         - name: DKUBE_MOUNT_PATH
           value: /home/dkube/d3s
