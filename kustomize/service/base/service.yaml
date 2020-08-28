@@ -848,6 +848,7 @@ spec:
         - prefix: /dkube/v2/controller/dkubeinfo
         - prefix: /cicd
         - suffix: /custom
+        - prefix: /v1/models/
         - regex: .*/nb/.*|.*/nb/lab.*|.*/tb/.*|.*/inference|.*/font-roboto/.*|.*/installer|.*/report|.*/katib.*|.*/rs.*|.*/docs/.*|.*/healthz
   - jwt:
       issuer: DKube
@@ -872,6 +873,7 @@ spec:
         - prefix: /dkube/v2/controller/dkubeinfo
         - prefix: /cicd
         - suffix: /custom
+        - prefix: /v1/models/
         - regex: .*/nb/.*|.*/nb/lab.*|.*/tb/.*|.*/inference|.*/font-roboto/.*|.*/installer|.*/report|.*/katib.*|.*/rs.*|.*/docs/.*|.*/healthz
   principalBinding: USE_ORIGIN
 ---
