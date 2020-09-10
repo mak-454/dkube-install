@@ -36,8 +36,6 @@ spec:
           value: nfsServer
         - name: NFS_BASE_PATH
           value: nfsBasePath
-        - name: CEPH_MONITORS
-          value: 'cephMonitors'
         - name: DKUBE_STORAGE_PROVIDER
           valueFrom:
             configMapKeyRef:
@@ -589,8 +587,6 @@ spec:
           value: nfsBasePath
         - name: DKUBE_APISERVER_ROLE
           value: master
-        - name: CEPH_MONITORS
-          value: 'cephMonitors'
         - name: DKUBE_STORAGE_PROVIDER
           valueFrom:
             configMapKeyRef:
