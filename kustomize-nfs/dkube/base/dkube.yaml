@@ -50,6 +50,7 @@ spec:
         envFrom:
         - configMapRef:
             name: ceph-config
+            optional: true
         image: dkubeApiServerImage
         imagePullPolicy: IfNotPresent
         name: main
@@ -602,6 +603,7 @@ spec:
         envFrom:
         - configMapRef:
             name: ceph-config
+            optional: true
         image: dkubeApiServerImage
         imagePullPolicy: IfNotPresent
         name: main
