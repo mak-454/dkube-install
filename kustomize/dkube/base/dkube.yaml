@@ -47,6 +47,9 @@ spec:
           value: dkubeClusterType
         - name: MODEL_REGISTRY
           value: modelRegistry
+        envFrom:
+        - configMapRef:
+            name: ceph-config
         image: dkubeApiServerImage
         imagePullPolicy: IfNotPresent
         name: main
@@ -594,6 +597,9 @@ spec:
           value: dkubeClusterType
         - name: MODEL_REGISTRY
           value: modelRegistry
+        envFrom:
+        - configMapRef:
+            name: ceph-config
         image: dkubeApiServerImage
         imagePullPolicy: IfNotPresent
         name: main
