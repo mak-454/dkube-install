@@ -1298,7 +1298,7 @@ spec:
   http:
   - match:
     - method:
-        regex: POST|DELETE
+        exact: POST
       uri:
         exact: /pipeline/apis/v1beta1/experiments
     route:
@@ -1312,9 +1312,9 @@ spec:
       retryOn: gateway-error,connect-failure,refused-stream
   - match:
     - method:
-        regex: POST|DELETE
+        exact: DELETE
       uri:
-        exact: /pipeline/apis/v1beta1/pipeline
+        prefix: /pipeline/apis/v1beta1/experiments
     route:
     - destination:
         host: dkube-controller-master
@@ -1326,7 +1326,42 @@ spec:
       retryOn: gateway-error,connect-failure,refused-stream
   - match:
     - method:
-        regex: POST|DELETE
+        exact: POST
+      uri:
+        exact: /pipeline/apis/v1beta1/pipelines/upload
+      uri:
+        exact: /pipeline/apis/v1beta1/pipelines
+      uri:
+        exact: /pipeline/apis/v1beta1/pipelines/upload_version
+      uri:
+        exact: /pipeline/apis/v1beta1/pipeline_versions
+    route:
+    - destination:
+        host: dkube-controller-master
+        port:
+          number: 5001
+    retries:
+      attempts: 3
+      perTryTimeout: 5s
+      retryOn: gateway-error,connect-failure,refused-stream
+  - match:
+    - method:
+        regex: DELETE
+      uri:
+        prefix: /pipeline/apis/v1beta1/pipelines
+    route:
+    - destination:
+        host: dkube-controller-master
+        port:
+          number: 5001
+    retries:
+      attempts: 3
+      perTryTimeout: 5s
+      retryOn: gateway-error,connect-failure,refused-stream
+
+  - match:
+    - method:
+        exact: POST
       uri:
         exact: /pipeline/apis/v1beta1/runs
     route:
@@ -1338,6 +1373,22 @@ spec:
       attempts: 3
       perTryTimeout: 5s
       retryOn: gateway-error,connect-failure,refused-stream
+
+  - match:
+    - method:
+        exact: DELETE
+      uri:
+        prefix: /pipeline/apis/v1beta1/runs
+    route:
+    - destination:
+        host: dkube-controller-master
+        port:
+          number: 5001
+    retries:
+      attempts: 3
+      perTryTimeout: 5s
+      retryOn: gateway-error,connect-failure,refused-stream
+ 
   - match:
     - uri:
         prefix: /pipeline
