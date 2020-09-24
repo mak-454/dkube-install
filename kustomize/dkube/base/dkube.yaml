@@ -49,6 +49,11 @@ spec:
           value: dkubeClusterType
         - name: MODEL_REGISTRY
           value: modelRegistry
+        - name: DKUBE_EVENTS_SENTRY_ENABLE
+          valueFrom:
+            configMapKeyRef:
+              name: dkube-installer
+              key: DKUBE_EVENTS_SENTRY_ENABLE
         image: dkubeApiServerImage
         imagePullPolicy: IfNotPresent
         name: main
@@ -613,6 +618,11 @@ spec:
           value: dkubeClusterType
         - name: MODEL_REGISTRY
           value: modelRegistry
+        - name: DKUBE_EVENTS_SENTRY_ENABLE
+          valueFrom:
+            configMapKeyRef:
+              name: dkube-installer
+              key: DKUBE_EVENTS_SENTRY_ENABLE
         image: dkubeApiServerImage
         imagePullPolicy: IfNotPresent
         name: main
