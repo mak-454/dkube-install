@@ -1329,10 +1329,16 @@ spec:
         exact: POST
       uri:
         exact: /pipeline/apis/v1beta1/pipelines/upload
+    - method:
+        exact: POST
       uri:
         exact: /pipeline/apis/v1beta1/pipelines
+    - method:
+        exact: POST
       uri:
         exact: /pipeline/apis/v1beta1/pipelines/upload_version
+    - method:
+        exact: POST
       uri:
         exact: /pipeline/apis/v1beta1/pipeline_versions
     route:
@@ -1376,7 +1382,7 @@ spec:
 
   - match:
     - method:
-        exact: DELETE
+        prefix: DELETE
       uri:
         prefix: /pipeline/apis/v1beta1/runs
     route:
