@@ -1300,7 +1300,7 @@ spec:
     - method:
         regex: POST|DELETE
       uri:
-        prefix: /pipeline/apis/v1beta1/experiments
+        exact: /pipeline/apis/v1beta1/experiments
     route:
     - destination:
         host: dkube-controller-master
@@ -1314,7 +1314,7 @@ spec:
     - method:
         regex: POST|DELETE
       uri:
-        prefix: /pipeline/apis/v1beta1/pipeline
+        exact: /pipeline/apis/v1beta1/pipeline
     route:
     - destination:
         host: dkube-controller-master
@@ -1328,7 +1328,7 @@ spec:
     - method:
         regex: POST|DELETE
       uri:
-        prefix: /pipeline/apis/v1beta1/runs
+        exact: /pipeline/apis/v1beta1/runs
     route:
     - destination:
         host: dkube-controller-master
