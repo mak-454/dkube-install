@@ -171,37 +171,22 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   labels:
-    k8s-app: dkube-metric-collector
+    k8s-app: dkube-log-collector
     ksonnet.io/component: dkube
   name: dkube-log-processor-verTag
   namespace: dkube
 spec:
   selector:
     matchLabels:
-      k8s-app: dkube-metric-collector
+      k8s-app: dkube-log-collector
   template:
     metadata:
       labels:
-        k8s-app: dkube-metric-collector
+        k8s-app: dkube-log-collector
     spec:
       tolerations:
         - operator: "Exists"
       containers:
-      - image: fluentdImage
-        imagePullPolicy: IfNotPresent
-        name: main
-        securityContext:
-          procMount: Default
-          runAsUser: 0
-        volumeMounts:
-        - mountPath: LOG_PATH
-          name: varlibdockercontainers
-          readOnly: true
-        - mountPath: /fluentd/etc/
-          name: dkube-metric-collector
-          readOnly: true
-        - mountPath: /var/log
-          name: varlog
       - image: fluentdImage
         imagePullPolicy: IfNotPresent
         name: sidecar
@@ -237,10 +222,6 @@ spec:
       - hostPath:
           path: LOG_PATH
         name: varlibdockercontainers
-      - configMap:
-          defaultMode: 420
-          name: dkube-metric-collector
-        name: dkube-metric-collector
 ---
 apiVersion: apps/v1
 kind: Deployment
