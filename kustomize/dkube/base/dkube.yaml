@@ -189,7 +189,7 @@ spec:
       containers:
       - image: fluentdImage
         imagePullPolicy: IfNotPresent
-        name: sidecar
+        name: main
         securityContext:
           procMount: Default
           runAsUser: 0
