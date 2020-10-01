@@ -527,6 +527,8 @@ metadata:
   labels:
     app: dkube-controller-master
     ksonnet.io/component: dkube
+  annotations:
+    IAM_ROLE_ANNOTATION
   name: dkube-controller-master-verTag
   namespace: dkube
 spec:
@@ -537,6 +539,8 @@ spec:
   serviceName: dkube-controller-master-headless
   template:
     metadata:
+      annotations:
+        IAM_ROLE_ANNOTATION
       labels:
         app: dkube-controller-master
     spec:
