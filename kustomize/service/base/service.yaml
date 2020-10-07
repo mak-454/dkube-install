@@ -174,6 +174,10 @@ data:
        s3_object_key_format %{path}/job-log-%{index}.%{file_extension}
        store_as text
        force_path_style true
+       ssl_verify_peer false
+       check_apikey_on_start false
+       check_bucket false
+       auto_create_bucket false
        <format>
          @type single_value
          message_key message
@@ -189,287 +193,15 @@ data:
          flush_thread_count 8
          retry_forever true
          overflow_action throw_exception
-         retry_type exponential_backoff
-         retry_exponential_backoff_base 2
+         retry_type periodic
+         retry_wait 10s
          flush_mode immediate
          flush_at_shutdown true
-         queue_limit_length 10000
        </buffer>
     </match>
 kind: ConfigMap
 metadata:
   name: dkube-log-collector
-  namespace: dkube
----
-apiVersion: v1
-data:
-  accuracy.conf: "<filter kubernetes_accuracy.**>\n    @type kubernetes_metadata\n</filter>\n\n<filter
-    kubernetes_accuracy.**>\n    @type grep\n    <regexp>\n        key $.kubernetes.labels.logger\n
-    \       pattern /^dkube$/\n    </regexp>\n</filter>\n\n<filter kubernetes_accuracy.**>\n
-    \   @type grep\n    <regexp>\n        key log\n        pattern /accuracy/\n    </regexp>\n</filter>\n\n<filter
-    kubernetes_accuracy.**>\n  @type parser\n  key_name $.log\n  reserve_data true\n
-    \ remove_key_name_field true\n  suppress_parse_error_log true\n  <parse>\n    @type
-    regexp\n    expression /^(.*):(.*):((.*)])?((.*):)?(?<message>(.*))$/\n  </parse>\n</filter>\n\n
-    <filter kubernetes_accuracy.**>\n   @type record_modifier\n   enable_ruby\n   <record>\n
-    \      escaped_tag ${record[\"message\"].gsub(' ', '')}\n   </record>\n </filter>\n\n<filter
-    kubernetes_accuracy.**>\n    @type grep\n    <regexp>\n        key escaped_tag\n
-    \       pattern /accuracy=/\n    </regexp>\n</filter>\n\n<filter kubernetes_accuracy.**>\n
-    \ @type parser\n  key_name $.escaped_tag\n  reserve_data true\n  remove_key_name_field
-    true\n  suppress_parse_error_log true\n  <parse>\n    @type ltsv\n    delimiter_pattern
-    /,/\n    label_delimiter  =\n  </parse>\n</filter>\n\n<filter kubernetes_accuracy.**>\n
-    \  @type record_modifier\n   enable_ruby\n   <record>\n       jobname ${record.dig(\"kubernetes\",
-    \"labels\", \"jobname\")}\n       username ${record.dig(\"kubernetes\", \"labels\",
-    \"username\")}\n       jobid ${record.dig(\"kubernetes\", \"labels\", \"jobid\")}\n
-    \      mode ${record.dig(\"mode\").to_s}\n       step ${record.dig(\"step\").to_i}\n
-    \      epoch ${record.dig(\"epoch\").to_i}\n       accuracy ${record.dig(\"accuracy\").to_f}
-    \n   </record>\n</filter>\n\n<filter kubernetes_accuracy.**>\n  @type prometheus\n
-    \ <metric>\n    name accuracy\n    type gauge\n    desc accuracy metric\n    key
-    $.accuracy\n    <labels>\n      jobname ${jobname}\n      username ${username}\n
-    \     jobid ${jobid}\n      step ${step}\n      mode ${mode}\n      epoch ${epoch}\n
-    \   </labels>\n  </metric>\n</filter>\n\n<match kubernetes_accuracy.**>\n    @type
-    relabel\n    @label @PROMETHEUS\n</match>\n"
-  fluent.conf: |
-    <source>
-      @type prometheus
-    </source>
-
-    <source>
-      @type monitor_agent
-    </source>
-
-    <source>
-      @type forward
-    </source>
-
-    # input plugin that collects metrics from MonitorAgent
-    <source>
-      @type prometheus_monitor
-      <labels>
-        host ${hostname}
-      </labels>
-    </source>
-
-    # input plugin that collects metrics for output plugin
-    <source>
-      @type prometheus_output_monitor
-      <labels>
-        host ${hostname}
-      </labels>
-    </source>
-
-    # input plugin that collects metrics for in_tail plugin
-    <source>
-      @type prometheus_tail_monitor
-      <labels>
-        host ${hostname}
-      </labels>
-    </source>
-
-    <source>
-      @type tail
-      path /var/log/containers/*_tensorflow-*.log
-      pos_file /var/log/fluentd-containers-accuracy.log.pos
-      time_format %Y-%m-%dT%H:%M:%S
-      tag kubernetes_accuracy.*
-      @label @ACCURACY
-      format json
-      read_from_head true
-    </source>
-
-    <source>
-      @type tail
-      path /var/log/containers/*_tensorflow-*.log
-      pos_file /var/log/fluentd-containers-loss.log.pos
-      time_format %Y-%m-%dT%H:%M:%S
-      tag kubernetes_loss.*
-      @label @LOSS
-      format json
-      read_from_head true
-    </source>
-
-    <source>
-      @type tail
-      path /var/log/containers/*_tensorflow-*.log
-      pos_file /var/log/fluentd-containers-step.log.pos
-      time_format %Y-%m-%dT%H:%M:%S
-      tag kubernetes_step.*
-      @label @STEP
-      format json
-      read_from_head true
-    </source>
-
-    <label @STEP>
-        @include step.conf
-    </label>
-
-    <label @ACCURACY>
-        @include accuracy.conf
-    </label>
-
-    <label @LOSS>
-        @include loss.conf
-    </label>
-
-    <label @PROMETHEUS>
-        @include prometheus.conf
-    </label>
-  loss.conf: "<filter kubernetes_loss.**>\n     @type kubernetes_metadata\n </filter>\n\n
-    <filter kubernetes_loss.**>\n     @type grep\n     <regexp>\n         key $.kubernetes.labels.logger\n
-    \        pattern /^dkube$/\n     </regexp>\n </filter>\n\n <filter kubernetes_loss.**>\n
-    \    @type grep\n     <regexp>\n         key log\n         pattern /loss/\n     </regexp>\n
-    </filter>\n\n <filter kubernetes_loss.**>\n   @type parser\n   key_name $.log\n
-    \  reserve_data true\n   remove_key_name_field true\n   suppress_parse_error_log
-    true\n   <parse>\n     @type regexp\n     expression /^(.*):(.*):((.*)])?((.*):)?(?<message>(.*))$/\n
-    \  </parse>\n </filter>\n\n  <filter kubernetes_loss.**>\n    @type record_modifier\n
-    \   enable_ruby\n    <record>\n        escaped_tag ${record[\"message\"].gsub('
-    ', '')}\n    </record>\n  </filter>\n\n <filter kubernetes_loss.**>\n     @type
-    grep\n     <regexp>\n         key escaped_tag\n         pattern /loss=/\n     </regexp>\n
-    </filter>\n\n <filter kubernetes_loss.**>\n   @type parser\n   key_name $.escaped_tag\n
-    \  reserve_data true\n   remove_key_name_field true\n   suppress_parse_error_log
-    true\n   <parse>\n     @type ltsv\n     delimiter_pattern /,/\n     label_delimiter
-    \ =\n   </parse>\n </filter>\n\n <filter kubernetes_loss.**>\n    @type record_modifier\n
-    \   enable_ruby\n    <record>\n        jobname ${record.dig(\"kubernetes\", \"labels\",
-    \"jobname\")}\n        username ${record.dig(\"kubernetes\", \"labels\", \"username\")}\n
-    \       jobuuid ${record.dig(\"kubernetes\", \"labels\", \"jobuuid\")}\n        jobid
-    ${record.dig(\"kubernetes\", \"labels\", \"jobid\")}\n        step ${record.dig(\"step\").to_i}\n
-    \       loss ${record.dig(\"loss\").to_f}\n        mode ${record.dig(\"mode\").to_s}\n
-    \       epoch ${record.dig(\"epoch\").to_i} \n    </record>\n </filter>\n\n <filter
-    kubernetes_loss.**>\n   @type prometheus\n   <metric>\n     name loss\n     type
-    gauge\n     desc loss metric\n     key $.loss\n     <labels>\n       jobuuid ${jobuuid}\n
-    \      jobname ${jobname}\n       username ${username}\n       jobid ${jobid}\n
-    \      step ${step}\n       mode ${mode}\n       epoch ${epoch}\n     </labels>\n
-    \  </metric>\n </filter>\n\n <match kubernetes_loss.**>\n     @type relabel\n
-    \    @label @PROMETHEUS\n </match>\n"
-  prometheus.conf: |
-    <match {kubernetes_accuracy.**, kubernetes_loss.**, kubernetes_step.**}>
-      @type copy
-      # for MonitorAgent sample
-      <store>
-        @id test_forward
-        @type forward
-        buffer_type memory
-        flush_interval 1s
-        max_retry_wait 2s
-        send_timeout 60s
-        recover_wait 60s
-        hard_timeout 60s
-        <buffer>
-          # max_retry_wait 10s
-          flush_interval 1s
-          # retry_type periodic
-          disable_retry_limit
-       </buffer>
-       # retry_limit 3
-       disable_retry_limit
-       <server>
-         host 0.0.0.0
-         port 24224
-       </server>
-      </store>
-    </match>
-  step.conf: |
-    <filter kubernetes_step.**>
-        @type kubernetes_metadata
-    </filter>
-
-    <filter kubernetes_step.**>
-        @type grep
-        <regexp>
-            key $.kubernetes.labels.logger
-            pattern /^dkube$/
-        </regexp>
-    </filter>
-
-    <filter kubernetes_step.**>
-        @type grep
-        <regexp>
-            key log
-            pattern /step/
-        </regexp>
-    </filter>
-
-    <filter kubernetes_step.**>
-      @type parser
-      key_name $.log
-      reserve_data true
-      remove_key_name_field true
-      suppress_parse_error_log true
-      <parse>
-        @type regexp
-        expression /^(.*):(.*):((.*)])?((.*):)?(?<message>(.*))$/
-      </parse>
-    </filter>
-
-     <filter kubernetes_step.**>
-       @type record_modifier
-       enable_ruby
-       <record>
-           escaped_tag ${record["message"].gsub(' ', '')}
-       </record>
-     </filter>
-
-    <filter kubernetes_step.**>
-        @type grep
-        <regexp>
-            key escaped_tag
-            pattern /,step=/
-        </regexp>
-    </filter>
-
-    <filter kubernetes_step.**>
-      @type parser
-      key_name $.escaped_tag
-      reserve_data true
-      remove_key_name_field true
-      suppress_parse_error_log true
-      <parse>
-        @type ltsv
-        delimiter_pattern /,/
-        label_delimiter  =
-      </parse>
-    </filter>
-
-    <filter kubernetes_step.**>
-       @type record_modifier
-       enable_ruby
-       <record>
-           jobname ${record.dig("kubernetes", "labels", "jobname")}
-           username ${record.dig("kubernetes", "labels", "username")}
-           jobid ${record.dig("kubernetes", "labels", "jobid")}
-           step ${record.dig("step").to_i}
-           accuracy ${record.dig("accuracy").to_f}
-           loss ${record.dig("loss").to_f}
-           mode ${record.dig("mode").to_s}
-       </record>
-    </filter>
-
-    <filter kubernetes_step.**>
-      @type prometheus
-      <metric>
-        name step
-        type gauge
-        desc step metric
-        key $.step
-        <labels>
-          jobname ${jobname}
-          username ${username}
-          jobid ${jobid}
-          accuracy ${accuracy}
-          loss ${loss}
-          mode ${mode}
-        </labels>
-      </metric>
-    </filter>
-
-    <match kubernetes_step.**>
-        @type relabel
-        @label @PROMETHEUS
-    </match>
-kind: ConfigMap
-metadata:
-  labels:
-    ksonnet.io/component: service
-  name: dkube-metric-collector
   namespace: dkube
 ---
 apiVersion: v1
@@ -702,27 +434,6 @@ spec:
     targetPort: 9401
   selector:
     app: dkube-ext
-  type: ClusterIP
----
-apiVersion: v1
-kind: Service
-metadata:
-  annotations:
-    prometheus.io/port: "24231"
-    prometheus.io/dkube_scrape: "true"
-  labels:
-    app: dkube-log-processor
-    ksonnet.io/component: service
-  name: dkube-log-processor
-  namespace: dkube
-spec:
-  ports:
-  - name: dkube-log-metrics
-    port: 24231
-    protocol: TCP
-    targetPort: 24231
-  selector:
-    k8s-app: dkube-metric-collector
   type: ClusterIP
 ---
 apiVersion: v1
@@ -974,6 +685,10 @@ spec:
         port:
           number: 5556
         host: dkube-auth-server
+    retries:
+      attempts: 3
+      perTryTimeout: 5s
+      retryOn: gateway-error,connect-failure,refused-stream
   - match:
     - uri:
         prefix: /dkube/v2/login
@@ -984,6 +699,10 @@ spec:
         port:
           number: 3001
         host: dkube-auth-server
+    retries:
+      attempts: 3
+      perTryTimeout: 5s
+      retryOn: gateway-error,connect-failure,refused-stream
   - match:
     - uri:
         prefix: /dkube/v2/logout
@@ -994,6 +713,10 @@ spec:
         port:
           number: 3001
         host: dkube-auth-server
+    retries:
+      attempts: 3
+      perTryTimeout: 5s
+      retryOn: gateway-error,connect-failure,refused-stream
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -1016,6 +739,10 @@ spec:
         port:
           number: 2379
         host: dkube-db-server
+    retries:
+      attempts: 3
+      perTryTimeout: 5s
+      retryOn: gateway-error,connect-failure,refused-stream
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -1038,6 +765,10 @@ spec:
         port:
           number: 8888
         host: dkube-docs
+    retries:
+      attempts: 3
+      perTryTimeout: 5s
+      retryOn: gateway-error,connect-failure,refused-stream
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -1060,6 +791,10 @@ spec:
         port:
           number: 9401
         host: dkube-downloader
+    retries:
+      attempts: 3
+      perTryTimeout: 5s
+      retryOn: gateway-error,connect-failure,refused-stream
   - match:
     - uri:
         prefix: /dkube/pipeline/logs/
@@ -1070,6 +805,10 @@ spec:
         port:
           number: 9401
         host: dkube-downloader
+    retries:
+      attempts: 3
+      perTryTimeout: 5s
+      retryOn: gateway-error,connect-failure,refused-stream
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -1090,6 +829,10 @@ spec:
         port:
           number: 8000
         host: dkube-operator-api-proxy
+    retries:
+      attempts: 3
+      perTryTimeout: 5s
+      retryOn: gateway-error,connect-failure,refused-stream
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -1112,6 +855,10 @@ spec:
         port:
           number: 80
         host: dkube-grafana
+    retries:
+      attempts: 3
+      perTryTimeout: 5s
+      retryOn: gateway-error,connect-failure,refused-stream
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -1134,6 +881,10 @@ spec:
         port:
           number: 9090
         host: dkube-prometheus.dkube.svc.cluster.local
+    retries:
+      attempts: 3
+      perTryTimeout: 5s
+      retryOn: gateway-error,connect-failure,refused-stream
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -1154,6 +905,10 @@ spec:
         port:
           number: 8000
         host: dkube-serving
+    retries:
+      attempts: 3
+      perTryTimeout: 5s
+      retryOn: gateway-error,connect-failure,refused-stream
   - match:
     - uri:
         prefix: /predict
@@ -1162,6 +917,10 @@ spec:
         port:
           number: 8000
         host: dkube-serving
+    retries:
+      attempts: 3
+      perTryTimeout: 5s
+      retryOn: gateway-error,connect-failure,refused-stream
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -1182,6 +941,10 @@ spec:
         port:
           number: 3000
         host: dkube-ui
+    retries:
+      attempts: 3
+      perTryTimeout: 5s
+      retryOn: gateway-error,connect-failure,refused-stream
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -1204,6 +967,10 @@ spec:
         port:
           number: 80
         host: argo-ui.kubeflow.svc.cluster.local
+    retries:
+      attempts: 3
+      perTryTimeout: 5s
+      retryOn: gateway-error,connect-failure,refused-stream
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -1224,6 +991,10 @@ spec:
         port:
           number: 80
         host: katib-ui.kubeflow.svc.cluster.local
+    retries:
+      attempts: 3
+      perTryTimeout: 5s
+      retryOn: gateway-error,connect-failure,refused-stream
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -1246,6 +1017,10 @@ spec:
         host: dkube-controller-master
         port:
           number: 5001
+    retries:
+      attempts: 3
+      perTryTimeout: 5s
+      retryOn: gateway-error,connect-failure,refused-stream
   - match:
     - method:
         regex: POST|DELETE
@@ -1256,11 +1031,33 @@ spec:
         host: dkube-controller-master
         port:
           number: 5001
+    retries:
+      attempts: 3
+      perTryTimeout: 5s
+      retryOn: gateway-error,connect-failure,refused-stream
   - match:
     - method:
-        regex: POST|DELETE
+        exact: POST
+      uri:
+        exact: /pipeline/apis/v1beta1/runs
+    retries:
+      attempts: 3
+      perTryTimeout: 5s
+      retryOn: gateway-error,connect-failure,refused-stream
+    route:
+    - destination:
+        host: dkube-controller-master
+        port:
+          number: 5001
+  - match:
+    - method:
+        exact: DELETE
       uri:
         prefix: /pipeline/apis/v1beta1/runs
+    retries:
+      attempts: 3
+      perTryTimeout: 5s
+      retryOn: gateway-error,connect-failure,refused-stream
     route:
     - destination:
         host: dkube-controller-master
@@ -1274,6 +1071,10 @@ spec:
         host: ml-pipeline-ui.kubeflow.svc.cluster.local
         port:
           number: 80
+    retries:
+      attempts: 3
+      perTryTimeout: 5s
+      retryOn: gateway-error,connect-failure,refused-stream
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -1296,6 +1097,10 @@ spec:
         port:
           number: 8888
         host: dkube-installer-service
+    retries:
+      attempts: 3
+      perTryTimeout: 5s
+      retryOn: gateway-error,connect-failure,refused-stream
   - match:
     - uri:
         prefix: /report
@@ -1304,6 +1109,10 @@ spec:
         port:
           number: 8888
         host: dkube-installer-service
+    retries:
+      attempts: 3
+      perTryTimeout: 5s
+      retryOn: gateway-error,connect-failure,refused-stream
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -1326,6 +1135,10 @@ spec:
         port:
           number: 5000
         host: dkube-controller-worker
+    retries:
+      attempts: 3
+      perTryTimeout: 5s
+      retryOn: gateway-error,connect-failure,refused-stream
   - match:
     - uri:
         prefix: /dkube/v2/controller
@@ -1334,6 +1147,10 @@ spec:
         port:
           number: 5000
         host: dkube-controller-master
+    retries:
+      attempts: 3
+      perTryTimeout: 5s
+      retryOn: gateway-error,connect-failure,refused-stream
 ---
 apiVersion: v1
 kind: Service
