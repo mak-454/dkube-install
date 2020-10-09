@@ -544,6 +544,7 @@ spec:
         - exact: /
         - prefix: /dex
         - prefix: /pipeline
+        - prefix: /ml_metadata
         - prefix: /dkube/pipeline
         - prefix: /static
         - prefix: /callback
@@ -569,6 +570,7 @@ spec:
         - exact: /
         - prefix: /dex
         - prefix: /pipeline
+        - prefix: /ml_metadata
         - prefix: /dkube/pipeline
         - prefix: /static
         - prefix: /callback
@@ -1071,6 +1073,18 @@ spec:
         host: ml-pipeline-ui.kubeflow.svc.cluster.local
         port:
           number: 80
+    retries:
+      attempts: 3
+      perTryTimeout: 5s
+      retryOn: gateway-error,connect-failure,refused-stream
+  - match:
+    - uri:
+        prefix: /ml_metadata
+    route:
+    - destination:
+        host: metadata-envoy-service.kubeflow.svc.cluster.local
+        port:
+          number: 9090
     retries:
       attempts: 3
       perTryTimeout: 5s
